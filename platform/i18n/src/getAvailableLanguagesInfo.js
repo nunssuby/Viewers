@@ -28,6 +28,7 @@ const languagesMap = {
   'ja-JP': 'Japanese (Japan)',
   kn: 'Kannada',
   ko: 'Korean',
+  'ko-KR': 'Korean',
   lt: 'Lithuanian',
   lv: 'Latvian',
   ml: 'Malayalam',

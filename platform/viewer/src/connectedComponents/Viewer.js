@@ -1,27 +1,24 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import OHIF, { MODULE_TYPES, DICOMSR } from '@ohif/core';
+import OHIF, { DICOMSR, MODULE_TYPES } from '@ohif/core';
 import { withDialog } from '@ohif/ui';
+import classNames from 'classnames';
 import moment from 'moment';
-
-import ConnectedHeader from './ConnectedHeader.js';
-import ToolbarRow from './ToolbarRow.js';
-import ConnectedStudyBrowser from './ConnectedStudyBrowser.js';
-import ConnectedViewerMain from './ConnectedViewerMain.js';
-import SidePanel from './../components/SidePanel.js';
-import ErrorBoundaryDialog from './../components/ErrorBoundaryDialog';
-import { extensionManager } from './../App.js';
-import { ReconstructionIssues } from './../../../core/src/enums.js';
-
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import StudyLoadingMonitor from '../components/StudyLoadingMonitor';
+import StudyPrefetcher from '../components/StudyPrefetcher.js';
+import AppContext from '../context/AppContext';
+import UserManagerContext from '../context/UserManagerContext';
 // Contexts
 import WhiteLabelingContext from '../context/WhiteLabelingContext.js';
-import UserManagerContext from '../context/UserManagerContext';
-import AppContext from '../context/AppContext';
-
+import { ReconstructionIssues } from './../../../core/src/enums.js';
+import { extensionManager } from './../App.js';
+import ErrorBoundaryDialog from './../components/ErrorBoundaryDialog';
+import SidePanel from './../components/SidePanel.js';
+import ConnectedHeader from './ConnectedHeader.js';
+import ConnectedStudyBrowser from './ConnectedStudyBrowser.js';
+import ConnectedViewerMain from './ConnectedViewerMain.js';
+import ToolbarRow from './ToolbarRow.js';
 import './Viewer.css';
-import StudyPrefetcher from '../components/StudyPrefetcher.js';
-import StudyLoadingMonitor from '../components/StudyLoadingMonitor';
 
 const { studyMetadataManager } = OHIF.utils;
 
@@ -106,7 +103,7 @@ class Viewer extends Component {
   }
 
   retrieveTimepoints = filter => {
-    OHIF.log.info('retrieveTimepoints');
+    OHIF.log.info('retrieveTimepoints1');
 
     // Get the earliest and latest study date
     let earliestDate = new Date().toISOString();
