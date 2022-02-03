@@ -25,7 +25,7 @@ const DICOMFileLoader = new (class extends FileLoader {
       dataset._meta = dcmjs.data.DicomMetaDictionary.namifyDataset(
         dicomData.meta
       );
-      console.log(dicomData);
+      console.log(dicomData.dict);
     } catch (e) {
       console.error('Error reading dicom file', e);
     }

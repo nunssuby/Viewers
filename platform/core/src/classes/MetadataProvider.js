@@ -425,7 +425,7 @@ class MetadataProvider {
 
         break;
       case WADO_IMAGE_LOADER_TAGS.GENERAL_STUDY_MODULE:
-        console.log(instance);
+        //console.log(instance);
         metadata = {
           studyDescription: instance.StudyDescription,
           studyDate: instance.StudyDate,

@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import {
   formatDICOMDate,
   formatDICOMTime,
+  formatEncoding,
   formatNumberPrecision,
   formatPN,
   getCompression,
@@ -60,6 +61,7 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
     const patientModule =
       cornerstone.metaData.get('patientModule', imageId) || {};
     const { patientId, patientName } = patientModule;
+    console.log(patientModule);
 
     const generalImageModule =
       cornerstone.metaData.get('generalImageModule', imageId) || {};
@@ -130,10 +132,10 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
       <React.Fragment>
         <div className="top-left overlay-element">
           <div>{formatPN(patientName)}</div>
-          <div>{patientId}</div>
+          <div>{formatEncoding(patientId)}</div>
         </div>
         <div className="top-right overlay-element">
-          <div>{studyDescription}</div>
+          <div>{formatEncoding(studyDescription)}</div>
           <div>
             {formatDICOMDate(studyDate, 'YYYY.MM.DD')}{' '}
             {formatDICOMTime(studyTime)}

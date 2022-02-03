@@ -385,6 +385,7 @@ class Viewer extends Component {
                   const { appConfig } = appContext;
                   const { studyPrefetcher } = appConfig;
                   const { studies } = this.props;
+
                   return (
                     studyPrefetcher &&
                     studyPrefetcher.enabled && (

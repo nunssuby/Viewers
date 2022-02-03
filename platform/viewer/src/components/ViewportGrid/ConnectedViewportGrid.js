@@ -1,8 +1,8 @@
-import ViewportGrid from './ViewportGrid.js';
 import { MODULE_TYPES } from '@ohif/core';
+import memoize from 'lodash/memoize';
 import { connect } from 'react-redux';
 import { extensionManager } from './../../App.js';
-import memoize from 'lodash/memoize';
+import ViewportGrid from './ViewportGrid.js';
 
 const getAvailableViewportModules = memoize(viewportModules => {
   const availableViewportModules = {};

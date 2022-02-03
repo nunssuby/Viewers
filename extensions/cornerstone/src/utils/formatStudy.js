@@ -1,3 +1,5 @@
+import iconv from 'iconv-lite';
+import jschardet from 'jschardet';
 import moment from 'moment';
 
 /**
@@ -100,10 +102,33 @@ function getCompression(imageId) {
   return 'Lossless / Uncompressed';
 }
 
-export { isValidNumber,
+/**
+ * Formats a EUC-KR to utf-8
+ *
+ * @param {string} value
+ * @returns {string} formatted value.
+ */
+function formatEncoding(value) {
+  if (!value) {
+    return;
+  }
+
+  //console.log(value);
+  //let type = jschardet.detect(value);
+  //console.log(type);
+  iconv.skipDecodeWarning = true;
+  //value = iconv.decode(value, type.encoding);
+  value = iconv.decode(value, 'euc-kr');
+  //console.log(value);
+  return value;
+}
+
+export {
+  isValidNumber,
   formatNumberPrecision,
   formatDICOMDate,
   formatDICOMTime,
   formatPN,
-  getCompression
+  getCompression,
+  formatEncoding,
 };
