@@ -51,6 +51,7 @@ class DicomUploadService {
     if (!checkDicomFile(content))
       throw new Error('This is not a valid DICOM file.');
 
+    console.log('ss===================Uploading');
     await client.storeInstances({ datasets: [content] });
   }
 

@@ -25,6 +25,7 @@ import AppContext from '../context/AppContext';
 const { urlUtil: UrlUtil } = OHIF.utils;
 
 function StudyListRoute(props) {
+  console.log(props);
   const { history, server, user, studyListFunctionsEnabled } = props;
   const [t] = useTranslation('Common');
   // ~~ STATE
@@ -82,6 +83,9 @@ function StudyListRoute(props) {
   // Watches filters and sort, debounced
   useEffect(
     () => {
+      console.log(studyListFunctionsEnabled);
+      console.log(isGoogleCHAIntegrationEnabled);
+      console.log(appConfig.enableGoogleCloudAdapter);
       const fetchStudies = async () => {
         try {
           setSearchStatus({ error: null, isSearchingForStudies: true });
@@ -208,7 +212,7 @@ function StudyListRoute(props) {
           onClose={() => setActiveModalId(null)}
         />
       ) : null}
-      {healthCareApiWindows}
+      {healthCareApiWindows}111
       <WhiteLabelingContext.Consumer>
         {whiteLabeling => (
           <UserManagerContext.Consumer>
@@ -239,10 +243,10 @@ function StudyListRoute(props) {
               onImport={() => setActiveModalId('DicomFilesUploader')}
             />
           )}
+
           <span className="study-count">{studies.length}</span>
         </div>
       </div>
-
       <div className="table-head-background" />
       <div className="study-list-container">
         {/* STUDY LIST OR DROP ZONE? */}
