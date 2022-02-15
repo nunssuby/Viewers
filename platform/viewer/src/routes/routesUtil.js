@@ -52,14 +52,14 @@ const ROUTES_DEF = {
       component: StandaloneRouting,
     },
     list: {
-      path: ['/studylist'],
+      path: ['/studylist', '/'],
       component: StudyListRouting,
       condition: appConfig => {
         return appConfig.showStudyList;
       },
     },
     local: {
-      path: ['/local', '/'],
+      path: ['/local'],
       component: ViewerLocalFileData,
     },
     IHEInvokeImageDisplay: {

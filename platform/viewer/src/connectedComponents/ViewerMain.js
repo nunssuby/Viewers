@@ -27,7 +27,9 @@ class ViewerMain extends Component {
     };
   }
 
+  // TODO: ss-이부분은 멀까? 저 코너스톤을 바꾸는 방법??
   getDisplaySets(studies) {
+    //console.log(studies);
     const displaySets = [];
     studies.forEach(study => {
       study.displaySets.forEach(dSet => {
