@@ -11,13 +11,14 @@ import UserManagerContext from '../context/UserManagerContext';
 // Contexts
 import WhiteLabelingContext from '../context/WhiteLabelingContext.js';
 import { ReconstructionIssues } from './../../../core/src/enums.js';
-import { extensionManager } from './../App.js';
+import { extensionManager, servicesManager } from './../App.js';
 import ErrorBoundaryDialog from './../components/ErrorBoundaryDialog';
 import SidePanel from './../components/SidePanel.js';
 import ConnectedHeader from './ConnectedHeader.js';
 import ConnectedStudyBrowser from './ConnectedStudyBrowser.js';
 import ConnectedViewerMain from './ConnectedViewerMain.js';
 import ToolbarRow from './ToolbarRow.js';
+
 import './Viewer.css';
 
 const { studyMetadataManager } = OHIF.utils;
@@ -67,9 +68,11 @@ class Viewer extends Component {
     const { activeServer } = this.props;
     const server = Object.assign({}, activeServer);
 
+    const external = { servicesManager };
+
     OHIF.measurements.MeasurementApi.setConfiguration({
       dataExchange: {
-        retrieve: DICOMSR.retrieveMeasurements,
+        retrieve: server => DICOMSR.retrieveMeasurements(server, external),
         store: DICOMSR.storeMeasurements,
       },
       server,
