@@ -260,6 +260,7 @@ class Viewer extends Component {
   render() {
     let VisiblePanelLeft, VisiblePanelRight;
     const panelExtensions = extensionManager.modules[MODULE_TYPES.PANEL];
+    console.log(panelExtensions);
 
     panelExtensions.forEach(panelExt => {
       panelExt.module.components.forEach(comp => {

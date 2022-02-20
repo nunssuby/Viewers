@@ -67,7 +67,7 @@ const SegmentationPanel = ({
    */
   const [state, setState] = useState({
     brushRadius: DEFAULT_BRUSH_RADIUS,
-    brushColor: 'rgba(221, 85, 85, 1)',
+    brushColor: 'rgba(255, 85, 85, 1)',
     selectedSegment: 0,
     selectedSegmentation: 0,
     showSettings: false,
@@ -224,11 +224,7 @@ const SegmentationPanel = ({
         )
       );
     };
-  }, [
-    activeIndex,
-    updateSegmentationComboBox,
-    viewports,
-  ]);
+  }, [activeIndex, updateSegmentationComboBox, viewports]);
 
   const updateSegmentationComboBox = e => {
     const index = e.detail.activatedLabelmapIndex;
