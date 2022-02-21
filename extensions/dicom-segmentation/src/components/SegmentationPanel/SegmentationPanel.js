@@ -70,13 +70,13 @@ const SegmentationPanel = ({
     brushColor: 'rgba(255, 85, 85, 1)',
     selectedSegment: 0,
     selectedSegmentation: 0,
-    showSettings: false,
+    showSettings: true,
     labelMapList: [],
     segmentList: [],
     segmentsHidden: [],
     segmentNumbers: [],
-    isLoading: false,
-    isDisabled: true,
+    isLoading: true,
+    isDisabled: false,
   });
 
   const getActiveViewport = () => viewports[activeIndex];
@@ -670,7 +670,7 @@ const SegmentationPanel = ({
           disabled: state.isDisabled,
         })}
       >
-        {false && (
+        {true && (
           <form className="selector-form">
             <BrushColorSelector
               defaultColor={state.brushColor}

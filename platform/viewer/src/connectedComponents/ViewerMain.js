@@ -143,14 +143,14 @@ class ViewerMain extends Component {
 
     const { LoggerService, UINotificationService } = servicesManager.services;
 
-    console.log(
-      'setViewportData========================================================='
-    );
-    console.log(displaySet);
+    //console.log(
+    //  'setViewportData========================================================='
+    //);
+    //console.log(displaySet);
     if (displaySet.x) {
-      console.log(
-        'displaySet========================================================='
-      );
+      // console.log(
+      //   'displaySet========================================================='
+      // );
       const { Modality } = displaySet;
       if (Modality === 'SEG' && servicesManager) {
         const onDisplaySetLoadFailureHandler = error => {

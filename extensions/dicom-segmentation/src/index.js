@@ -134,6 +134,9 @@ export default {
               return true;
             }
 
+            console.log(
+              '====================================================='
+            );
             for (let i = 0; i < studies.length; i++) {
               const study = studies[i];
               console.log(study);
@@ -141,8 +144,8 @@ export default {
               if (study && study.series) {
                 for (let j = 0; j < study.series.length; j++) {
                   const series = study.series[j];
-
-                  if (series.Modality === 'SEG') {
+                  console.log(series);
+                  if (series.Modality === 'CT') {
                     if (activeViewport) {
                       const studyMetadata = studyMetadataManager.get(
                         activeViewport.StudyInstanceUID
