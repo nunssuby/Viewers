@@ -76,7 +76,7 @@ export default {
       menuOptions: [
         {
           icon: 'list',
-          label: 'Measurements1',
+          label: 'Measurements',
           target: 'measurement-panel',
         },
       ],
