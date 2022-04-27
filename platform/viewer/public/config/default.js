@@ -31,14 +31,14 @@ window.config = {
   //   ],
   // },
   routerBasename: '/ohif',
-  rootUrl: 'http://localhost:2016/ohif',
+  rootUrl: 'http://49.50.161.247:2016/ohif',
   servers: {
     dicomWeb: [
       {
         name: 'dicomweb_server',
-        wadoUriRoot: '49.50.161.247',
-        qidoRoot: '49.50.161.247',
-        wadoRoot: '49.50.161.247',
+        wadoUriRoot: 'http://49.50.161.247',
+        qidoRoot: 'http://49.50.161.247',
+        wadoRoot: 'http://49.50.161.247',
         qidoSupportsIncludeField: true,
         imageRendering: 'wadouri',
         thumbnailRendering: 'wadors',
