@@ -1,36 +1,53 @@
 window.config = {
   // default: '/'
-  routerBasename: '/',
-  extensions: [],
-  showStudyList: true,
-  filterQueryParam: false,
-  disableServersCache: false,
-  studyPrefetcher: {
-    enabled: true,
-    order: 'closest',
-    displaySetCount: 3,
-    preventCache: false,
-    prefetchDisplaySetsTimeout: 300,
-    maxNumPrefetchRequests: 100,
-    displayProgress: true,
-    includeActiveDisplaySet: true,
-  },
+  // routerBasename: '/',
+  // extensions: [],
+  // showStudyList: true,
+  // filterQueryParam: false,
+  // disableServersCache: false,
+  // studyPrefetcher: {
+  //   enabled: true,
+  //   order: 'closest',
+  //   displaySetCount: 3,
+  //   preventCache: false,
+  //   prefetchDisplaySetsTimeout: 300,
+  //   maxNumPrefetchRequests: 100,
+  //   displayProgress: true,
+  //   includeActiveDisplaySet: true,
+  // },
+  // servers: {
+  //   dicomWeb: [
+  //     {
+  //       name: 'DCM4CHEE',
+  //       wadoUriRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/wado',
+  //       qidoRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs',
+  //       wadoRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs',
+  //       qidoSupportsIncludeField: true,
+  //       imageRendering: 'wadors',
+  //       thumbnailRendering: 'wadors',
+  //       enableStudyLazyLoad: true,
+  //       supportsFuzzyMatching: true,
+  //     },
+  //   ],
+  // },
+  routerBasename: '/ohif',
+  rootUrl: 'http://49.50.161.247:2016/ohif',
   servers: {
     dicomWeb: [
       {
-        name: 'DCM4CHEE',
-        wadoUriRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/wado',
-        qidoRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs',
-        wadoRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs',
+        name: 'dicomweb_server',
+        wadoUriRoot: 'http://49.50.161.247',
+        qidoRoot: 'http://49.50.161.247',
+        wadoRoot: 'http://49.50.161.247',
         qidoSupportsIncludeField: true,
-        imageRendering: 'wadors',
+        imageRendering: 'wadouri',
         thumbnailRendering: 'wadors',
-        enableStudyLazyLoad: true,
-        supportsFuzzyMatching: true,
+        requestOptions: {
+          requestFromBrowser: true,
+        },
       },
     ],
   },
-
   // Extensions should be able to suggest default values for these?
   // Or we can require that these be explicitly set
   hotkeys: [
