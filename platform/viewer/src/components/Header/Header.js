@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import OHIFLogo from '../OHIFLogo/OHIFLogo.js';
 //
 import { UserPreferences } from './../UserPreferences';
@@ -27,15 +27,15 @@ function Header(props) {
 
   useEffect(() => {
     const optionsValue = [
-      // {
-      //   title: t('About'),
-      //   icon: { name: 'info' },
-      //   onClick: () =>
-      //     show({
-      //       content: AboutContent,
-      //       title: t('OHIF Viewer - About'),
-      //     }),
-      // },
+      {
+        title: t('About'),
+        icon: { name: 'info' },
+        onClick: () =>
+          show({
+            content: AboutContent,
+            title: t('OHIF Viewer - About'),
+          }),
+      },
       {
         title: t('Preferences'),
         icon: {
@@ -66,7 +66,7 @@ function Header(props) {
       <div
         className={classNames('entry-header', { 'header-big': useLargeLogo })}
       >
-        {/* <div className="header-left-box">
+        <div className="header-left-box">
           {location && location.studyLink && (
             <Link
               to={location.studyLink}
@@ -89,7 +89,7 @@ function Header(props) {
               {t(linkText)}
             </Link>
           )}
-        </div> */}
+        </div>
         <div className="header-menu">
           {/* <span className="research-use">{t('INVESTIGATIONAL USE ONLY')}</span> */}
           <Dropdown title={t('Options')} list={options} align="right" />
