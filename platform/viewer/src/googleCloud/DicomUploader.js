@@ -95,7 +95,9 @@ export default class DicomUploader extends Component {
       uploadContext === this.state.uploadContext &&
       this.uploadCallback.call(this, fileId, error);
 
-    dicomUploader.setRetrieveAuthHeaderFunction(this.props.retrieveAuthHeaderFunction);
+    dicomUploader.setRetrieveAuthHeaderFunction(
+      this.props.retrieveAuthHeaderFunction
+    );
 
     dicomUploader.smartUpload(
       files.target.files,
@@ -141,7 +143,7 @@ export default class DicomUploader extends Component {
         <div className="dicom-uploader">
           <div className="button">
             <label htmlFor="file">
-              <img src="./assets/Button_File.svg" alt="upload file"></img>
+              <img src="/assets/Button_File.svg" alt="upload file"></img>
             </label>
             <input
               className="invisible-input"
@@ -154,7 +156,7 @@ export default class DicomUploader extends Component {
 
           <div className="button">
             <label htmlFor="folder">
-              <img src="./assets/Button_Folder.svg" alt="upload folder"></img>
+              <img src="/assets/Button_Folder.svg" alt="upload folder"></img>
             </label>
             <input
               className="invisible-input"
