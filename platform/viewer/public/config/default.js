@@ -30,6 +30,7 @@ window.config = {
   //     },
   //   ],
   // },
+  
   routerBasename: '/ohif',
   rootUrl: 'http://api.medical-lab.co.kr:2016/ohif',
   servers: {
