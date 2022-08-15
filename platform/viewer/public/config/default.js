@@ -31,14 +31,17 @@ window.config = {
   //   ],
   // },
   routerBasename: '/ohif',
-  rootUrl: 'http://49.50.161.247:2016/ohif',
+  rootUrl: 'http://api.medical-lab.co.kr:2016/ohif',
   servers: {
     dicomWeb: [
       {
         name: 'dicomweb_server',
-        wadoUriRoot: 'http://49.50.161.247',
-        qidoRoot: 'http://49.50.161.247',
-        wadoRoot: 'http://49.50.161.247',
+        wadoUriRoot: 'http://api.medical-lab.co.kr',
+        qidoRoot: 'http://api.medical-lab.co.kr',
+        wadoRoot: 'http://api.medical-lab.co.kr',
+        // wadoUriRoot: 'http://localhost:5985',
+        // qidoRoot: 'http://localhost:5985',
+        // wadoRoot: 'http://localhost:5985',
         qidoSupportsIncludeField: true,
         imageRendering: 'wadouri',
         thumbnailRendering: 'wadors',

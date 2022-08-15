@@ -6,9 +6,9 @@ window.config = {
     dicomWeb: [
       {
         name: 'dicomweb_server',
-        wadoUriRoot: 'http://49.50.161.247',
-        qidoRoot: 'http://49.50.161.247',
-        wadoRoot: 'http://49.50.161.247',
+        wadoUriRoot: 'http://api.medical-lab.co.kr',
+        qidoRoot: 'http://api.medical-lab.co.kr',
+        wadoRoot: 'http://api.medical-lab.co.kr',
         qidoSupportsIncludeField: false,
         imageRendering: 'wadouri',
         thumbnailRendering: 'wadouri',
