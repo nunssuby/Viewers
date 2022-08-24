@@ -340,10 +340,31 @@ class StudyMetadata extends Metadata {
     if (referencedSeriesInstanceUID) {
       filteredDerivedDisplaySets = filteredDerivedDisplaySets.filter(
         displaySet => {
-          return (
-            StudyMetadata.getReferencedDisplaySet(displaySet, [this])
-              .SeriesInstanceUID === referencedSeriesInstanceUID
+          const referencedDisplaySet = StudyMetadata.getReferencedDisplaySet(
+            displaySet,
+            [this]
           );
+          if (referencedDisplaySet) {
+            return (
+              referencedDisplaySet.SeriesInstanceUID ===
+              referencedSeriesInstanceUID
+            );
+          } else {
+            const filteredReferencedDisplaySets = displaySet.referencedDisplaySets.filter(
+              referencedDisplaySet =>
+                referencedDisplaySet.SeriesInstanceUID ===
+                referencedSeriesInstanceUID
+            );
+
+            if (
+              filteredReferencedDisplaySets &&
+              filteredReferencedDisplaySets.length !== 0
+            ) {
+              return true;
+            }
+
+            return false;
+          }
         }
       );
     }
