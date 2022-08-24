@@ -54,7 +54,7 @@ import measureTargetNe from './icons/measure-target-ne.svg';
 import measureTargetUn from './icons/measure-target-un.svg';
 import measureTemp from './icons/measure-temp.svg';
 import objectGroup from './icons/object-group.svg';
-import ohifLogo from './icons/logo.svg';
+import ohifLogo from './icons/medical-logo.svg';
 import ohifTextLogo from './icons/text-logo.svg';
 import oval from './icons/oval.svg';
 import palette from './icons/palette.svg';
