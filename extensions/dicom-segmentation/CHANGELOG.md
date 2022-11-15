@@ -3,6 +3,49 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.16](https://github.com/OHIF/Viewers/compare/@ohif/extension-dicom-segmentation@0.7.15...@ohif/extension-dicom-segmentation@0.7.16) (2022-10-28)
+
+
+### Bug Fixes
+
+* [#2964](https://github.com/OHIF/Viewers/issues/2964) Update message for segmentation error loading due to orientation tolerance ([#2982](https://github.com/OHIF/Viewers/issues/2982)) ([545161d](https://github.com/OHIF/Viewers/commit/545161d5e8d92bb6652f17dc24a36dac8aa7b3a4))
+
+
+
+
+
+## [0.7.15](https://github.com/OHIF/Viewers/compare/@ohif/extension-dicom-segmentation@0.7.14...@ohif/extension-dicom-segmentation@0.7.15) (2022-09-19)
+
+**Note:** Version bump only for package @ohif/extension-dicom-segmentation
+
+
+
+
+
+## [0.7.14](https://github.com/OHIF/Viewers/compare/@ohif/extension-dicom-segmentation@0.7.13...@ohif/extension-dicom-segmentation@0.7.14) (2022-09-12)
+
+**Note:** Version bump only for package @ohif/extension-dicom-segmentation
+
+
+
+
+
+## [0.7.13](https://github.com/OHIF/Viewers/compare/@ohif/extension-dicom-segmentation@0.7.12...@ohif/extension-dicom-segmentation@0.7.13) (2022-09-01)
+
+**Note:** Version bump only for package @ohif/extension-dicom-segmentation
+
+
+
+
+
+## [0.7.12](https://github.com/OHIF/Viewers/compare/@ohif/extension-dicom-segmentation@0.7.11...@ohif/extension-dicom-segmentation@0.7.12) (2022-08-31)
+
+**Note:** Version bump only for package @ohif/extension-dicom-segmentation
+
+
+
+
+
 ## [0.7.11](https://github.com/OHIF/Viewers/compare/@ohif/extension-dicom-segmentation@0.7.10...@ohif/extension-dicom-segmentation@0.7.11) (2022-04-05)
 
 **Note:** Version bump only for package @ohif/extension-dicom-segmentation
