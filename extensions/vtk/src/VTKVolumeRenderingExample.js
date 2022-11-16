@@ -1,6 +1,6 @@
 import React from 'react';
 import { Component } from 'react';
-import { getImageData, loadImageData, View3D } from 'react-vtkjs-viewport';
+import { getImageData, loadImageData, View3D } from '@vtk-viewport';
 import vtkVolume from 'vtk.js/Sources/Rendering/Core/Volume';
 import vtkVolumeMapper from 'vtk.js/Sources/Rendering/Core/VolumeMapper';
 import { api } from 'dicomweb-client';
@@ -13,7 +13,15 @@ import presets from './presets.js';
 
 window.cornerstoneWADOImageLoader = cornerstoneWADOImageLoader;
 
-const url = window.config.servers.dicomWeb[0].wadoRoot;
+const url = 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs';
+const studyInstanceUID =
+  '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463';
+const ctSeriesInstanceUID =
+  '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561';
+
+const searchInstanceOptions = {
+  studyInstanceUID,
+};
 
 function createActorMapper(imageData) {
   const mapper = vtkVolumeMapper.newInstance();
@@ -189,7 +197,7 @@ function createCT3dPipeline(imageData, ctTransferFunctionPresetId) {
   return actor;
 }
 
-function createStudyImageIds(baseUrl, studySearchOptions, studyInstanceUID) {
+function createStudyImageIds(baseUrl, studySearchOptions) {
   const SOP_INSTANCE_UID = '00080018';
   const SERIES_INSTANCE_UID = '0020000E';
 
@@ -230,18 +238,7 @@ class VTKFusionExample extends Component {
   };
 
   async componentDidMount() {
-    const studyInstanceUID = this.props.images.StudyInstanceUID;
-
-    const ctSeriesInstanceUID = this.props.images.SeriesInstanceUID;
-    const searchInstanceOptions = {
-      studyInstanceUID,
-    };
-
-    const imageIdPromise = createStudyImageIds(
-      url,
-      searchInstanceOptions,
-      studyInstanceUID
-    );
+    const imageIdPromise = createStudyImageIds(url, searchInstanceOptions);
 
     this.apis = [];
 
@@ -251,7 +248,7 @@ class VTKFusionExample extends Component {
     );
     //ctImageIds = ctImageIds.slice(0, ctImageIds.length / 2);
 
-    const ctImageDataObject = this.loadDataset(ctImageIds, ctImageIds);
+    const ctImageDataObject = this.loadDataset(ctImageIds, 'ctDisplaySet');
 
     const ctImageData = ctImageDataObject.vtkImageData;
     const ctVolVR = createCT3dPipeline(
@@ -300,6 +297,7 @@ class VTKFusionExample extends Component {
 
   loadDataset(imageIds, displaySetInstanceUid) {
     const imageDataObject = getImageData(imageIds, displaySetInstanceUid);
+
     loadImageData(imageDataObject);
 
     const numberOfFrames = imageIds.length;
@@ -346,29 +344,36 @@ class VTKFusionExample extends Component {
     const progressString = `Progress: ${percentComplete}%`;
 
     return (
-      <div>
-        <div
-          className="col-xs-12 col-sm-6"
-          style={{ width: '100%', height: 'calc(100vh - 130px)' }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              left: '10px',
-              color: 'white',
-              zIndex: '1',
-            }}
-          >
+      <div className="row">
+        <div className="col-xs-12">
+          <h1>Volume Rendering</h1>
+          <p>This example demonstrates volume rendering of a CT Volume.</p>
+          <p>
+            Images are retrieved via DICOMWeb from a publicly available server
+            and constructed into <code>vtkImageData</code> volumes before they
+            are provided to the component. When each slice arrives, its pixel
+            data is dumped into the proper location in the volume array.
+          </p>
+        </div>
+        <div className="col-xs-12">
+          <div>
+            <label htmlFor="select_CT_xfer_fn">
+              CT Transfer Function Preset (for Volume Rendering):{' '}
+            </label>
             <select
               id="select_CT_xfer_fn"
               value={this.state.ctTransferFunctionPresetId}
               onChange={this.handleChangeCTTransferFunction}
             >
               {ctTransferFunctionPresetOptions}
-            </select>{' '}
-            {progressString}
+            </select>
           </div>
+        </div>
+        <div className="col-xs-12">
+          <h5>{progressString}</h5>
+        </div>
+        <hr />
+        <div className="col-xs-12 col-sm-6">
           <View3D
             volumes={this.state.volumeRenderingVolumes}
             onCreated={this.saveApiReference}

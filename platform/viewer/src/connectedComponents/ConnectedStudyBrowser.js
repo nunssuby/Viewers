@@ -16,6 +16,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
       const { LoggerService, UINotificationService } = servicesManager.services;
 
+      //console.log(displaySet.isDerived, displaySet);
       if (displaySet.isDerived) {
         const { Modality } = displaySet;
         if (Modality === 'SEG' && servicesManager) {
@@ -28,7 +29,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 please adjust the tolerance in the segmentation panel settings (at your own peril!)'
                 : error.message;
 
-            LoggerService.error({ error, message });
+            LoggerService.error({
+              error,
+              message,
+            });
             UINotificationService.show({
               title: 'DICOM Segmentation Loader',
               message,
@@ -51,12 +55,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             const selectionFired = new CustomEvent(
               'extensiondicomsegmentationsegselected',
               {
-                detail: { activatedLabelmapIndex: activatedLabelmapIndex },
+                detail: {
+                  activatedLabelmapIndex: activatedLabelmapIndex,
+                },
               }
             );
-            const segThumbnailSelected = new CustomEvent('segseriesselected');
             document.dispatchEvent(selectionFired);
-            document.dispatchEvent(segThumbnailSelected);
           });
         } else if (Modality !== 'SR') {
           displaySet = displaySet.getSourceDisplaySet(ownProps.studyMetadata);
@@ -67,7 +71,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             `Referenced series for ${Modality} dataset not present.`
           );
           const message = `Referenced series for ${Modality} dataset not present.`;
-          LoggerService.error({ error, message });
+          LoggerService.error({
+            error,
+            message,
+          });
           UINotificationService.show({
             autoClose: false,
             title: 'Fail to load series',
@@ -80,7 +87,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       if (!displaySet) {
         const error = new Error('Source data not present');
         const message = 'Source data not present';
-        LoggerService.error({ error, message });
+        LoggerService.error({
+          error,
+          message,
+        });
         UINotificationService.show({
           autoClose: false,
           title: 'Fail to load series',
@@ -92,7 +102,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       if (displaySet.isSOPClassUIDSupported === false) {
         const error = new Error('Modality not supported');
         const message = 'Modality not supported';
-        LoggerService.error({ error, message });
+        LoggerService.error({
+          error,
+          message,
+        });
         UINotificationService.show({
           autoClose: false,
           title: 'Fail to load series',

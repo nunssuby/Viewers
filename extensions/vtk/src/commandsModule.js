@@ -1,3 +1,4 @@
+import React from 'react';
 import throttle from 'lodash.throttle';
 import {
   vtkInteractorStyleMPRWindowLevel,
@@ -124,56 +125,78 @@ const commandsModule = ({ commandsManager, servicesManager, props }) => {
 
   const actions = {
     render: async ({ viewports }) => {
-      //
+                                       //
 
-      const displaySet =
-        viewports.viewportSpecificData[viewports.activeViewportIndex];
-      const viewportProps = [
-        {
-          orientation: {
-            sliceNormal: [0, 0, 1],
-            viewUp: [0, -1, 0],
-          },
-        },
-      ];
+                                       const displaySet =
+                                         viewports.viewportSpecificData[
+                                           viewports.activeViewportIndex
+                                         ];
+                                       const viewportProps = [
+                                         {
+                                           orientation: {
+                                             sliceNormal: [0, 0, 1],
+                                             viewUp: [0, -1, 0],
+                                           },
+                                         },
+                                       ];
 
-      const study = studyMetadataManager.get(displaySet.StudyInstanceUID);
-      const images = study.findDisplaySet(ds => {
-        return (
-          ds.images &&
-          ds.images.find(
-            i => i.getSOPInstanceUID() === displaySet.SOPInstanceUID
-          )
-        );
-      });
+                                       const study = studyMetadataManager.get(
+                                         displaySet.StudyInstanceUID
+                                       );
+                                       const images = study.findDisplaySet(
+                                         ds => {
+                                           return (
+                                             ds.images &&
+                                             ds.images.find(
+                                               i =>
+                                                 i.getSOPInstanceUID() ===
+                                                 displaySet.SOPInstanceUID
+                                             )
+                                           );
+                                         }
+                                       );
 
-      try {
-        await setMPRLayout(displaySet, viewportProps, 1, 1);
-      } catch (error) {
-        throw new Error(error);
-      }
-      const vistaActivada = Array.from(
-        document.getElementsByClassName('vtk-viewport-handler')
-      );
-      vistaActivada[0].innerHTML = '';
-      ReactDOM.render(<Render3D images={images} />, vistaActivada[0]);
+                                       try {
+                                         await setMPRLayout(
+                                           displaySet,
+                                           viewportProps,
+                                           1,
+                                           1
+                                         );
+                                       } catch (error) {
+                                         throw new Error(error);
+                                       }
+                                       const vistaActivada = Array.from(
+                                         document.getElementsByClassName(
+                                           'vtk-viewport-handler'
+                                         )
+                                       );
+                                       vistaActivada[0].innerHTML = '';
+                                       ReactDOM.render(
+                                         <Render3D images={images} />,
+                                         vistaActivada[0]
+                                       );
 
-      const Toolbar = Array.from(
-        document.getElementsByClassName('toolbar-button')
-      );
+                                       const Toolbar = Array.from(
+                                         document.getElementsByClassName(
+                                           'toolbar-button'
+                                         )
+                                       );
 
-      Toolbar.forEach(tool => {
-        if (
-          tool.getElementsByClassName('toolbar-button-label')[0].innerText ==
-          'Exit 2D MPR'
-        ) {
-          tool.getElementsByClassName('toolbar-button-label')[0].innerText =
-            'Exit 3D';
-        } else {
-          tool.style.display = 'none';
-        }
-      });
-    },
+                                       Toolbar.forEach(tool => {
+                                         if (
+                                           tool.getElementsByClassName(
+                                             'toolbar-button-label'
+                                           )[0].innerText == 'Exit 2D MPR'
+                                         ) {
+                                           tool.getElementsByClassName(
+                                             'toolbar-button-label'
+                                           )[0].innerText = 'Exit 3D';
+                                         } else {
+                                           tool.style.display = 'none';
+                                         }
+                                       });
+                                     },
     getVtkApis: ({ index }) => {
       return apis[index];
     },
@@ -548,6 +571,13 @@ const commandsModule = ({ commandsManager, servicesManager, props }) => {
   window.vtkActions = actions;
 
   const definitions = {
+    render: {
+      commandFn: actions.render,
+      storeContexts: ['viewports'],
+      options: {},
+      context: 'VIEWER',
+    },
+
     requestNewSegmentation: {
       commandFn: actions.requestNewSegmentation,
       storeContexts: ['viewports'],
