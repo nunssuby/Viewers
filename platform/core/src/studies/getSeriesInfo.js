@@ -12,7 +12,7 @@ const INFO = Symbol('INFO');
 export default function getSeriesInfo(series) {
   let info = series[INFO];
   if (!info) {
-    const Modality = DICOMWeb.getString(series['00080060'], '').toUpperCase();
+    const Modality = DICOMWeb.getString(series['00080061'], '').toUpperCase();
     info = Object.freeze({
       Modality,
       isLowPriority: isLowPriorityModality(Modality),
