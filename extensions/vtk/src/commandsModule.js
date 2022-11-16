@@ -11,6 +11,7 @@ import setMPRLayout from './utils/setMPRLayout.js';
 import setViewportToVTK from './utils/setViewportToVTK.js';
 import Constants from 'vtk.js/Sources/Rendering/Core/VolumeMapper/Constants.js';
 import OHIFVTKViewport from './OHIFVTKViewport';
+import Render3D from './Render3D';
 
 const { BlendMode } = Constants;
 
@@ -118,6 +119,29 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
   };
 
   const actions = {
+    render: async ({ viewports }) => {
+      const displaySet =
+        viewports.viewportSpecificData[viewports.activeViewportIndex];
+      const viewportProps = [
+        {
+          orientation: {
+            sliceNormal: [0, 0, 1],
+            viewUp: [0, -1, 0],
+          },
+        },
+      ];
+      try {
+        await setMPRLayout(displaySet, viewportProps, 1, 1);
+      } catch (error) {
+        throw new Error(error);
+      }
+      const vistaActivada = Array.from(
+        document.getElementsByClassName('vtk-viewport-handler')
+      );
+      vistaActivada[0].innerHTML = '';
+      ReactDOM.render(<Render3D />, vistaActivada[0]);
+      Render3D.botones(false);
+    },
     getVtkApis: ({ index }) => {
       return apis[index];
     },
@@ -492,6 +516,13 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
   window.vtkActions = actions;
 
   const definitions = {
+    render: {
+      commandFn: actions.render,
+      storeContexts: ['viewports'],
+      options: {},
+      context: 'VIEWER',
+    },
+
     requestNewSegmentation: {
       commandFn: actions.requestNewSegmentation,
       storeContexts: ['viewports'],
