@@ -1,3 +1,4 @@
+import React from 'react';
 import throttle from 'lodash.throttle';
 import {
   vtkInteractorStyleMPRWindowLevel,
@@ -12,6 +13,7 @@ import setViewportToVTK from './utils/setViewportToVTK.js';
 import Constants from 'vtk.js/Sources/Rendering/Core/VolumeMapper/Constants.js';
 import OHIFVTKViewport from './OHIFVTKViewport';
 import Render3D from './Render3D';
+import ReactDOM from 'react-dom';
 
 const { BlendMode } = Constants;
 
@@ -140,7 +142,6 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
       );
       vistaActivada[0].innerHTML = '';
       ReactDOM.render(<Render3D />, vistaActivada[0]);
-      Render3D.botones(false);
     },
     getVtkApis: ({ index }) => {
       return apis[index];

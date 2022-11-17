@@ -243,6 +243,7 @@ class VTKFusionExample extends Component {
     this.apis = [];
 
     const imageIds = await imageIdPromise;
+    console.log(imageIds);
     let ctImageIds = imageIds.filter(imageId =>
       imageId.includes(ctSeriesInstanceUID)
     );
@@ -344,36 +345,29 @@ class VTKFusionExample extends Component {
     const progressString = `Progress: ${percentComplete}%`;
 
     return (
-      <div className="row">
-        <div className="col-xs-12">
-          <h1>Volume Rendering</h1>
-          <p>This example demonstrates volume rendering of a CT Volume.</p>
-          <p>
-            Images are retrieved via DICOMWeb from a publicly available server
-            and constructed into <code>vtkImageData</code> volumes before they
-            are provided to the component. When each slice arrives, its pixel
-            data is dumped into the proper location in the volume array.
-          </p>
-        </div>
-        <div className="col-xs-12">
-          <div>
-            <label htmlFor="select_CT_xfer_fn">
-              CT Transfer Function Preset (for Volume Rendering):{' '}
-            </label>
+      <div>
+        <div
+          className="col-xs-12 col-sm-6"
+          style={{ width: '100%', height: 'calc(100vh - 130px)' }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: '10px',
+              left: '10px',
+              color: 'white',
+              zIndex: '1',
+            }}
+          >
             <select
               id="select_CT_xfer_fn"
               value={this.state.ctTransferFunctionPresetId}
               onChange={this.handleChangeCTTransferFunction}
             >
               {ctTransferFunctionPresetOptions}
-            </select>
+            </select>{' '}
+            {progressString}
           </div>
-        </div>
-        <div className="col-xs-12">
-          <h5>{progressString}</h5>
-        </div>
-        <hr />
-        <div className="col-xs-12 col-sm-6">
           <View3D
             volumes={this.state.volumeRenderingVolumes}
             onCreated={this.saveApiReference}
