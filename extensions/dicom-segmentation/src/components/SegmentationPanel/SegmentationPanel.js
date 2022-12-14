@@ -564,7 +564,7 @@ const SegmentationPanel = ({
   const updateBrushSize = evt => {
     const updatedRadius = Number(evt.target.value);
 
-    if (updatedRadius !== brushRadius) {
+    if (updatedRadius !== state.brushRadius) {
       setState(state => ({ ...state, brushRadius: updatedRadius }));
       const module = cornerstoneTools.getModule('segmentation');
       module.setters.radius(updatedRadius);
@@ -582,7 +582,7 @@ const SegmentationPanel = ({
   };
 
   const incrementSegment = event => {
-    const activeSegmentIndex = getActiveSegmentIndex();
+    let activeSegmentIndex = getActiveSegmentIndex();
     event.preventDefault();
     activeSegmentIndex++;
     setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
@@ -606,7 +606,7 @@ const SegmentationPanel = ({
     if (!brushStackState) {
       return 'rgba(255, 255, 255, 1)';
     }
-
+    const labelmap3D = getActiveLabelMaps3D();
     const colorLutTable = getColorLUTTable();
     const color = colorLutTable[labelmap3D.activeSegmentIndex];
     return `rgba(${color.join(',')})`;
