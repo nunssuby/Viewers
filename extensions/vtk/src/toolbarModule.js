@@ -137,6 +137,14 @@ const definitions = [
     commandName: 'mpr2d',
     context: 'ACTIVE_VIEWPORT::CORNERSTONE',
   },
+  {
+    id: '3D',
+    label: '3D',
+    icon: 'cube',
+    type: TOOLBAR_BUTTON_TYPES.COMMAND,
+    commandName: 'render',
+    context: 'ACTIVE_VIEWPORT::CORNERSTONE',
+  },
 ];
 
 export default {
