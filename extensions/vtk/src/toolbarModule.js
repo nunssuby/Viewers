@@ -140,7 +140,6 @@ const definitions = [
     label: '3D',
     icon: 'cube',
     type: TOOLBAR_BUTTON_TYPES.COMMAND,
-    CustomComponent: VTKMPRToolbarButton,
     commandName: 'render',
     context: 'ACTIVE_VIEWPORT::CORNERSTONE',
   },

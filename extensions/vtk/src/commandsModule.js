@@ -142,6 +142,22 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
       );
       vistaActivada[0].innerHTML = '';
       ReactDOM.render(<Render3D />, vistaActivada[0]);
+
+      const Toolbar = Array.from(
+        document.getElementsByClassName('toolbar-button')
+      );
+
+      Toolbar.forEach(tool => {
+        if (
+          tool.getElementsByClassName('toolbar-button-label')[0].innerText ==
+          'Exit 2D MPR'
+        ) {
+          tool.getElementsByClassName('toolbar-button-label')[0].innerText =
+            'Exit 3D';
+        } else {
+          tool.style.display = 'none';
+        }
+      });
     },
     getVtkApis: ({ index }) => {
       return apis[index];

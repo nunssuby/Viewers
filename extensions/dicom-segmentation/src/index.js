@@ -141,17 +141,14 @@ export default {
               return true;
             }
 
-            console.log(
-              '====================================================='
-            );
             for (let i = 0; i < studies.length; i++) {
               const study = studies[i];
-              console.log(study);
+              //console.log(study);
 
               if (study && study.series) {
                 for (let j = 0; j < study.series.length; j++) {
                   const series = study.series[j];
-                  console.log(series.Modality);
+                  //console.log(series.Modality);
                   //if (series.Modality === 'CT') {
                   if (activeViewport) {
                     const studyMetadata = studyMetadataManager.get(
