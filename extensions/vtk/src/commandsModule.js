@@ -14,10 +14,13 @@ import Constants from 'vtk.js/Sources/Rendering/Core/VolumeMapper/Constants.js';
 import OHIFVTKViewport from './OHIFVTKViewport';
 import Render3D from './Render3D';
 import ReactDOM from 'react-dom';
+import OHIF from '@ohif/core';
+
+const { studyMetadataManager } = OHIF.utils;
 
 const { BlendMode } = Constants;
 
-const commandsModule = ({ commandsManager, servicesManager }) => {
+const commandsModule = ({ commandsManager, servicesManager, props }) => {
   const { UINotificationService, LoggerService } = servicesManager.services;
 
   // TODO: Put this somewhere else
@@ -122,6 +125,8 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
 
   const actions = {
     render: async ({ viewports }) => {
+      //
+
       const displaySet =
         viewports.viewportSpecificData[viewports.activeViewportIndex];
       const viewportProps = [
@@ -132,6 +137,17 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
           },
         },
       ];
+
+      const study = studyMetadataManager.get(displaySet.StudyInstanceUID);
+      const images = study.findDisplaySet(ds => {
+        return (
+          ds.images &&
+          ds.images.find(
+            i => i.getSOPInstanceUID() === displaySet.SOPInstanceUID
+          )
+        );
+      });
+
       try {
         await setMPRLayout(displaySet, viewportProps, 1, 1);
       } catch (error) {
@@ -141,7 +157,7 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
         document.getElementsByClassName('vtk-viewport-handler')
       );
       vistaActivada[0].innerHTML = '';
-      ReactDOM.render(<Render3D />, vistaActivada[0]);
+      ReactDOM.render(<Render3D images={images} />, vistaActivada[0]);
 
       const Toolbar = Array.from(
         document.getElementsByClassName('toolbar-button')

@@ -61,7 +61,6 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
     const patientModule =
       cornerstone.metaData.get('patientModule', imageId) || {};
     const { patientId, patientName } = patientModule;
-    console.log(patientModule);
 
     const generalImageModule =
       cornerstone.metaData.get('generalImageModule', imageId) || {};

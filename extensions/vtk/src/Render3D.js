@@ -13,15 +13,7 @@ import presets from './presets.js';
 
 window.cornerstoneWADOImageLoader = cornerstoneWADOImageLoader;
 
-const url = 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs';
-const studyInstanceUID =
-  '1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463';
-const ctSeriesInstanceUID =
-  '1.3.6.1.4.1.14519.5.2.1.7009.2403.226151125820845824875394858561';
-
-const searchInstanceOptions = {
-  studyInstanceUID,
-};
+const url = window.config.servers.dicomWeb[0].wadoRoot;
 
 function createActorMapper(imageData) {
   const mapper = vtkVolumeMapper.newInstance();
@@ -197,7 +189,7 @@ function createCT3dPipeline(imageData, ctTransferFunctionPresetId) {
   return actor;
 }
 
-function createStudyImageIds(baseUrl, studySearchOptions) {
+function createStudyImageIds(baseUrl, studySearchOptions, studyInstanceUID) {
   const SOP_INSTANCE_UID = '00080018';
   const SERIES_INSTANCE_UID = '0020000E';
 
@@ -238,18 +230,29 @@ class VTKFusionExample extends Component {
   };
 
   async componentDidMount() {
-    const imageIdPromise = createStudyImageIds(url, searchInstanceOptions);
+    const studyInstanceUID = this.props.images.StudyInstanceUID;
+
+    const ctSeriesInstanceUID = this.props.images.SeriesInstanceUID;
+    const searchInstanceOptions = {
+      studyInstanceUID,
+    };
+
+    const imageIdPromise = createStudyImageIds(
+      url,
+      searchInstanceOptions,
+      studyInstanceUID
+    );
 
     this.apis = [];
 
     const imageIds = await imageIdPromise;
-    console.log(imageIds);
+
     let ctImageIds = imageIds.filter(imageId =>
       imageId.includes(ctSeriesInstanceUID)
     );
     //ctImageIds = ctImageIds.slice(0, ctImageIds.length / 2);
 
-    const ctImageDataObject = this.loadDataset(ctImageIds, 'ctDisplaySet');
+    const ctImageDataObject = this.loadDataset(ctImageIds, ctImageIds);
 
     const ctImageData = ctImageDataObject.vtkImageData;
     const ctVolVR = createCT3dPipeline(
@@ -298,7 +301,6 @@ class VTKFusionExample extends Component {
 
   loadDataset(imageIds, displaySetInstanceUid) {
     const imageDataObject = getImageData(imageIds, displaySetInstanceUid);
-
     loadImageData(imageDataObject);
 
     const numberOfFrames = imageIds.length;
