@@ -260,15 +260,18 @@ const SegmentationPanel = ({
   const refreshSegmentations = () => {
     const activeViewport = getActiveViewport();
     const isDisabled = !activeViewport || !activeViewport.StudyInstanceUID;
+
     if (!isDisabled) {
       const brushStackState = getBrushStackState();
       if (brushStackState) {
         const labelMapList = getLabelMapList();
+        console.log('labelMapList======', labelMapList);
         const {
           items: segmentList,
           numbers: segmentNumbers,
           segmentsHidden,
         } = getSegmentList();
+
         setState(state => ({
           ...state,
           segmentsHidden,
@@ -311,17 +314,22 @@ const SegmentationPanel = ({
 
   const getLabelMapList = () => {
     const activeViewport = getActiveViewport();
-
+    console.log('getLabelMapList==========', activeViewport);
     /* Get list of SEG labelmaps specific to active viewport (reference series) */
     const referencedSegDisplaysets = _getReferencedSegDisplaysets(
       activeViewport.StudyInstanceUID,
       activeViewport.SeriesInstanceUID
     );
+    console.log('referencedSegDisplaysets==========', referencedSegDisplaysets);
 
     const filteredReferencedSegDisplaysets = referencedSegDisplaysets.filter(
       segDisplay => segDisplay.loadError !== true
     );
 
+    console.log(
+      'filteredReferencedSegDisplaysets==========',
+      filteredReferencedSegDisplaysets
+    );
     return filteredReferencedSegDisplaysets.map((displaySet, index) => {
       const {
         labelmapIndex,

@@ -20,6 +20,15 @@ const definitions = [
         commandOptions: { toolName: 'Brush' },
       },
       {
+        id: 'FreehandScissors',
+        label: 'FreehandScissors',
+        icon: 'brush',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'FreehandScissors' },
+      },
+      {
         id: 'SphericalBrush',
         label: 'Spherical',
         icon: 'sphere',
