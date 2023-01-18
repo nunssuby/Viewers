@@ -42,7 +42,6 @@ const parseSCOORD3D = ({ servicesManager, displaySets }) => {
     });*/
   });
 
-  
 };
 
 const checkIfCanAddMeasurementsToDisplaySet = (
