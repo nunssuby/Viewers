@@ -36,11 +36,13 @@ const parseSCOORD3D = ({ servicesManager, displaySets }) => {
     srDisplaySet.isRehydratable = isRehydratable(srDisplaySet, mappings);
     srDisplaySet.isLoaded = true;
 
-    imageDisplaySets.forEach(imageDisplaySet => {
+    /*imageDisplaySets.forEach(imageDisplaySet => {
       // Check currently added displaySets and add measurements if the sources exist.
       checkIfCanAddMeasurementsToDisplaySet(srDisplaySet, imageDisplaySet);
-    });
+    });*/
   });
+
+  
 };
 
 const checkIfCanAddMeasurementsToDisplaySet = (
