@@ -39,7 +39,7 @@ const parseSCOORD3D = ({ servicesManager, displaySets }) => {
     /*imageDisplaySets.forEach(imageDisplaySet => {
       // Check currently added displaySets and add measurements if the sources exist.
       checkIfCanAddMeasurementsToDisplaySet(srDisplaySet, imageDisplaySet);
-    });*/
+    });*/ //Failed to parse Rearch Derived series SR display set 에러 발생지점 
   });
 
 };
