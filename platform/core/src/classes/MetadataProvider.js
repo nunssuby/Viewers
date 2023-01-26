@@ -1,9 +1,9 @@
 import dcmjs from 'dcmjs';
-import queryString from 'query-string';
 import dicomParser from 'dicom-parser';
-import getPixelSpacingInformation from '../utils/metadataProvider/getPixelSpacingInformation';
-import fetchPaletteColorLookupTableData from '../utils/metadataProvider/fetchPaletteColorLookupTableData';
+import queryString from 'query-string';
 import fetchOverlayData from '../utils/metadataProvider/fetchOverlayData';
+import fetchPaletteColorLookupTableData from '../utils/metadataProvider/fetchPaletteColorLookupTableData';
+import getPixelSpacingInformation from '../utils/metadataProvider/getPixelSpacingInformation';
 import validNumber from '../utils/metadataProvider/validNumber';
 
 class MetadataProvider {
@@ -425,6 +425,7 @@ class MetadataProvider {
 
         break;
       case WADO_IMAGE_LOADER_TAGS.GENERAL_STUDY_MODULE:
+        //console.log(instance);
         metadata = {
           studyDescription: instance.StudyDescription,
           studyDate: instance.StudyDate,

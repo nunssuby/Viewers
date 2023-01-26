@@ -10,11 +10,11 @@ const definitions = [
     //
     type: TOOLBAR_BUTTON_TYPES.COMMAND,
     commandName: 'openDebugInfoModal',
-    context: 'VIEWER',
+    context: 'ACTIVE_VIEWPORT::CORNERSTONE',
   },
 ];
 
 export default {
   definitions,
-  defaultContext: 'VIEWER',
+  defaultContext: 'ACTIVE_VIEWPORT::CORNERSTONE',
 };

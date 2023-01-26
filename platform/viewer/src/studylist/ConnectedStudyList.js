@@ -6,6 +6,7 @@ const isActive = a => a.active === true;
 
 const mapStateToProps = state => {
   const activeServer = state.servers.servers.find(isActive);
+  console.log(state);
 
   return {
     server: activeServer,

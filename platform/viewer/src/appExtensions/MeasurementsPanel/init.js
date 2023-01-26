@@ -18,6 +18,9 @@ const MEASUREMENT_ACTION_MAP = {
   modified: throttle(event => {
     return onModified(event);
   }, 300),
+  labelmapModified: throttle(event => {
+    return onModified(event);
+  }, 300),
 };
 
 /**
@@ -36,6 +39,7 @@ export default function init({
 
   // TODO: MEASUREMENT_COMPLETED (not present in initial implementation)
   const onMeasurementsChanged = (action, event) => {
+    //console.log('=====================', action, event);
     return MEASUREMENT_ACTION_MAP[action](event);
   };
   const onMeasurementAdded = onMeasurementsChanged.bind(this, 'added');

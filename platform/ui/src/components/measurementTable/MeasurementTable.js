@@ -85,7 +85,7 @@ class MeasurementTable extends Component {
               data-cy="save-measurements-btn"
             >
               <Icon name="save" width="14px" height="14px" />
-              Save measurements
+              Save measurements!
             </button>
           )}
         </div>
@@ -95,6 +95,7 @@ class MeasurementTable extends Component {
 
   saveFunction = async event => {
     const { saveFunction, onSaveComplete } = this.props;
+    console.log(saveFunction);
     if (saveFunction) {
       try {
         const result = await saveFunction();

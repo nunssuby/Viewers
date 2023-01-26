@@ -117,7 +117,17 @@ class App extends Component {
 
     const appDefaultConfig = {
       showStudyList: true,
-      cornerstoneExtensionConfig: {},
+      cornerstoneExtensionConfig: {
+        hideHandles: true,
+        tools: {
+          ArrowAnnotate: {
+            configuration: {
+              getTextCallback: (callback, eventDetails) =>
+                callback(prompt('Enter your custom annotation')),
+            },
+          },
+        },
+      },
       extensions: [],
       routerBasename: '/',
     };

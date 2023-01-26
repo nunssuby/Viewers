@@ -32,8 +32,8 @@
 
 .entry-header.header-big .header-logo-image {
   margin-right: 20px;
-  width: 50px;
-  height: 50px;
+  width: 280px;
+  height: 60px;
 }
 
 .entry-header.header-big .header-logo-text {
@@ -51,11 +51,16 @@
   float: left;
 }
 
+.header-logo-text {
+  fill: #fff;
+  display: none;
+}
+
 .header-logo-image {
-  fill: transparent;
+  fill: #fff;
   height: 100%;
   margin: 0 8px 0 0;
-  width: 30px;
+  width: 180px;
   float: left;
 }
 
@@ -78,7 +83,7 @@
 .header-studyListLinkSection {
   border-left: var(--ui-border-thickness) solid var(--ui-border-color);
   margin: 3px 0 0 10px;
-  padding: 0 0 0 10px;
+  padding: 0 0 0 20px;
   display: inline-block;
 }
 

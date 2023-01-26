@@ -68,6 +68,8 @@ class ToolbarRow extends Component {
 
   updateButtonGroups() {
     const panelModules = extensionManager.modules[MODULE_TYPES.PANEL];
+    //console.log('Update button groups');
+    //console.log(panelModules);
 
     this.buttonGroups = {
       left: [],
@@ -87,10 +89,12 @@ class ToolbarRow extends Component {
 
         // It's a bit beefy to pass studies; probably only need to be reactive on `studyInstanceUIDs` and activeViewport?
         // Note: This does not cleanly handle `studies` prop updating with panel open
+
         const isDisabled =
           typeof menuOption.isDisabled === 'function' &&
           menuOption.isDisabled(this.props.studies, this.props.activeViewport);
 
+        //console.log(isDisabled);
         if (hasActiveContext && !isDisabled) {
           const menuOptionEntry = {
             value: menuOption.target,
@@ -105,6 +109,7 @@ class ToolbarRow extends Component {
         }
       });
     });
+    //console.log(this.buttonGroups);
 
     // TODO: This should come from extensions, instead of being baked in
     this.buttonGroups.left.unshift({
@@ -306,6 +311,7 @@ function _getDefaultButtonComponent(button, activeButtons) {
  */
 function _getButtonComponents(toolbarButtons, activeButtons) {
   const _this = this;
+
   return toolbarButtons.map(button => {
     const hasCustomComponent = button.CustomComponent;
     const hasNestedButtonDefinitions = button.buttons && button.buttons.length;

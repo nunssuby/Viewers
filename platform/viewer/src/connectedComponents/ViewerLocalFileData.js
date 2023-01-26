@@ -1,13 +1,12 @@
-import React, { Component } from 'react';
 import { metadata, utils } from '@ohif/core';
-
-import ConnectedViewer from './ConnectedViewer.js';
 import PropTypes from 'prop-types';
-import { extensionManager } from './../App.js';
+import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
-import filesToStudies from '../lib/filesToStudies';
-import './ViewerLocalFileData.css';
 import { withTranslation } from 'react-i18next';
+import filesToStudies from '../lib/filesToStudies';
+import { extensionManager } from './../App.js';
+import ConnectedViewer from './ConnectedViewer.js';
+import './ViewerLocalFileData.css';
 
 const { OHIFStudyMetadata } = metadata;
 const { studyMetadataManager } = utils;

@@ -18,6 +18,7 @@ export default {
   },
 
   getPanelModule({ servicesManager, commandsManager }) {
+    console.log('getPanelModule11');
     const { UINotificationService, UIDialogService } = servicesManager.services;
 
     const showLabellingDialog = (props, measurementData) => {
@@ -71,6 +72,7 @@ export default {
       />
     );
     return {
+      //TODO : ss--- 여기 를 SegmentationPanel로 바꾸고 싶다.
       menuOptions: [
         {
           icon: 'list',

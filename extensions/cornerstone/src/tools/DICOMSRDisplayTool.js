@@ -168,7 +168,7 @@ export default class DICOMSRDisplayTool extends BaseTool {
       function textBoxAnchorPoints() {
         return data.handles.textBox.anchorPoints;
       }
-
+/*
       if (data.handles.textBox.anchorPoints.length !== 0) {
         draw(context, context => {
           drawLinkedTextBox(
@@ -184,7 +184,7 @@ export default class DICOMSRDisplayTool extends BaseTool {
             true
           );
         });
-      }
+      }*/
     }
 
     // TOOD -> text boxes may overlap with other annotations at the moment.
@@ -304,7 +304,8 @@ function _getTextBoxLinesFromLabels(labels) {
 
   for (let i = 0; i < labelLength; i++) {
     const labelEntry = labels[i];
-    lines.push(`${_labelToShorthand(labelEntry.label)}${labelEntry.value}`);
+    lines.push(`${_labelToShorthand(labelEntry.label)}`);
+    //lines.push(`${_labelToShorthand(labelEntry.label)}${labelEntry.value}`);
   }
 
   return lines;

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { withTranslation } from 'react-i18next';
-import PropTypes from 'prop-types';
+import { AboutContent, Dropdown, withModal } from '@ohif/ui';
 import classNames from 'classnames';
-import { Dropdown, AboutContent, withModal } from '@ohif/ui';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { withTranslation } from 'react-i18next';
+import { Link, withRouter } from 'react-router-dom';
+import OHIFLogo from '../OHIFLogo/OHIFLogo.js';
 //
 import { UserPreferences } from './../UserPreferences';
-import OHIFLogo from '../OHIFLogo/OHIFLogo.js';
 import './Header.css';
 
 function Header(props) {
@@ -62,7 +62,7 @@ function Header(props) {
 
   return (
     <>
-      <div className="notification-bar">{t('INVESTIGATIONAL USE ONLY')}</div>
+      {/* <div className="notification-bar">{t('INVESTIGATIONAL USE ONLY')}</div> */}
       <div
         className={classNames('entry-header', { 'header-big': useLargeLogo })}
       >
@@ -90,9 +90,8 @@ function Header(props) {
             </Link>
           )}
         </div>
-
         <div className="header-menu">
-          <span className="research-use">{t('INVESTIGATIONAL USE ONLY')}</span>
+          {/* <span className="research-use">{t('INVESTIGATIONAL USE ONLY')}</span> */}
           <Dropdown title={t('Options')} list={options} align="right" />
         </div>
       </div>

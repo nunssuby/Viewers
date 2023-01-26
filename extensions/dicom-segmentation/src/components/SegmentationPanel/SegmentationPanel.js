@@ -72,16 +72,16 @@ const SegmentationPanel = ({
    */
   const [state, setState] = useState({
     brushRadius: DEFAULT_BRUSH_RADIUS,
-    brushColor: 'rgba(221, 85, 85, 1)',
+    brushColor: 'rgba(255, 85, 85, 1)',
     selectedSegment: 0,
     selectedSegmentation: 0,
-    showSettings: false,
+    showSettings: true,
     labelMapList: [],
     segmentList: [],
     segmentsHidden: [],
     segmentNumbers: [],
-    isLoading: false,
-    isDisabled: true,
+    isLoading: true,
+    isDisabled: false,
   });
 
   const getActiveViewport = () => viewports[activeIndex];
@@ -260,15 +260,18 @@ const SegmentationPanel = ({
   const refreshSegmentations = () => {
     const activeViewport = getActiveViewport();
     const isDisabled = !activeViewport || !activeViewport.StudyInstanceUID;
+
     if (!isDisabled) {
       const brushStackState = getBrushStackState();
       if (brushStackState) {
         const labelMapList = getLabelMapList();
+        console.log('labelMapList======', labelMapList);
         const {
           items: segmentList,
           numbers: segmentNumbers,
           segmentsHidden,
         } = getSegmentList();
+
         setState(state => ({
           ...state,
           segmentsHidden,
@@ -311,17 +314,22 @@ const SegmentationPanel = ({
 
   const getLabelMapList = () => {
     const activeViewport = getActiveViewport();
-
+    console.log('getLabelMapList==========', activeViewport);
     /* Get list of SEG labelmaps specific to active viewport (reference series) */
     const referencedSegDisplaysets = _getReferencedSegDisplaysets(
       activeViewport.StudyInstanceUID,
       activeViewport.SeriesInstanceUID
     );
+    console.log('referencedSegDisplaysets==========', referencedSegDisplaysets);
 
     const filteredReferencedSegDisplaysets = referencedSegDisplaysets.filter(
       segDisplay => segDisplay.loadError !== true
     );
 
+    console.log(
+      'filteredReferencedSegDisplaysets==========',
+      filteredReferencedSegDisplaysets
+    );
     return filteredReferencedSegDisplaysets.map((displaySet, index) => {
       const {
         labelmapIndex,
@@ -564,7 +572,7 @@ const SegmentationPanel = ({
   const updateBrushSize = evt => {
     const updatedRadius = Number(evt.target.value);
 
-    if (updatedRadius !== brushRadius) {
+    if (updatedRadius !== state.brushRadius) {
       setState(state => ({ ...state, brushRadius: updatedRadius }));
       const module = cornerstoneTools.getModule('segmentation');
       module.setters.radius(updatedRadius);
@@ -582,7 +590,7 @@ const SegmentationPanel = ({
   };
 
   const incrementSegment = event => {
-    const activeSegmentIndex = getActiveSegmentIndex();
+    let activeSegmentIndex = getActiveSegmentIndex();
     event.preventDefault();
     activeSegmentIndex++;
     setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
@@ -606,7 +614,7 @@ const SegmentationPanel = ({
     if (!brushStackState) {
       return 'rgba(255, 255, 255, 1)';
     }
-
+    const labelmap3D = getActiveLabelMaps3D();
     const colorLutTable = getColorLUTTable();
     const color = colorLutTable[labelmap3D.activeSegmentIndex];
     return `rgba(${color.join(',')})`;
@@ -675,7 +683,7 @@ const SegmentationPanel = ({
           disabled: state.isDisabled,
         })}
       >
-        {false && (
+        {true && (
           <form className="selector-form">
             <BrushColorSelector
               defaultColor={state.brushColor}

@@ -72,8 +72,8 @@ export const seriesAttributes = [
     text: '(x0020000e) Series Instance UID',
   },
   {
-    id: 'x00080060',
-    text: '(x00080060) Modality',
+    id: 'x00080061',
+    text: '(x00080061) Modality',
   },
   {
     id: 'x00200011',

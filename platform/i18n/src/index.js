@@ -1,13 +1,13 @@
 import i18n from 'i18next';
-import Backend from 'i18next-locize-backend';
-import LastUsed from 'locize-lastused';
-import Editor from 'locize-editor';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import Backend from 'i18next-locize-backend';
+import Editor from 'locize-editor';
+import LastUsed from 'locize-lastused';
 import { initReactI18next } from 'react-i18next';
-import customDebug from './debugger';
 import pkg from '../package.json';
 import { debugMode, detectionOptions } from './config';
-
+import customDebug from './debugger';
+import getAvailableLanguagesInfo from './getAvailableLanguagesInfo.js';
 // Note: The index.js files inside src/locales are dynamically generated
 // by the pullTranslations.sh script
 import locales from './locales';
@@ -43,7 +43,7 @@ const locizeOptions = {
 
 const envUseLocize = !!process.env.USE_LOCIZE;
 const envApiKeyAvailable = !!process.env.LOCIZE_API_KEY;
-const DEFAULT_LANGUAGE = 'en-US';
+const DEFAULT_LANGUAGE = 'ko-KR';
 
 function initI18n(
   detection = detectionOptions,
@@ -140,7 +140,6 @@ i18n.initI18n = initI18n;
 i18n.addLocales = addLocales;
 i18n.defaultLanguage = DEFAULT_LANGUAGE;
 
-import getAvailableLanguagesInfo from './getAvailableLanguagesInfo.js';
 i18n.availableLanguages = getAvailableLanguagesInfo(locales);
 
 export default i18n;

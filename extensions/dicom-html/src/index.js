@@ -1,6 +1,6 @@
 import React from 'react';
-import OHIFDicomHtmlSopClassHandler from './OHIFDicomHtmlSopClassHandler.js';
 import { version } from '../package.json';
+import OHIFDicomHtmlSopClassHandler from './OHIFDicomHtmlSopClassHandler.js';
 
 const Component = React.lazy(() => {
   return import('./OHIFDicomHtmlViewport');
@@ -22,9 +22,11 @@ export default {
   version,
 
   getViewportModule() {
+    //console.log('11');
     return OHIFDicomHtmlViewport;
   },
   getSopClassHandlerModule() {
+    //console.log('12');
     return OHIFDicomHtmlSopClassHandler;
   },
 };

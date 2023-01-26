@@ -23,12 +23,15 @@ export default {
    * @param {object|array} [configuration.csToolsConfig] - Passed directly to `initCornerstoneTools`
    */
   preRegistration({ servicesManager, configuration = {} }) {
+    console.log('preRegistration');
     init({ servicesManager, configuration });
   },
   getToolbarModule({ servicesManager }) {
+    console.log('getToolbarModule');
     return toolbarModule;
   },
   getPanelModule({ commandsManager, api, servicesManager }) {
+    console.log('getPanelModule');
     const { UINotificationService, LoggerService } = servicesManager.services;
 
     const ExtendedSegmentationPanel = props => {
@@ -150,31 +153,32 @@ export default {
 
             for (let i = 0; i < studies.length; i++) {
               const study = studies[i];
+              //console.log(study);
 
               if (study && study.series) {
                 for (let j = 0; j < study.series.length; j++) {
                   const series = study.series[j];
-
-                  if (series.Modality === 'SEG') {
-                    if (activeViewport) {
-                      const studyMetadata = studyMetadataManager.get(
-                        activeViewport.StudyInstanceUID
-                      );
-                      if (!studyMetadata) {
-                        return;
-                      }
-                      const referencedDS = studyMetadata.getDerivedDatasets({
-                        referencedSeriesInstanceUID:
-                          activeViewport.SeriesInstanceUID,
-                        Modality: 'SEG',
-                      });
-                      triggerSegmentationPanelTabUpdatedEvent({
-                        badgeNumber: referencedDS.length,
-                        target: 'segmentation-panel',
-                      });
+                  //console.log(series.Modality);
+                  //if (series.Modality === 'CT') {
+                  if (activeViewport) {
+                    const studyMetadata = studyMetadataManager.get(
+                      activeViewport.StudyInstanceUID
+                    );
+                    if (!studyMetadata) {
+                      return;
                     }
-                    return false;
+                    const referencedDS = studyMetadata.getDerivedDatasets({
+                      referencedSeriesInstanceUID:
+                        activeViewport.SeriesInstanceUID,
+                      Modality: 'SEG',
+                    });
+                    triggerSegmentationPanelTabUpdatedEvent({
+                      badgeNumber: referencedDS.length,
+                      target: 'segmentation-panel',
+                    });
                   }
+                  return false;
+                  //}
                 }
               }
             }

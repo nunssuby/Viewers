@@ -16,6 +16,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
       const { LoggerService, UINotificationService } = servicesManager.services;
 
+      //console.log(displaySet.isDerived, displaySet);
       if (displaySet.isDerived) {
         const { Modality } = displaySet;
         if (Modality === 'SEG' && servicesManager) {

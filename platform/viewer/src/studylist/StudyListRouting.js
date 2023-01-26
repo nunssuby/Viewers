@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
-import ConnectedStudyList from './ConnectedStudyList';
-import useServer from '../customHooks/useServer';
 import OHIF from '@ohif/core';
-const { urlUtil: UrlUtil } = OHIF.utils;
-
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { withRouter } from 'react-router-dom';
 // Contexts
 import AppContext from '../context/AppContext';
+import useServer from '../customHooks/useServer';
+import ConnectedStudyList from './ConnectedStudyList';
+
+const { urlUtil: UrlUtil } = OHIF.utils;
 
 function StudyListRouting({ match: routeMatch, location: routeLocation }) {
   const {
@@ -23,7 +23,7 @@ function StudyListRouting({ match: routeMatch, location: routeLocation }) {
 
   const filters = UrlUtil.queryString.getQueryFilters(routeLocation);
 
-  let studyListFunctionsEnabled = false;
+  let studyListFunctionsEnabled = true;
   if (appConfig.studyListFunctionsEnabled) {
     studyListFunctionsEnabled = appConfig.studyListFunctionsEnabled;
   }

@@ -125,9 +125,9 @@ class DropdownMenu extends Component {
         data-cy="options-menu"
         ref={node => (this.node = node)}
       >
-        <div className="dd-menu-toggle" onClick={this.toggleList}>
+        {/* <div className="dd-menu-toggle" onClick={this.toggleList}>
           {this.renderTitleElement()}
-        </div>
+        </div> */}
 
         {this.renderList()}
       </div>

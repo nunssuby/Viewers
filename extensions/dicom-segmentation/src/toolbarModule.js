@@ -1,14 +1,10 @@
-/* TODO: Creation tools (future release).
-
 const TOOLBAR_BUTTON_TYPES = {
   COMMAND: 'command',
   SET_TOOL_ACTIVE: 'setToolActive',
   BUILT_IN: 'builtIn',
 };
 
-*/
-
-const definitions = []; /* TODO: Creation tools (future release). [
+const definitions = [
   {
     id: 'SegDropdown',
     label: 'Segmentation',
@@ -22,6 +18,15 @@ const definitions = []; /* TODO: Creation tools (future release). [
         type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
         commandName: 'setToolActive',
         commandOptions: { toolName: 'Brush' },
+      },
+      {
+        id: 'FreehandScissors',
+        label: 'FreehandScissors',
+        icon: 'brush',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'FreehandScissors' },
       },
       {
         id: 'SphericalBrush',
@@ -52,7 +57,7 @@ const definitions = []; /* TODO: Creation tools (future release). [
       },
     ],
   },
-]; */
+];
 
 export default {
   definitions,

@@ -11,36 +11,50 @@ const parseSCOORD3D = ({ servicesManager, displaySets }) => {
     ds =>
       ds.Modality !== 'SR' &&
       ds.Modality !== 'SEG' &&
-      ds.Modality !== 'RTSTRUCT'
+      ds.Modality !== 'RTSTRUCT' &&
+      ds.Modality !== 'KO'
   );
 
   imageDisplaySets.forEach(imageDisplaySet => {
     imageDisplaySet.SRLabels = [];
   });
+  
+  var check_sr = 0;
 
-  srDisplaySets.forEach(srDisplaySet => {
-    const firstInstance = srDisplaySet.metadata;
-    if (!firstInstance) {
-      return;
-    }
+  try{
+    srDisplaySets.forEach(srDisplaySet => {
+      const firstInstance = srDisplaySet.metadata;
+      if (!firstInstance) {
+        return;
+      }
+      
+      const { ContentSequence } = firstInstance;
 
-    const { ContentSequence } = firstInstance;
+      srDisplaySet.measurements = getMeasurements(ContentSequence);
+      const mappings = MeasurementService.getSourceMappings(
+        'CornerstoneTools',
+        '4'
+      );
 
-    srDisplaySet.measurements = getMeasurements(ContentSequence);
-    const mappings = MeasurementService.getSourceMappings(
-      'CornerstoneTools',
-      '4'
-    );
-
-    srDisplaySet.isHydrated = false;
-    srDisplaySet.isRehydratable = isRehydratable(srDisplaySet, mappings);
-    srDisplaySet.isLoaded = true;
-
-    imageDisplaySets.forEach(imageDisplaySet => {
-      // Check currently added displaySets and add measurements if the sources exist.
-      checkIfCanAddMeasurementsToDisplaySet(srDisplaySet, imageDisplaySet);
+      srDisplaySet.isHydrated = false;
+      srDisplaySet.isRehydratable = isRehydratable(srDisplaySet, mappings);
+      srDisplaySet.isLoaded = true;
+          
+          
+          
+      imageDisplaySets.forEach(imageDisplaySet => {
+        // Check currently added displaySets and add measurements if the sources exist.
+        checkIfCanAddMeasurementsToDisplaySet(srDisplaySet, imageDisplaySet);
+            
+      }); //Failed to parse Rearch Derived series SR display set 에러 발생지점 
+      
+      if(check_sr === 0){
+        throw new Error("stop loop");
+      }
+      check_sr++;
     });
-  });
+  }catch(e){}
+
 };
 
 const checkIfCanAddMeasurementsToDisplaySet = (
@@ -62,7 +76,7 @@ const checkIfCanAddMeasurementsToDisplaySet = (
   /**
    * Filter measurements that references the correct sop class.
    */
-  measurements = measurements.filter(measurement => {
+  measurements = measurements.filter(measurement => { //이미지와 매칭 시킬 레퍼런스SOPinstanceUID 존재 여부 확인
     return measurement.coords.some(coord => {
       if (coord.ReferencedSOPSequence === undefined) {
         /** we miss the referenced information. We can compare the annotation SCOORD3D coordinates with
@@ -78,7 +92,7 @@ const checkIfCanAddMeasurementsToDisplaySet = (
             coord.ReferencedFrameOfReferenceSequence
           ) {
             continue;
-          }
+          }//일치하지 않을 시 점프 
 
           let sliceNormal = [0, 0, 0];
           const orientation = imageMetadata.ImageOrientationPatient;
@@ -105,10 +119,10 @@ const checkIfCanAddMeasurementsToDisplaySet = (
             ReferencedSOPInstanceUID: imageMetadata.SOPInstanceUID,
           };
 
-          break;
+          break;// 일치하면 종료
         }
 
-        if (coord.ReferencedSOPSequence === undefined) {
+        if (coord.ReferencedSOPSequence === undefined) { //위의 반복문에서 레퍼런스 sop시퀀스가 정의되지 않으면 false
           return false;
         }
       }

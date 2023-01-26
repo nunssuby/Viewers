@@ -1,14 +1,14 @@
 window.config = {
   routerBasename: '/',
   extensions: [],
-  showStudyList: true,
+  showStudyList: false,
   servers: {
     dicomWeb: [
       {
         name: 'dicomweb_server',
-        wadoUriRoot: 'http://localhost:5985',
-        qidoRoot: 'http://localhost:5985',
-        wadoRoot: 'http://localhost:5985',
+        wadoUriRoot: 'http://api.medical-lab.co.kr',
+        qidoRoot: 'http://api.medical-lab.co.kr',
+        wadoRoot: 'http://api.medical-lab.co.kr',
         qidoSupportsIncludeField: false,
         imageRendering: 'wadouri',
         thumbnailRendering: 'wadouri',

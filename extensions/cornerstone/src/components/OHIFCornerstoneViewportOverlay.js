@@ -1,35 +1,20 @@
-import { PureComponent } from 'react';
-import React from 'react';
-import styled from 'styled-components';
-import PropTypes from 'prop-types';
+import { OverlayTrigger } from '@ohif/ui/src/components/overlayTrigger';
+import { Tooltip } from '@ohif/ui/src/components/tooltip';
+import { Icon } from '@ohif/ui/src/elements/Icon';
+import classNames from 'classnames';
 import cornerstone from 'cornerstone-core';
-import './OHIFCornerstoneViewportOverlay.css';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import {
-  isValidNumber,
-  formatNumberPrecision,
   formatDICOMDate,
   formatDICOMTime,
+  formatEncoding,
+  formatNumberPrecision,
   formatPN,
   getCompression,
+  isValidNumber,
 } from '../utils/formatStudy';
-import classNames from 'classnames';
-import { Icon } from '@ohif/ui/src/elements/Icon';
-import { Tooltip } from '@ohif/ui/src/components/tooltip';
-import { OverlayTrigger } from '@ohif/ui/src/components/overlayTrigger';
-
-const Button = styled.button`
-  color: white;
-  padding: 2px 7px;
-  border-radius: 10px;
-  outline: 0;
-  text-transform: none;
-  margin: 2px 2px;
-  cursor: pointer;
-  &:disabled {
-    cursor: default;
-    opacity: 0.9;
-  }
-`;
+import './OHIFCornerstoneViewportOverlay.css';
 
 class OHIFCornerstoneViewportOverlay extends PureComponent {
   static propTypes = {
@@ -45,8 +30,7 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
     imageId: PropTypes.string.isRequired,
     imageIndex: PropTypes.number.isRequired,
     stackSize: PropTypes.number.isRequired,
-    inconsistencyWarnings: PropTypes.array,
-    SRLabels: PropTypes.array,
+    inconsistencyWarnings: PropTypes.array.isRequired,
   };
 
   render() {
@@ -56,7 +40,6 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
       windowWidth,
       windowCenter,
       inconsistencyWarnings,
-      SRLabels,
     } = this.props;
 
     if (!imageId) {
@@ -144,81 +127,17 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
       );
     };
 
-    const SRLabelsOn = SRLabels && SRLabels.length !== 0 ? true : false;
-
-    /**/
-
-    const getSRLabelsContent = SRLabels => {
-      if (Array.isArray(SRLabels)) {
-        const listedSRLabels = SRLabels.map((SRLabel, index) => {
-          const color = SRLabel.labels.color;
-          return (
-            SRLabel.labels.visible && (
-              <OverlayTrigger
-                key={index}
-                placement="top"
-                overlay={
-                  <Tooltip
-                    placement="top"
-                    className="in tooltip-warning"
-                    id="tooltip-top"
-                  >
-                    <div className="warningTitle">
-                      {' '}
-                      Coding scheme designators{' '}
-                    </div>
-                    <div className="warningContent">
-                      {SRLabel.labels.labelCodingSchemeDesignator +
-                        ' : ' +
-                        SRLabel.labels.valueCodingSchemeDesignator}
-                    </div>
-                  </Tooltip>
-                }
-              >
-                <div style={{ display: 'inline-block' }}>
-                  <Button
-                    style={{
-                      backgroundColor: color,
-                    }}
-                    disabled={true}
-                    key={index}
-                  >
-                    {SRLabel.labels.label + ' : ' + SRLabel.labels.value}
-                  </Button>
-                </div>
-              </OverlayTrigger>
-            )
-          );
-        });
-
-        return <ol>{listedSRLabels}</ol>;
-      } else {
-        return <React.Fragment></React.Fragment>;
-      }
-    };
-
-    const getSRLabelsInfo = SRLabels => {
-      return (
-        <React.Fragment>
-          {SRLabels.length != 0 ? (
-            getSRLabelsContent(SRLabels)
-          ) : (
-            <React.Fragment></React.Fragment>
-          )}
-        </React.Fragment>
-      );
-    };
-
     const normal = (
       <React.Fragment>
         <div className="top-left overlay-element">
           <div>{formatPN(patientName)}</div>
-          <div>{patientId}</div>
+          <div>{formatEncoding(patientId)}</div>
         </div>
         <div className="top-right overlay-element">
-          <div>{studyDescription}</div>
+          <div>{formatEncoding(studyDescription)}</div>
           <div>
-            {formatDICOMDate(studyDate)} {formatDICOMTime(studyTime)}
+            {formatDICOMDate(studyDate, 'YYYY.MM.DD')}{' '}
+            {formatDICOMTime(studyTime)}
           </div>
         </div>
         <div className="bottom-right overlay-element">
@@ -232,9 +151,6 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
               ? getWarningInfo(seriesNumber, inconsistencyWarnings)
               : ''}
           </div>
-        </div>
-        <div className="bottom-left3 warning">
-          <div>{SRLabelsOn ? getSRLabelsInfo(SRLabels) : ''}</div>
         </div>
         <div className="bottom-left overlay-element">
           <div>{seriesNumber >= 0 ? `Ser: ${seriesNumber}` : ''}</div>
