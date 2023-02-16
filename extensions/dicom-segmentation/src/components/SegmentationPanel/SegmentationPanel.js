@@ -7,9 +7,10 @@ import classNames from 'classnames';
 import { utils, log } from '@ohif/core';
 import { ScrollableArea, TableList, Icon } from '@ohif/ui';
 import DICOMSegTempCrosshairsTool from '../../tools/DICOMSegTempCrosshairsTool';
-
 import setActiveLabelmap from '../../utils/setActiveLabelMap';
 import refreshViewports from '../../utils/refreshViewports';
+
+import axios from 'axios';
 
 import {
   BrushColorSelector,
@@ -494,6 +495,7 @@ const SegmentationPanel = ({
   };
 
   const getSegmentList = () => {
+    console.log('getSegmentList');
     /*
      * Newly created segments have no `meta`
      * So we instead build a list of all segment indexes in use
@@ -525,7 +527,7 @@ const SegmentationPanel = ({
       const segmentIndex = uniqueSegmentIndexes[i];
 
       const color = colorLutTable[segmentIndex];
-      let segmentLabel = '(unlabeled)';
+      let segmentLabel = '(???)';
       let segmentNumber = segmentIndex;
 
       /* Meta */
@@ -729,6 +731,8 @@ const SegmentationPanel = ({
             <button
               onClick={() => {
                 console.log(state.segmentList);
+                saveData('1111', state.segmentList);
+                //getData();
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"
@@ -833,6 +837,43 @@ const SegmentsSection = ({
     </div>
   );
 };
+
+async function saveData(uuid, data) {
+  try {
+    //응답 성공
+    const response = await axios.post(
+      'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
+      {
+        params: {
+          //url 뒤에 붙는 param id값
+          uuid: uuid,
+          text: data,
+        },
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response);
+  } catch (error) {
+    //응답 실패
+    console.error(error);
+  }
+}
+
+async function getData() {
+  try {
+    //응답 성공
+    const response = await axios.get(
+      'https://lg-ai-portal.carpediem.so/api/v1/segmentation/1',
+      {}
+    );
+    console.log(response);
+  } catch (error) {
+    //응답 실패
+    console.error(error);
+  }
+}
 
 const noop = () => {};
 
