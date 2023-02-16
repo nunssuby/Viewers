@@ -725,6 +725,18 @@ const SegmentationPanel = ({
           <ScrollableArea>
             <TableList headless>{state.segmentList}</TableList>
           </ScrollableArea>
+          <div className="measurementTableFooter">
+            <button
+              onClick={() => {
+                console.log(state.segmentList);
+              }}
+              className="saveBtn"
+              data-cy="save-measurements-btn"
+            >
+              <Icon name="save" width="14px" height="14px" />
+              Save segmentations!
+            </button>
+          </div>
         </SegmentsSection>
       </div>
     );
