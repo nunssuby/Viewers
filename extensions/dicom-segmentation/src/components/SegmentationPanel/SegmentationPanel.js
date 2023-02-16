@@ -841,20 +841,27 @@ const SegmentsSection = ({
 async function saveData(uuid, data) {
   try {
     //응답 성공
-    const response = await axios.post(
-      'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
-      {
-        params: {
-          //url 뒤에 붙는 param id값
-          uuid: uuid,
-          text: data,
-        },
-      },
-      {
-        withCredentials: true,
+    // const response = await axios.post(
+    //   // 'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
+    //   'http://localhost:8080/api/v1/segmentation',
+    //   {
+    //       //url 뒤에 붙는 param id값
+    //       uuid: "ffff",
+    //       text: "xxxxx",
+    //   },
+    //   {
+    //     withCredentials: true,
+    //   }
+    // );
+    // console.log(response);
+    axios({
+      method: 'post',
+      url: 'http://localhost:8080/api/v1/segmentation',
+      data: {
+        uuid: "9999",
+        text: "9999"
       }
-    );
-    console.log(response);
+    });
   } catch (error) {
     //응답 실패
     console.error(error);
