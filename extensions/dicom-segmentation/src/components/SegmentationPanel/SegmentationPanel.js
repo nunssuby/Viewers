@@ -856,7 +856,7 @@ async function saveData(uuid, data) {
     // console.log(response);
     axios({
       method: 'post',
-      url: 'http://localhost:8080/api/v1/segmentation',
+      url: 'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
       data: {
         uuid: "9999",
         text: "9999"
