@@ -839,40 +839,32 @@ const SegmentsSection = ({
 };
 
 async function saveData(uuid, data) {
+  console.log('============================', JSON.stringify(data).length);
+  let sendData = [];
+  data.forEach(e => {
+    console.log(e.props);
+    sendData.push(e.props.labelmap3D.labelmaps2D);
+  });
+  console.log('============================', JSON.stringify(sendData));
   try {
-    //응답 성공
-    // const response = await axios.post(
-    //   // 'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
-    //   'http://localhost:8080/api/v1/segmentation',
-    //   {
-    //       //url 뒤에 붙는 param id값
-    //       uuid: "ffff",
-    //       text: "xxxxx",
-    //   },
-    //   {
-    //     withCredentials: true,
-    //   }
-    // );
-    // console.log(response);
     axios({
       method: 'post',
       url: 'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
       data: {
-        uuid: "9999",
-        text: "9999"
-      }
+        uuid: '999999',
+        text: JSON.stringify(sendData),
+      },
     });
   } catch (error) {
-    //응답 실패
     console.error(error);
   }
 }
 
-async function getData() {
+async function getData(uuid) {
   try {
     //응답 성공
     const response = await axios.get(
-      'https://lg-ai-portal.carpediem.so/api/v1/segmentation/1',
+      'https://lg-ai-portal.carpediem.so/api/v1/segmentation/' + uuid,
       {}
     );
     console.log(response);

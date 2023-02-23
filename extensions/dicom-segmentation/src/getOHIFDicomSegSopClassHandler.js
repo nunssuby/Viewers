@@ -17,6 +17,7 @@ const sopClassUIDs = Object.values(SOP_CLASS_UIDS);
 export default function getSopClassHandlerModule({ servicesManager }) {
   // TODO: Handle the case where there is more than one SOP Class Handler for the
   // same SOP Class.
+  console.log('=============================gogo?');
   return {
     id: 'OHIFDicomSegSopClassHandler',
     type: MODULE_TYPES.SOP_CLASS_HANDLER,
@@ -70,6 +71,10 @@ export default function getSopClassHandlerModule({ servicesManager }) {
         activateLabelMap = true,
         onDisplaySetLoadFailureHandler
       ) {
+        console.log(
+          '=============================getSourceDisplaySet?',
+          studies
+        );
         return getSourceDisplaySet(
           studies,
           segDisplaySet,
@@ -94,7 +99,11 @@ export default function getSopClassHandlerModule({ servicesManager }) {
           referencedDisplaySet.SeriesInstanceUID
         );
 
-        const results = await _parseSeg(segArrayBuffer, imageIds, segDisplaySet.tolerance);
+        const results = await _parseSeg(
+          segArrayBuffer,
+          imageIds,
+          segDisplaySet.tolerance
+        );
         if (results === undefined) {
           return;
         }

@@ -111,6 +111,7 @@ export default {
     };
 
     const onSegmentationsLoaded = ({ detail }) => {
+      console.log(detail);
       const { segDisplaySet, segMetadata } = detail;
       const studyMetadata = studyMetadataManager.get(
         segDisplaySet.StudyInstanceUID
