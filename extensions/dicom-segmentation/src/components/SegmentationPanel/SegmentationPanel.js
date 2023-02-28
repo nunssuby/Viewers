@@ -9,7 +9,6 @@ import { ScrollableArea, TableList, Icon } from '@ohif/ui';
 import DICOMSegTempCrosshairsTool from '../../tools/DICOMSegTempCrosshairsTool';
 import setActiveLabelmap from '../../utils/setActiveLabelMap';
 import refreshViewports from '../../utils/refreshViewports';
-import createSeg from './saveSeg';
 
 import axios from 'axios';
 
@@ -41,6 +40,8 @@ const { studyMetadataManager } = utils;
  * @param {Function} props.servicesManager - Services manager
  * @returns component
  */
+
+
 const SegmentationPanel = ({
   studies,
   viewports,
@@ -733,11 +734,11 @@ const SegmentationPanel = ({
               onClick={() => {
                 //console.log(state.segmentList);
                 //saveData('1111', state.segmentList);
-                //getData(999999);
-                console.log(cornerstoneTools.getModule('segmentation'));
-                
-                createSeg();
-             
+                //getData('999999');
+                //console.log(getData(999999));
+                console.log(document.createEvent('CustomEvent'));
+                drawData(tlabelmap3D, tlabelmap2D, tlabelmapIndex);
+         
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"
@@ -751,6 +752,8 @@ const SegmentationPanel = ({
     );
   }
 };
+
+
 
 SegmentationPanel.propTypes = {
   /*
@@ -877,7 +880,6 @@ async function getData(uuid) {
     //응답 실패
     console.error(error);
   }
-
   return response;
 }
 
@@ -887,5 +889,60 @@ SegmentsSection.defaultProps = {
   onVisibilityChange: noop,
 };
 
+async function drawData(labelmap3D, labelmap2D, labelmapIndex){
+  const getter = cornerstoneTools.getModule('segmentation').getters;
+  console.log(getter);
+  console.log(getter.activeLabelmapIndex[0]);
+  const evt = document.createEvent('CustomEvent');
+  
+  renderSegmentationFill(evt, labelmap3D, labelmap2D, labelmapIndex, true);
+}
+
+function renderSegmentationFill(evt, labelmap3D, labelmap2D, labelmapIndex, isActiveLabelMap) {
+  var labelmapCanvas = cornerstoneTools.getLabelmapCanvas(evt, labelmap3D, labelmap2D);
+  cornerstoneTools.renderFill(evt, labelmapCanvas, isActiveLabelMap);
+}
+
+const tlabelmap3D = SegmentationPanel.getActiveLabelMaps3D;
+
+const tlabelmap2D = SegmentationPanel.getActiveLabelMaps2D;
+const tlabelmapIndex = SegmentationPanel.getActiveLabelMapIndex;
+function getLabelmapCanvas(evt, labelmap3D, labelmap2D) {
+  var state = cornerstoneTools.getModule('segmentation').state;
+  var eventData = evt.detail;
+  var image = eventData.image;
+  var cols = image.width;
+  var rows = image.height;
+  var segmentsHidden = labelmap3D.segmentsHidden;
+  var pixelData = labelmap2D.pixelData;
+  var colorLutTable = state.colorLutTables[labelmap3D.colorLUTIndex];
+  var canvasElement = document.createElement('canvas');
+  canvasElement.width = cols;
+  canvasElement.height = rows;
+  var ctx = Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_1__["getNewContext"])(canvasElement); // Image data initialized with all transparent black.
+
+  var imageData = new ImageData(cols, rows);
+  var data = imageData.data;
+
+  for (var i = 0; i < pixelData.length; i++) {
+    var segmentIndex = pixelData[i];
+
+    if (segmentIndex !== 0 && !segmentsHidden[segmentIndex]) {
+      var color = colorLutTable[pixelData[i]]; // Modify ImageData.
+
+      data[4 * i] = color[0]; // R value
+
+      data[4 * i + 1] = color[1]; // G value
+
+      data[4 * i + 2] = color[2]; // B value
+
+      data[4 * i + 3] = color[3]; // A value
+    }
+  } // Put this image data onto the labelmapCanvas.
+
+
+  ctx.putImageData(imageData, 0, 0);
+  return canvasElement;
+}
 
 export default SegmentationPanel;
