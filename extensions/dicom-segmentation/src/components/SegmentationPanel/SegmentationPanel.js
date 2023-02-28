@@ -9,6 +9,7 @@ import { ScrollableArea, TableList, Icon } from '@ohif/ui';
 import DICOMSegTempCrosshairsTool from '../../tools/DICOMSegTempCrosshairsTool';
 import setActiveLabelmap from '../../utils/setActiveLabelMap';
 import refreshViewports from '../../utils/refreshViewports';
+import createSeg from './saveSeg';
 
 import axios from 'axios';
 
@@ -730,9 +731,13 @@ const SegmentationPanel = ({
           <div className="measurementTableFooter">
             <button
               onClick={() => {
-                console.log(state.segmentList);
-                saveData('1111', state.segmentList);
-                //getData();
+                //console.log(state.segmentList);
+                //saveData('1111', state.segmentList);
+                //getData(999999);
+                console.log(cornerstoneTools.getModule('segmentation'));
+                
+                createSeg();
+             
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"
@@ -846,7 +851,7 @@ async function saveData(uuid, data) {
     sendData.push(e.props.labelmap3D.labelmaps2D);
   });
   console.log('============================', JSON.stringify(sendData));
-  try {
+  /*try {
     axios({
       method: 'post',
       url: 'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
@@ -857,7 +862,7 @@ async function saveData(uuid, data) {
     });
   } catch (error) {
     console.error(error);
-  }
+  }*/
 }
 
 async function getData(uuid) {
@@ -867,11 +872,13 @@ async function getData(uuid) {
       'https://lg-ai-portal.carpediem.so/api/v1/segmentation/' + uuid,
       {}
     );
-    console.log(response);
+    console.log(response.data.data.text);
   } catch (error) {
     //응답 실패
     console.error(error);
   }
+
+  return response;
 }
 
 const noop = () => {};
@@ -879,5 +886,6 @@ const noop = () => {};
 SegmentsSection.defaultProps = {
   onVisibilityChange: noop,
 };
+
 
 export default SegmentationPanel;
