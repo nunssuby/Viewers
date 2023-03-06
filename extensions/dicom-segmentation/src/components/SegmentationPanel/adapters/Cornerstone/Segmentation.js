@@ -70,7 +70,7 @@ function generateToolState(
   arrayBuffer,
   metadataProvider,
   skipOverlapping = false,
-  tolerance = 1e-3,
+  tolerance = 1e-2,
   cornerstoneToolsVersion = 4
 ) {
   if (cornerstoneToolsVersion === 4) {
