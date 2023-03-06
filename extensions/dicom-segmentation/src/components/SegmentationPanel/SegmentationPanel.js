@@ -731,13 +731,20 @@ const SegmentationPanel = ({
           <div className="measurementTableFooter">
             <button
               onClick={() => {
-                //console.log(state.segmentList);
+                console.log(
+                  '=======================================state.segmentList',
+                  state.segmentList
+                );
                 //saveData('1111', state.segmentList);
                 //getData(999999);
-                console.log(cornerstoneTools.getModule('segmentation'));
-                
-                createSeg();
-             
+                console.log(
+                  '=======================================state.getModule',
+                  cornerstoneTools.getModule('segmentation')
+                );
+                const firstImageId = getFirstImageId();
+                const element = getEnabledElement();
+
+                createSeg(firstImageId, element);
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"
@@ -886,6 +893,5 @@ const noop = () => {};
 SegmentsSection.defaultProps = {
   onVisibilityChange: noop,
 };
-
 
 export default SegmentationPanel;

@@ -48,6 +48,10 @@ class DicomUploadService {
     const client = this.getClient(url);
     const loadedFile = await this.readFile(file);
     const content = loadedFile.content;
+    console.log(
+      '==============================================content',
+      content
+    );
     if (!checkDicomFile(content))
       throw new Error('This is not a valid DICOM file.');
 

@@ -62,6 +62,7 @@ const retrieveMeasurementFromSR = async (
  */
 const stowSRFromMeasurements = async (measurements, serverUrl) => {
   const { dataset } = parseMeasurementsData(measurements);
+  console.log('====================================dataset', dataset);
   const { DicomMetaDictionary, DicomDict } = dcmjs.data;
   const meta = {
     FileMetaInformationVersion: dataset._meta.FileMetaInformationVersion.Value,
@@ -76,8 +77,14 @@ const stowSRFromMeasurements = async (measurements, serverUrl) => {
   const dicomDict = new DicomDict(denaturalized);
 
   dicomDict.dict = DicomMetaDictionary.denaturalizeDataset(dataset);
-
+  console.log(
+    '====================================dicomDict',
+    dicomDict,
+    denaturalized,
+    dicomDict.dict
+  );
   const part10Buffer = dicomDict.write();
+  console.log('====================================part10Buffer', part10Buffer);
 
   const config = {
     url: serverUrl,
