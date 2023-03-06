@@ -77,30 +77,30 @@ async function createSeg(firstImageId, element, studies, DisplaySet) {
     return;
   }
 
-  // for (
-  //   let labelmapIndex = 0;
-  //   labelmapIndex < labelmaps3D.length;
-  //   labelmapIndex++
-  // ) {
-  //   const labelmap3D = labelmaps3D[labelmapIndex];
-  //   const labelmaps2D = labelmap3D.labelmaps2D;
+  for (
+    let labelmapIndex = 0;
+    labelmapIndex < labelmaps3D.length;
+    labelmapIndex++
+  ) {
+    const labelmap3D = labelmaps3D[labelmapIndex];
+    const labelmaps2D = labelmap3D.labelmaps2D;
 
-  //   for (let i = 0; i < labelmaps2D.length; i++) {
-  //     if (!labelmaps2D[i]) {
-  //       continue;
-  //     }
+    for (let i = 0; i < labelmaps2D.length; i++) {
+      if (!labelmaps2D[i]) {
+        continue;
+      }
 
-  //     const segmentsOnLabelmap = labelmaps2D[i].segmentsOnLabelmap;
+      const segmentsOnLabelmap = labelmaps2D[i].segmentsOnLabelmap;
 
-  //     segmentsOnLabelmap.forEach(segmentIndex => {
-  //       if (segmentIndex !== 0 && !labelmap3D.metadata[segmentIndex]) {
-  //         labelmap3D.metadata[segmentIndex] = generateMockMetadata(
-  //           segmentIndex
-  //         );
-  //       }
-  //     });
-  //   }
-  // }
+      segmentsOnLabelmap.forEach(segmentIndex => {
+        if (segmentIndex !== 0 && !labelmap3D.metadata[segmentIndex]) {
+          labelmap3D.metadata[segmentIndex] = generateMockMetadata(
+            segmentIndex
+          );
+        }
+      });
+    }
+  }
 
   console.log('-=======================labelmaps3D,', labelmaps3D);
 
