@@ -5,10 +5,8 @@ import { api } from 'dicomweb-client';
 import OHIF from '@ohif/core';
 import { errorHandler } from '@ohif/core';
 import getXHRRetryRequestHook from '@ohif/core/src/utils/xhrRetryRequestHook';
-import {
-  httpErrorToStr,
-  checkDicomFile,
-} from '../../../../../platform/viewer/src/googleCloud/utils/helpers';
+import Segmentation from './adapters/Cornerstone/Segmentation';
+const { DicomLoaderService } = OHIF.utils;
 
 let metaData = {};
 /*
@@ -49,14 +47,21 @@ function changeLabelmap() {
   cornerstone.updateImage(element);
 }
 
-async function createSeg(firstImageId, element) {
+async function createSeg(firstImageId, element, studies, DisplaySet) {
   const globalToolStateManager =
     cornerstoneTools.globalImageIdSpecificToolStateManager;
   const toolState = globalToolStateManager.saveToolState();
 
   const stackToolState = cornerstoneTools.getToolState(element, 'stack');
-  console.log('================================stackToolState', stackToolState);
+  console.log('================================studies', studies, DisplaySet);
   const imageIds = stackToolState.data[0].imageIds;
+
+  const segArrayBuffer = await DicomLoaderService.findDicomDataPromise(
+    DisplaySet,
+    studies
+  );
+
+  console.log('================================segArrayBuffer', segArrayBuffer);
 
   let imagePromises = [];
   for (let i = 0; i < imageIds.length; i++) {
@@ -72,65 +77,92 @@ async function createSeg(firstImageId, element) {
     return;
   }
 
-  for (
-    let labelmapIndex = 0;
-    labelmapIndex < labelmaps3D.length;
-    labelmapIndex++
-  ) {
-    const labelmap3D = labelmaps3D[labelmapIndex];
-    const labelmaps2D = labelmap3D.labelmaps2D;
+  // for (
+  //   let labelmapIndex = 0;
+  //   labelmapIndex < labelmaps3D.length;
+  //   labelmapIndex++
+  // ) {
+  //   const labelmap3D = labelmaps3D[labelmapIndex];
+  //   const labelmaps2D = labelmap3D.labelmaps2D;
 
-    for (let i = 0; i < labelmaps2D.length; i++) {
-      if (!labelmaps2D[i]) {
-        continue;
-      }
+  //   for (let i = 0; i < labelmaps2D.length; i++) {
+  //     if (!labelmaps2D[i]) {
+  //       continue;
+  //     }
 
-      const segmentsOnLabelmap = labelmaps2D[i].segmentsOnLabelmap;
+  //     const segmentsOnLabelmap = labelmaps2D[i].segmentsOnLabelmap;
 
-      segmentsOnLabelmap.forEach(segmentIndex => {
-        if (segmentIndex !== 0 && !labelmap3D.metadata[segmentIndex]) {
-          labelmap3D.metadata[segmentIndex] = generateMockMetadata(
-            segmentIndex
-          );
-        }
-      });
-    }
-  }
+  //     segmentsOnLabelmap.forEach(segmentIndex => {
+  //       if (segmentIndex !== 0 && !labelmap3D.metadata[segmentIndex]) {
+  //         labelmap3D.metadata[segmentIndex] = generateMockMetadata(
+  //           segmentIndex
+  //         );
+  //       }
+  //     });
+  //   }
+  // }
 
-  console.log('-=======================labelmaps3D,', labelmaps3D[0].buffer);
+  console.log('-=======================labelmaps3D,', labelmaps3D);
 
-  // Promise.all(imagePromises)
-  //   .then(images => {
-  //     console.log('-=======================images', images);
-  //     const segBlob = dcmjs.adapters.Cornerstone.Segmentation.generateSegmentation(
-  //       images,
-  //       labelmaps3D
-  //     );
+  Promise.all(imagePromises)
+    .then(async images => {
+      console.log('-=======================images', images);
+      const segBlob = Segmentation.generateSegmentation(
+        images,
+        labelmaps3D,
+        segArrayBuffer
+      );
+      const config = {
+        url: window.config.servers.dicomWeb[0].wadoRoot,
+        headers: OHIF.DICOMWeb.getAuthorizationHeader(),
+        errorInterceptor: errorHandler.getHTTPErrorHandler(),
+        requestHooks: [getXHRRetryRequestHook()],
+      };
 
-  //     //Create a URL for the binary.
-  //     var objectUrl = URL.createObjectURL(segBlob);
-  //     window.open(objectUrl);
-  //   })
-  //   .catch(err => console.log(err));
+      console.log('===============================segBlob', segBlob);
+      //
+      // if (!checkDicomFile(labelmaps3D[0].buffer))
+      //   throw new Error('This is not a valid DICOM file.');
 
-  const config = {
-    url: window.config.servers.dicomWeb[0].wadoRoot,
-    headers: OHIF.DICOMWeb.getAuthorizationHeader(),
-    errorInterceptor: errorHandler.getHTTPErrorHandler(),
-    requestHooks: [getXHRRetryRequestHook()],
+      const dicomWeb = new api.DICOMwebClient(config);
+      const options = {
+        datasets: [segBlob],
+      };
+
+      await dicomWeb.storeInstances(options);
+    })
+    .catch(err => console.log(err));
+}
+
+function datasetToDict(dataset) {
+  const fileMetaInformationVersionArray = new Uint8Array(2);
+  fileMetaInformationVersionArray[1] = 1;
+
+  const TransferSyntaxUID =
+    dataset._meta.TransferSyntaxUID &&
+    dataset._meta.TransferSyntaxUID.Value &&
+    dataset._meta.TransferSyntaxUID.Value[0]
+      ? dataset._meta.TransferSyntaxUID.Value[0]
+      : '1.2.840.10008.1.2.1';
+
+  dataset._meta = {
+    MediaStorageSOPClassUID: dataset.SOPClassUID,
+    MediaStorageSOPInstanceUID: dataset.SOPInstanceUID,
+    ImplementationVersionName: 'dcmjs-0.0',
+    TransferSyntaxUID,
+    ImplementationClassUID:
+      '2.25.80302813137786398554742050926734630921603366648225212145404',
+    FileMetaInformationVersion: fileMetaInformationVersionArray.buffer,
   };
 
-  console.log('===============================config', config);
-  //
-  // if (!checkDicomFile(labelmaps3D[0].buffer))
-  //   throw new Error('This is not a valid DICOM file.');
+  const denaturalized = DicomMetaDictionary.denaturalizeDataset(dataset._meta);
+  const dicomDict = new DicomDict(denaturalized);
+  dicomDict.dict = DicomMetaDictionary.denaturalizeDataset(dataset);
+  return dicomDict;
+}
 
-  const dicomWeb = new api.DICOMwebClient(config);
-  const options = {
-    datasets: [labelmaps3D[0].buffer],
-  };
-
-  await dicomWeb.storeInstances(options);
+function datasetToBuffer(dataset) {
+  return Buffer.from(datasetToDict(dataset).write());
 }
 
 function generateMockMetadata(segmentIndex) {

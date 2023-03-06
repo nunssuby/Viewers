@@ -744,7 +744,14 @@ const SegmentationPanel = ({
                 const firstImageId = getFirstImageId();
                 const element = getEnabledElement();
 
-                createSeg(firstImageId, element);
+                const DisplaySet = getCurrentDisplaySet();
+                console.log(
+                  '=======================================DisplaySet',
+                  DisplaySet,
+                  getAllSegDisplaySets()
+                );
+
+                createSeg(firstImageId, element, studies, DisplaySet);
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"
