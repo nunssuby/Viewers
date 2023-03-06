@@ -18,6 +18,7 @@ import ConnectedHeader from './ConnectedHeader.js';
 import ConnectedStudyBrowser from './ConnectedStudyBrowser.js';
 import ConnectedViewerMain from './ConnectedViewerMain.js';
 import ToolbarRow from './ToolbarRow.js';
+import axios from 'axios';
 
 import './Viewer.css';
 
@@ -256,6 +257,20 @@ class Viewer extends Component {
       });
     }
     if (isStudyLoaded && isStudyLoaded !== prevProps.isStudyLoaded) {
+      //TODO : 여기서 가져온 데이터를 seg객체에 담아야 함
+      studies.map(study => {
+        study.displaySets.map(displaySet => {
+          if (
+            displaySet.Modality &&
+            !['SEG', 'SR', 'RTSTRUCT'].includes(displaySet.Modality)
+          ) {
+            getData(displaySet.SeriesInstanceUID).then(res => {
+              console.log('=================res', res);
+            });
+          }
+        });
+      });
+
       const PatientID = studies[0] && studies[0].PatientID;
       const { currentTimepointId } = this;
 
@@ -727,3 +742,16 @@ const _mapStudiesToThumbnails = function(studies, activeDisplaySetInstanceUID) {
     };
   });
 };
+
+async function getData(uuid) {
+  return new Promise((resolve, reject) => {
+    axios
+      .get('https://lg-ai-portal.carpediem.so/api/v1/segmentation/' + uuid, {})
+      .then(function(res) {
+        resolve(res.data);
+      })
+      .catch(function(error) {
+        reject(error);
+      });
+  });
+}

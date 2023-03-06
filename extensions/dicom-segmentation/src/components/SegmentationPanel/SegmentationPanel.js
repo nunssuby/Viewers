@@ -730,9 +730,14 @@ const SegmentationPanel = ({
           <div className="measurementTableFooter">
             <button
               onClick={() => {
-                console.log(state.segmentList);
-                saveData('1111', state.segmentList);
-                //getData();
+                let sendData = [];
+                state.segmentList.forEach(e => {
+                  sendData.push(e.props.labelmap3D);
+                });
+                let data = JSON.stringify(sendData);
+
+                //TODO : 저쟁할때 viewports[0].SeriesInstanceUID 이거랑 넘겨주는 데이터 확인은 필요해보임
+                saveData(viewports[0].SeriesInstanceUID, data);
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"
@@ -838,38 +843,17 @@ const SegmentsSection = ({
   );
 };
 
-async function saveData(uuid, data) {
-  console.log('============================', JSON.stringify(data).length);
-  let sendData = [];
-  data.forEach(e => {
-    console.log(e.props);
-    sendData.push(e.props.labelmap3D.labelmaps2D);
-  });
-  console.log('============================', JSON.stringify(sendData));
+async function saveData(id, data) {
   try {
     axios({
       method: 'post',
       url: 'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
       data: {
-        uuid: '999999',
-        text: JSON.stringify(sendData),
+        uuid: id,
+        text: data,
       },
     });
   } catch (error) {
-    console.error(error);
-  }
-}
-
-async function getData(uuid) {
-  try {
-    //응답 성공
-    const response = await axios.get(
-      'https://lg-ai-portal.carpediem.so/api/v1/segmentation/' + uuid,
-      {}
-    );
-    console.log(response);
-  } catch (error) {
-    //응답 실패
     console.error(error);
   }
 }
