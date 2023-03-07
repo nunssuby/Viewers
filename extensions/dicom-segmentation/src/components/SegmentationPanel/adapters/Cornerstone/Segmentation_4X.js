@@ -178,12 +178,12 @@ function fillSegmentation(segmentation, inputLabelmaps3D, userOptions = {}) {
     // to be 1 for BINARY. This is not ideal and there should be a better format for compression in this manner
     // added to the standard.
     segmentation.assignToDataset({
-      BitsAllocated: '1',
-      BitsStored: '1',
-      HighBit: '0',
-      SegmentationType: 'BINARY',
-      //SegmentationFractionalType: 'PROBABILITY',
-      //MaximumFractionalValue: '255',
+      BitsAllocated: '8',
+      BitsStored: '8',
+      HighBit: '7',
+      SegmentationType: 'FRACTIONAL',
+      SegmentationFractionalType: 'PROBABILITY',
+      MaximumFractionalValue: '255',
     });
 
     segmentation.dataset._meta.TransferSyntaxUID = {
@@ -1225,10 +1225,10 @@ function unpackPixelData(multiframe) {
   const onlyMaxAndZero =
     pixelData.find(element => element !== 0 && element !== max) === undefined;
 
-  if (!onlyMaxAndZero) {
-    // This is a fractional segmentation, which is not currently supported.
-    return;
-  }
+  //if (!onlyMaxAndZero) {
+  //  // This is a fractional segmentation, which is not currently supported.
+  //  return;
+  //}
 
   log.warn(
     'This segmentation object is actually binary... processing as such.'
