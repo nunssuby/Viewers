@@ -101,7 +101,9 @@ function fillSegmentation(segmentation, inputLabelmaps3D, userOptions = {}) {
 
     const referencedFramesPerSegment = [];
 
-    for (let i = 1; i < metadata.length; i++) {
+    //for (let i = 1; i < metadata.length; i++) {
+    for (let i = 1; i < labelmaps3D[0].activeSegmentIndex+1; i++) {
+      console.log(metadata[i]);
       if (metadata[i]) {
         referencedFramesPerSegment[i] = [];
       }
