@@ -452,7 +452,7 @@ const SegmentationPanel = ({
     const { state } = cornerstoneTools.getModule('segmentation');
     const { colorLUTIndex } = getActiveLabelMaps3D();
 
-    return state.colorLutTables[colorLUTIndex];
+    return state.colorLutTables[0];
   };
 
   const getEnabledElement = () => {
