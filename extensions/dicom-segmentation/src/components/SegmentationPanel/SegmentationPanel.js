@@ -125,6 +125,7 @@ const SegmentationPanel = ({
 
   const getActiveSegmentIndex = () => {
     const { activeSegmentIndex } = getActiveLabelMaps3D();
+
     return activeSegmentIndex;
   };
 
@@ -529,7 +530,7 @@ const SegmentationPanel = ({
       const segmentIndex = uniqueSegmentIndexes[i];
 
       const color = colorLutTable[segmentIndex];
-      let segmentLabel = '(???)';
+      let segmentLabel = '(unlabeled)';
       let segmentNumber = segmentIndex;
 
       /* Meta */
@@ -584,23 +585,27 @@ const SegmentationPanel = ({
   };
 
   const decrementSegment = event => {
-    let activeSegmentIndex = getActiveSegmentIndex();
     event.preventDefault();
-    if (activeSegmentIndex > 1) {
-      activeSegmentIndex--;
+    if (checkBrushStackState()) {
+      let activeSegmentIndex = getActiveSegmentIndex();
+      if (activeSegmentIndex > 1) {
+        activeSegmentIndex--;
+      }
+      setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
+      setActiveSegment(activeSegmentIndex);
+      updateActiveSegmentColor();
     }
-    setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
-    setActiveSegment(activeSegmentIndex);
-    updateActiveSegmentColor();
   };
 
   const incrementSegment = event => {
-    let activeSegmentIndex = getActiveSegmentIndex();
     event.preventDefault();
-    activeSegmentIndex++;
-    setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
-    setActiveSegment(activeSegmentIndex);
-    updateActiveSegmentColor();
+    if (checkBrushStackState()) {
+      let activeSegmentIndex = getActiveSegmentIndex();
+      activeSegmentIndex++;
+      setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
+      setActiveSegment(activeSegmentIndex);
+      updateActiveSegmentColor();
+    }
   };
 
   const updateActiveSegmentColor = () => {
@@ -615,10 +620,7 @@ const SegmentationPanel = ({
     }
     const labelmap3D = getActiveLabelMaps3D();
     const colorLutTable = getColorLUTTable();
-    console.log(
-      '=================================labelmap3D.activeSegmentIndex',
-      labelmap3D.activeSegmentIndex
-    );
+
     const color = colorLutTable[labelmap3D.activeSegmentIndex];
     return `rgba(${color.join(',')})`;
   };
@@ -628,6 +630,17 @@ const SegmentationPanel = ({
     const firstImageId = getFirstImageId();
     const brushStackState = module.state.series[firstImageId];
     return brushStackState;
+  };
+
+  const checkBrushStackState = () => {
+    const module = cornerstoneTools.getModule('segmentation');
+    const firstImageId = getFirstImageId();
+    const brushStackState = module.state.series[firstImageId];
+    console.log(
+      '=================================brushStackState',
+      brushStackState === undefined ? false : true
+    );
+    return brushStackState === undefined ? false : true;
   };
 
   const updateConfiguration = newConfiguration => {

@@ -77,7 +77,7 @@ const SegmentItem = ({
             />
           </div>
           {false && <div className="segment-info">{'...'}</div>}
-          {false && (
+          {true && (
             <div className="segment-actions">
               <button
                 className="btnAction"

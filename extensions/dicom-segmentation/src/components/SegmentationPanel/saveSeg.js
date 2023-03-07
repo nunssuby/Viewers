@@ -84,6 +84,7 @@ async function createSeg(firstImageId, element, studies, DisplaySet) {
   ) {
     const labelmap3D = labelmaps3D[labelmapIndex];
     const labelmaps2D = labelmap3D.labelmaps2D;
+    const colorLUTIndex = labelmap3D.colorLUTIndex;
 
     for (let i = 0; i < labelmaps2D.length; i++) {
       if (!labelmaps2D[i]) {
@@ -95,7 +96,8 @@ async function createSeg(firstImageId, element, studies, DisplaySet) {
       segmentsOnLabelmap.forEach(segmentIndex => {
         if (segmentIndex !== 0 && !labelmap3D.metadata[segmentIndex]) {
           labelmap3D.metadata[segmentIndex] = generateMockMetadata(
-            segmentIndex
+            segmentIndex,
+            colorLUTIndex
           );
         }
       });
@@ -118,11 +120,6 @@ async function createSeg(firstImageId, element, studies, DisplaySet) {
         errorInterceptor: errorHandler.getHTTPErrorHandler(),
         requestHooks: [getXHRRetryRequestHook()],
       };
-
-      console.log('===============================segBlob', segBlob);
-      //
-      // if (!checkDicomFile(labelmaps3D[0].buffer))
-      //   throw new Error('This is not a valid DICOM file.');
 
       const dicomWeb = new api.DICOMwebClient(config);
       const options = {
@@ -165,13 +162,20 @@ function datasetToBuffer(dataset) {
   return Buffer.from(datasetToDict(dataset).write());
 }
 
-function generateMockMetadata(segmentIndex) {
+function generateMockMetadata(segmentIndex, colorLUTIndex) {
+  const { state } = cornerstoneTools.getModule('segmentation');
+  const colorLutTables = state.colorLutTables[colorLUTIndex];
+
   // TODO -> Use colors from the cornerstoneTools LUT.
-  const RecommendedDisplayCIELabValue = dcmjs.data.Colors.rgb2DICOMLAB([
-    1,
-    0,
-    0,
-  ]);
+  const RecommendedDisplayCIELabValue = dicomlab2LAB(
+    colorLutTables[segmentIndex]
+  );
+
+  // console.log(
+  //   '-=======================RecommendedDisplayCIELabValue,',
+  //   colorLutTables[segmentIndex],
+  //   RecommendedDisplayCIELabValue
+  // );
 
   return {
     SegmentedPropertyCategoryCodeSequence: {
@@ -180,7 +184,7 @@ function generateMockMetadata(segmentIndex) {
       CodeMeaning: 'Tissue',
     },
     SegmentNumber: (segmentIndex + 1).toString(),
-    SegmentLabel: 'Tissue ' + (segmentIndex + 1).toString(),
+    SegmentLabel: 'Tissue!! ' + (segmentIndex + 1).toString(),
     SegmentAlgorithmType: 'SEMIAUTOMATIC',
     SegmentAlgorithmName: 'Slicer Prototype',
     RecommendedDisplayCIELabValue,
@@ -261,6 +265,14 @@ function loadMultiFrameAndPopulateMetadata(baseImageId) {
       resolve(multiframe);
     });
   });
+}
+
+function dicomlab2LAB(lab) {
+  return [
+    (lab[0] * 65535.0) / 100.0, // results in 0 <= L <= 65535
+    ((lab[1] + 128) * 65535.0) / 255.0, // results in 0 <= a <= 65535
+    ((lab[2] + 128) * 65535.0) / 255.0, // results in 0 <= b <= 65535
+  ];
 }
 
 export default createSeg;
