@@ -102,12 +102,21 @@ function fillSegmentation(segmentation, inputLabelmaps3D, userOptions = {}) {
     const referencedFramesPerSegment = [];
 
     //for (let i = 1; i < metadata.length; i++) {
-    for (let i = 1; i < labelmaps3D[0].labelmaps2D[0].segmentsOnLabelmap.length; i++) {
-      console.log(metadata[i]);
+    let labelNum =0;
+    for(let i=0; i < labelmaps3D[0].labelmaps2D.length; i++){
+      for(let j=0; j< labelmaps3D[0].labelmaps2D[i].segmentsOnLabelmap.length-1;j++){
+        labelNum++;
+      }
+    }
+
+    // for (let i = 1; i < labelmaps3D[0].activeSegmentIndex * labelmaps3D[0].labelmaps2D.length; i++) {
+    for (let i = 1; i < labelNum + 1; i++) {
       if (metadata[i]) {
         referencedFramesPerSegment[i] = [];
       }
     }
+
+    
 
     for (let i = 0; i < labelmaps2D.length; i++) {
       const labelmap2D = labelmaps2D[i];
