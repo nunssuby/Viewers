@@ -122,18 +122,22 @@ function _makeColorLUTAndGetIndex(segMetadata) {
 
     const { ROIDisplayColor, RecommendedDisplayCIELabValue } = segment;
 
-    if (RecommendedDisplayCIELabValue) {
-      const rgb = dcmjs.data.Colors.dicomlab2RGB(
-        RecommendedDisplayCIELabValue
-      ).map(x => Math.round(x * 255));
+    // if (RecommendedDisplayCIELabValue) {
+    //   const rgb = dcmjs.data.Colors.dicomlab2RGB(
+    //     RecommendedDisplayCIELabValue
+    //   ).map(x => Math.round(x * 255));
 
-      colorLUT[i] = [...rgb, 255];
-    } else if (ROIDisplayColor) {
-      colorLUT[i] = [...ROIDisplayColor, 255];
-    } else {
-      colorLUT[i] = [...colorLutTables[0][i]];
-    }
+    //   colorLUT[i] = [...rgb, 255];
+    // } else if (ROIDisplayColor) {
+    //   colorLUT[i] = [...ROIDisplayColor, 255];
+    // } else {
+    //   colorLUT[i] = [...colorLutTables[0][i]];
+    // }
+
+    colorLUT[i] = [...colorLutTables[0][i]];
   }
+
+  
 
   colorLUT.shift();
   setters.colorLUT(colorLUTIndex, colorLUT);
