@@ -57,7 +57,7 @@ const SegmentationPanel = ({
 }) => {
   const isVTK = () => activeContexts.includes(contexts.VTK);
   const isCornerstone = () => activeContexts.includes(contexts.CORNERSTONE);
-
+  const { UINotificationService, UIDialogService } = servicesManager.services;
   /*
    * TODO: wrap get/set interactions with the cornerstoneTools
    * store with context to make these kind of things less blurry.
@@ -707,6 +707,12 @@ const SegmentationPanel = ({
     i => i.value === state.selectedSegmentation
   );
 
+  const onSaveComplete = message => {
+    if (UINotificationService) {
+      UINotificationService.show(message);
+    }
+  };
+
   if (state.showSettings) {
     return (
       <SegmentationSettings
@@ -772,7 +778,21 @@ const SegmentationPanel = ({
                 const element = getEnabledElement();
                 const DisplaySet = getCurrentDisplaySet();
 
-                createSeg(element, studies, DisplaySet, state.labels);
+                createSeg(element, studies, DisplaySet, state.labels)
+                  .then(() => {
+                    onSaveComplete({
+                      title: 'Save segmentaion',
+                      message: 'Segmentaions saved successfully',
+                      type: 'success',
+                    });
+                  })
+                  .catch(() => {
+                    onSaveComplete({
+                      title: 'Save segmentaion',
+                      message: 'Error while saving the segmentaions.',
+                      type: 'error',
+                    });
+                  });
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"
