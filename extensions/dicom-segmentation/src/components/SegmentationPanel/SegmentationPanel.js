@@ -82,6 +82,7 @@ const SegmentationPanel = ({
     segmentList: [],
     segmentsHidden: [],
     segmentNumbers: [],
+    labels: [],
     isLoading: true,
     isDisabled: false,
   });
@@ -280,6 +281,7 @@ const SegmentationPanel = ({
           items: segmentList,
           numbers: segmentNumbers,
           segmentsHidden,
+          labels,
         } = getSegmentList();
 
         setState(state => ({
@@ -288,6 +290,7 @@ const SegmentationPanel = ({
           segmentNumbers,
           labelMapList,
           segmentList,
+          labels,
           isDisabled,
         }));
       } else {
@@ -297,6 +300,7 @@ const SegmentationPanel = ({
           segmentNumbers: [],
           labelMapList: [],
           segmentList: [],
+          labels: [],
           isDisabled,
         }));
       }
@@ -456,6 +460,11 @@ const SegmentationPanel = ({
     return enabledElements[activeIndex].element;
   };
 
+  const onLabelChange = (label, segmentNumber, labels) => {
+    labels[segmentNumber] = label;
+    setState(state => ({ ...state, labels }));
+  };
+
   const onSegmentVisibilityChangeHandler = (
     isVisible,
     segmentNumber,
@@ -493,19 +502,18 @@ const SegmentationPanel = ({
       labelmap3D.segmentsHidden[segmentNumber] = !isVisible;
       segmentsHidden = [...labelmap3D.segmentsHidden];
     }
-
     setState(state => ({ ...state, segmentsHidden }));
 
     refreshSegmentations();
     refreshViewports();
 
     if (isVTK()) {
+      //TODO : 여기는 언제 쓰는지 나중에 확인 필요
       onSegmentVisibilityChange(segmentNumber, isVisible);
     }
   };
 
   const getSegmentList = () => {
-    console.log('getSegmentList');
     /*
      * Newly created segments have no `meta`
      * So we instead build a list of all segment indexes in use
@@ -530,6 +538,7 @@ const SegmentationPanel = ({
     const labelmap3D = getActiveLabelMaps3D();
     const colorLutTable = getColorLUTTable();
     const hasLabelmapMeta = labelmap3D.metadata && labelmap3D.metadata.data;
+    const labels = [];
 
     const segmentList = [];
     const segmentNumbers = [];
@@ -548,6 +557,7 @@ const SegmentationPanel = ({
           segmentLabel = segmentMeta.SegmentLabel;
         }
       }
+      labels[segmentNumber] = segmentLabel;
 
       const sameSegment = state.selectedSegment === segmentNumber;
 
@@ -561,8 +571,11 @@ const SegmentationPanel = ({
           index={segmentNumber}
           color={color}
           labelmap3D={labelmap3D}
+          labels={labels}
           visible={!labelmap3D.segmentsHidden[segmentIndex]}
           onVisibilityChange={onSegmentVisibilityChangeHandler}
+          servicesManager={servicesManager}
+          onLabelChange={onLabelChange}
         />
       );
     }
@@ -571,6 +584,7 @@ const SegmentationPanel = ({
       items: segmentList,
       numbers: segmentNumbers,
       segmentsHidden: labelmap3D.segmentsHidden,
+      labels: labels,
     };
 
     /*
@@ -636,6 +650,7 @@ const SegmentationPanel = ({
     const module = cornerstoneTools.getModule('segmentation');
     const firstImageId = getFirstImageId();
     const brushStackState = module.state.series[firstImageId];
+
     return brushStackState;
   };
 
@@ -754,27 +769,10 @@ const SegmentationPanel = ({
           <div className="measurementTableFooter">
             <button
               onClick={() => {
-                console.log(
-                  '=======================================state.segmentList',
-                  state.segmentList
-                );
-                //saveData('1111', state.segmentList);
-                //getData(999999);
-                console.log(
-                  '=======================================state.getModule',
-                  cornerstoneTools.getModule('segmentation')
-                );
-                const firstImageId = getFirstImageId();
                 const element = getEnabledElement();
-
                 const DisplaySet = getCurrentDisplaySet();
-                console.log(
-                  '=======================================DisplaySet',
-                  DisplaySet,
-                  getAllSegDisplaySets()
-                );
 
-                createSeg(firstImageId, element, studies, DisplaySet);
+                createSeg(element, studies, DisplaySet, state.labels);
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"

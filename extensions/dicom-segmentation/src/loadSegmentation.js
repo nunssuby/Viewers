@@ -58,7 +58,6 @@ export default async function loadSegmentation(
    * allows us to easily watch the module or the segmentations loading process in any other component
    * without subscribing to external events.
    */
-  console.log('Segmentation loaded.');
   const event = new CustomEvent('extensiondicomsegmentationsegloaded', {
     detail: {
       imageIds,

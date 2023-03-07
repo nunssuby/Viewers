@@ -47,21 +47,19 @@ function changeLabelmap() {
   cornerstone.updateImage(element);
 }
 
-async function createSeg(firstImageId, element, studies, DisplaySet) {
+async function createSeg(element, studies, DisplaySet, labels) {
   const globalToolStateManager =
     cornerstoneTools.globalImageIdSpecificToolStateManager;
   const toolState = globalToolStateManager.saveToolState();
 
   const stackToolState = cornerstoneTools.getToolState(element, 'stack');
-  console.log('================================studies', studies, DisplaySet);
+
   const imageIds = stackToolState.data[0].imageIds;
 
   const segArrayBuffer = await DicomLoaderService.findDicomDataPromise(
     DisplaySet,
     studies
   );
-
-  console.log('================================segArrayBuffer', segArrayBuffer);
 
   let imagePromises = [];
   for (let i = 0; i < imageIds.length; i++) {
@@ -97,18 +95,18 @@ async function createSeg(firstImageId, element, studies, DisplaySet) {
         if (segmentIndex !== 0 && !labelmap3D.metadata[segmentIndex]) {
           labelmap3D.metadata[segmentIndex] = generateMockMetadata(
             segmentIndex,
-            colorLUTIndex
+            colorLUTIndex,
+            labels
           );
         }
       });
     }
   }
 
-  console.log('-=======================labelmaps3D,', labelmaps3D);
+  //console.log('-=======================labelmaps3D,', labelmaps3D);
 
   Promise.all(imagePromises)
     .then(async images => {
-      console.log('-=======================images', images);
       const segBlob = Segmentation.generateSegmentation(
         images,
         labelmaps3D,
@@ -162,7 +160,7 @@ function datasetToBuffer(dataset) {
   return Buffer.from(datasetToDict(dataset).write());
 }
 
-function generateMockMetadata(segmentIndex, colorLUTIndex) {
+function generateMockMetadata(segmentIndex, colorLUTIndex, labels) {
   const { state } = cornerstoneTools.getModule('segmentation');
   const colorLutTables = state.colorLutTables[colorLUTIndex];
 
@@ -184,7 +182,7 @@ function generateMockMetadata(segmentIndex, colorLUTIndex) {
       CodeMeaning: 'Tissue',
     },
     SegmentNumber: (segmentIndex + 1).toString(),
-    SegmentLabel: 'Tissue!! ' + (segmentIndex + 1).toString(),
+    SegmentLabel: labels[segmentIndex] || 'Seg #' + segmentIndex,
     SegmentAlgorithmType: 'SEMIAUTOMATIC',
     SegmentAlgorithmName: 'Slicer Prototype',
     RecommendedDisplayCIELabValue,
