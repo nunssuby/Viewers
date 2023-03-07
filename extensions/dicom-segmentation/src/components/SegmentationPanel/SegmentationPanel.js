@@ -439,6 +439,7 @@ const SegmentationPanel = ({
   const getColorLUTTable = () => {
     const { state } = cornerstoneTools.getModule('segmentation');
     const { colorLUTIndex } = getActiveLabelMaps3D();
+
     return state.colorLutTables[colorLUTIndex];
   };
 
@@ -583,12 +584,13 @@ const SegmentationPanel = ({
   };
 
   const decrementSegment = event => {
-    const activeSegmentIndex = getActiveSegmentIndex();
+    let activeSegmentIndex = getActiveSegmentIndex();
     event.preventDefault();
     if (activeSegmentIndex > 1) {
       activeSegmentIndex--;
     }
     setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
+    setActiveSegment(activeSegmentIndex);
     updateActiveSegmentColor();
   };
 
@@ -597,19 +599,13 @@ const SegmentationPanel = ({
     event.preventDefault();
     activeSegmentIndex++;
     setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
+    setActiveSegment(activeSegmentIndex);
     updateActiveSegmentColor();
   };
 
   const updateActiveSegmentColor = () => {
     const color = getActiveSegmentColor();
     setState(state => ({ ...state, brushColor: color }));
-  };
-
-  const getBrushStackState = () => {
-    const module = cornerstoneTools.getModule('segmentation');
-    const firstImageId = getFirstImageId();
-    const brushStackState = module.state.series[firstImageId];
-    return brushStackState;
   };
 
   const getActiveSegmentColor = () => {
@@ -619,8 +615,19 @@ const SegmentationPanel = ({
     }
     const labelmap3D = getActiveLabelMaps3D();
     const colorLutTable = getColorLUTTable();
+    console.log(
+      '=================================labelmap3D.activeSegmentIndex',
+      labelmap3D.activeSegmentIndex
+    );
     const color = colorLutTable[labelmap3D.activeSegmentIndex];
     return `rgba(${color.join(',')})`;
+  };
+
+  const getBrushStackState = () => {
+    const module = cornerstoneTools.getModule('segmentation');
+    const firstImageId = getFirstImageId();
+    const brushStackState = module.state.series[firstImageId];
+    return brushStackState;
   };
 
   const updateConfiguration = newConfiguration => {
