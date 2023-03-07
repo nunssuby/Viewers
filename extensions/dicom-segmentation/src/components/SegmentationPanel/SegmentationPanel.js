@@ -183,13 +183,20 @@ const SegmentationPanel = ({
     const brushStackState = getBrushStackState();
     brushStackState.activeLabelmapIndex = newLabelmapIndex;
     if (selectedSegmentation) {
-      setState(state => ({ ...state, selectedSegmentation }));
+      setState(state => ({
+        ...state,
+        selectedSegmentation,
+      }));
     }
 
     refreshViewports();
 
     return segmentIndex;
   };
+
+  useEffect(() => {
+    console.log('===========================state', state);
+  }, [state]);
 
   useEffect(() => {
     const labelmapModifiedHandler = event => {
@@ -317,22 +324,16 @@ const SegmentationPanel = ({
 
   const getLabelMapList = () => {
     const activeViewport = getActiveViewport();
-    console.log('getLabelMapList==========', activeViewport);
     /* Get list of SEG labelmaps specific to active viewport (reference series) */
     const referencedSegDisplaysets = _getReferencedSegDisplaysets(
       activeViewport.StudyInstanceUID,
       activeViewport.SeriesInstanceUID
     );
-    console.log('referencedSegDisplaysets==========', referencedSegDisplaysets);
 
     const filteredReferencedSegDisplaysets = referencedSegDisplaysets.filter(
       segDisplay => segDisplay.loadError !== true
     );
 
-    console.log(
-      'filteredReferencedSegDisplaysets==========',
-      filteredReferencedSegDisplaysets
-    );
     return filteredReferencedSegDisplaysets.map((displaySet, index) => {
       const {
         labelmapIndex,
@@ -374,7 +375,13 @@ const SegmentationPanel = ({
 
     const sameSegment = state.selectedSegment === segmentNumber;
     if (!sameSegment) {
-      setState(state => ({ ...state, selectedSegment: segmentNumber }));
+      const color = getActiveSegmentColor();
+      console.log(color);
+      setState(state => ({
+        ...state,
+        selectedSegment: segmentNumber,
+        brushColor: color,
+      }));
     }
 
     const validIndexList = [];
@@ -636,10 +643,6 @@ const SegmentationPanel = ({
     const module = cornerstoneTools.getModule('segmentation');
     const firstImageId = getFirstImageId();
     const brushStackState = module.state.series[firstImageId];
-    console.log(
-      '=================================brushStackState',
-      brushStackState === undefined ? false : true
-    );
     return brushStackState === undefined ? false : true;
   };
 
