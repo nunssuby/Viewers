@@ -7,10 +7,7 @@ import cornerstoneTools, {
   csTools,
 } from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
-import drawCanvasCrosshairs from '../utils/drawCanvasCrosshairs';
 import TOOL_NAMES from './TOOL_NAMES';
-
-import { segCircleFillOutsideCursor } from './cursors/index.js';
 
 const { DICOM_SEG_CUSTOM_TOOL } = TOOL_NAMES;
 const { getters } = getModule('segmentation');
