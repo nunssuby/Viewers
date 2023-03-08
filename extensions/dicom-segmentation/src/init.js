@@ -13,12 +13,16 @@ export default function init({ servicesManager, configuration = {} }) {
     SphericalBrushTool,
     CorrectionScissorsTool,
     FreehandScissorsTool,
+    CircleScissorsTool,
+    RectangleScissorsTool,
   } = csTools;
   const tools = [
     BrushTool,
     SphericalBrushTool,
     CorrectionScissorsTool,
     FreehandScissorsTool,
+    CircleScissorsTool,
+    RectangleScissorsTool,
   ];
 
   tools.forEach(tool => csTools.addTool(tool));
