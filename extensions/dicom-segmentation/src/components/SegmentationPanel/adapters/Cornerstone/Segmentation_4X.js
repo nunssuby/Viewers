@@ -65,7 +65,7 @@ function generateSegmentation(
     userOptions
   );
 
-  return fillSegmentation(segmentation, inputLabelmaps3D, userOptions);
+  return fillSegmentation(segmentation, inputLabelmaps3D, userOptions, images);
 }
 
 /**
@@ -76,7 +76,7 @@ function generateSegmentation(
  * @param  {Object} userOptions Options object to override default options.
  * @returns {Blob}           description
  */
-function fillSegmentation(segmentation, inputLabelmaps3D, userOptions = {}) {
+function fillSegmentation(segmentation, inputLabelmaps3D, userOptions = {}, images) {
   const options = Object.assign(
     {},
     generateSegmentationDefaultOptions,
@@ -177,7 +177,8 @@ function fillSegmentation(segmentation, inputLabelmaps3D, userOptions = {}) {
           segmentMetadata,
           labelmaps,
           segmentIndex,
-          referencedFrameNumbers
+          referencedFrameNumbers,
+          images
         );
       }
     }

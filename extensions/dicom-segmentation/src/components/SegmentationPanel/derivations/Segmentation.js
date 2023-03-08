@@ -3,6 +3,7 @@ import DerivedPixels from "./DerivedPixels";
 import DerivedDataset from "./DerivedDataset";
 import { Normalizer } from "../normalizers.js";
 import { BitArray } from "../bitArray.js";
+import metadataProvider from "@ohif/core/src/classes/MetadataProvider.js";
 
 export default class Segmentation extends DerivedPixels {
     constructor(datasets, options = { includeSliceSpacing: true }) {
@@ -152,7 +153,8 @@ export default class Segmentation extends DerivedPixels {
         Segment,
         labelmaps,
         segmentIndexInLabelmap,
-        referencedFrameNumbers
+        referencedFrameNumbers,
+        images
     ) {
         if (this.dataset.NumberOfFrames === 0) {
             throw new Error(
@@ -167,7 +169,8 @@ export default class Segmentation extends DerivedPixels {
         const ReferencedSegmentNumber = this._addSegmentMetadata(Segment);
         this._addPerFrameFunctionalGroups(
             ReferencedSegmentNumber,
-            referencedFrameNumbers
+            referencedFrameNumbers,
+            images
         );
     }
 
@@ -249,7 +252,8 @@ export default class Segmentation extends DerivedPixels {
 
     _addPerFrameFunctionalGroups(
         ReferencedSegmentNumber,
-        referencedFrameNumbers
+        referencedFrameNumbers,
+        images
     ) {
         const PerFrameFunctionalGroupsSequence =
             this.dataset.PerFrameFunctionalGroupsSequence;
@@ -257,6 +261,13 @@ export default class Segmentation extends DerivedPixels {
         const ReferencedSeriesSequence =
             this.referencedDataset.ReferencedSeriesSequence;
 
+        const referUID = []
+        for(let i = 0; i < images.length; i++){
+            const tempSOPinstance = metadataProvider.get('sopCommonModule',images[i].imageId);
+            ReferencedSeriesSequence.ReferencedInstanceSequence[i].ReferencedSOPInstanceUID = tempSOPinstance.sopInstanceUID;
+            
+        }
+        
         for (let i = 0; i < referencedFrameNumbers.length; i++) {
             const frameNumber = referencedFrameNumbers[i];
 
@@ -358,6 +369,120 @@ export default class Segmentation extends DerivedPixels {
             PerFrameFunctionalGroupsSequence.push(perFrameFunctionalGroups);
         }
     }
+//     ///////////////////
+//     _addPerFrameFunctionalGroups(
+//         ReferencedSegmentNumber,
+//         referencedFrameNumbers
+//     ) {
+//         const PerFrameFunctionalGroupsSequence =
+//             this.dataset.PerFrameFunctionalGroupsSequence;
+
+//         const ReferencedSeriesSequence =
+//             this.referencedDataset.ReferencedSeriesSequence;
+
+//         for (let i = 0; i < referencedFrameNumbers.length; i++) {
+//             const frameNumber = referencedFrameNumbers[i];
+
+//             const perFrameFunctionalGroups = {};
+
+//             perFrameFunctionalGroups.PlanePositionSequence =
+//                 DerivedDataset.copyDataset(
+//                     this.referencedDataset.PerFrameFunctionalGroupsSequence[
+//                         frameNumber - 1
+//                     ].PlanePositionSequence
+//                 );
+
+//             // If the PlaneOrientationSequence is not in the SharedFunctionalGroupsSequence,
+//             // extract it from the PerFrameFunctionalGroupsSequence.
+//             if (
+//                 !this.dataset.SharedFunctionalGroupsSequence
+//                     .PlaneOrientationSequence
+//             ) {
+//                 perFrameFunctionalGroups.PlaneOrientationSequence =
+//                     DerivedDataset.copyDataset(
+//                         this.referencedDataset.PerFrameFunctionalGroupsSequence[
+//                             frameNumber - 1
+//                         ].PlaneOrientationSequence
+//                     );
+//             }
+
+//             perFrameFunctionalGroups.FrameContentSequence = {
+//                 DimensionIndexValues: [ReferencedSegmentNumber, frameNumber]
+//             };
+
+//             perFrameFunctionalGroups.SegmentIdentificationSequence = {
+//                 ReferencedSegmentNumber
+//             };
+
+//             let ReferencedSOPClassUID;
+//             let ReferencedSOPInstanceUID;
+//             let ReferencedFrameNumber;
+
+//             if (ReferencedSeriesSequence) {
+//                 const referencedInstanceSequenceI =
+//                     ReferencedSeriesSequence.ReferencedInstanceSequence[
+//                         frameNumber - 1
+//                     ];
+
+//                 ReferencedSOPClassUID =
+//                     referencedInstanceSequenceI.ReferencedSOPClassUID;
+//                 ReferencedSOPInstanceUID =
+//                     referencedInstanceSequenceI.ReferencedSOPInstanceUID;
+
+//                 if (Normalizer.isMultiframeSOPClassUID(ReferencedSOPClassUID)) {
+//                     ReferencedFrameNumber = frameNumber;
+//                 }
+//             } else {
+//                 ReferencedSOPClassUID = this.referencedDataset.SOPClassUID;
+//                 ReferencedSOPInstanceUID =
+//                     this.referencedDataset.SOPInstanceUID;
+//                 ReferencedFrameNumber = frameNumber;
+//             }
+
+//             if (ReferencedFrameNumber) {
+//                 perFrameFunctionalGroups.DerivationImageSequence = {
+//                     SourceImageSequence: {
+//                         ReferencedSOPClassUID,
+//                         ReferencedSOPInstanceUID,
+//                         ReferencedFrameNumber,
+//                         PurposeOfReferenceCodeSequence: {
+//                             CodeValue: "121322",
+//                             CodingSchemeDesignator: "DCM",
+//                             CodeMeaning:
+//                                 "Source image for image processing operation"
+//                         }
+//                     },
+//                     DerivationCodeSequence: {
+//                         CodeValue: "113076",
+//                         CodingSchemeDesignator: "DCM",
+//                         CodeMeaning: "Segmentation"
+//                     }
+//                 };
+//             } else {
+//                 perFrameFunctionalGroups.DerivationImageSequence = {
+//                     SourceImageSequence: {
+//                         ReferencedSOPClassUID,
+//                         ReferencedSOPInstanceUID,
+//                         PurposeOfReferenceCodeSequence: {
+//                             CodeValue: "121322",
+//                             CodingSchemeDesignator: "DCM",
+//                             CodeMeaning:
+//                                 "Source image for image processing operation"
+//                         }
+//                     },
+//                     DerivationCodeSequence: {
+//                         CodeValue: "113076",
+//                         CodingSchemeDesignator: "DCM",
+//                         CodeMeaning: "Segmentation"
+//                     }
+//                 };
+//             }
+
+//             PerFrameFunctionalGroupsSequence.push(perFrameFunctionalGroups);
+//         }
+//     }
+// ///////////////
+
 
     _addSegmentMetadata(Segment) {
         if (
