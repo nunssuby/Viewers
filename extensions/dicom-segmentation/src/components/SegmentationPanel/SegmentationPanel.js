@@ -196,10 +196,6 @@ const SegmentationPanel = ({
   };
 
   useEffect(() => {
-    console.log('===========================state', state);
-  }, [state]);
-
-  useEffect(() => {
     const labelmapModifiedHandler = event => {
       log.warn('Segmentation Panel: labelmap modified', event);
       refreshSegmentations();
@@ -276,7 +272,6 @@ const SegmentationPanel = ({
       const brushStackState = getBrushStackState();
       if (brushStackState) {
         const labelMapList = getLabelMapList();
-        console.log('labelMapList======', labelMapList);
         const {
           items: segmentList,
           numbers: segmentNumbers,
@@ -380,7 +375,6 @@ const SegmentationPanel = ({
     const sameSegment = state.selectedSegment === segmentNumber;
     if (!sameSegment) {
       const color = getActiveSegmentColor();
-      console.log(color);
       setState(state => ({
         ...state,
         selectedSegment: segmentNumber,

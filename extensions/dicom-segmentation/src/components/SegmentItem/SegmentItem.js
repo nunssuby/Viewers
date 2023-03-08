@@ -76,7 +76,6 @@ const SegmentItem = ({
         updateLabelling: ({ location, description }) => {
           measurementData.location = location || measurementData.location;
           measurementData.description = description || '';
-          console.log(measurementData);
           setLabelText(
             measurementData.location + ' ' + measurementData.description
           );
