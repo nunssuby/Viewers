@@ -1,5 +1,6 @@
 import csTools from 'cornerstone-tools';
 import DICOMSegTempCrosshairsTool from './tools/DICOMSegTempCrosshairsTool';
+import DICOMSegCustomTool from './tools/DICOMSegCustomTool';
 
 /**
  *
@@ -30,4 +31,5 @@ export default function init({ servicesManager, configuration = {} }) {
   });
 
   csTools.addTool(DICOMSegTempCrosshairsTool);
+  csTools.addTool(DICOMSegCustomTool);
 }

@@ -20,6 +20,15 @@ const definitions = [
         commandOptions: { toolName: 'Brush' },
       },
       {
+        id: 'SegTempCrosshairs',
+        label: 'Custom',
+        icon: 'sun',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'customDrow',
+        commandOptions: {},
+      },
+      {
         id: 'FreehandScissors',
         label: 'FreehandScissors',
         icon: 'brush',

@@ -3,7 +3,8 @@ import cs from 'cornerstone-core';
 import OHIF from '@ohif/core';
 
 import DICOMSegTempCrosshairsTool from './tools/DICOMSegTempCrosshairsTool';
-import refreshViewports from './utils/refreshViewports';
+import TOOL_NAMES from './tools/TOOL_NAMES';
+const { DICOM_SEG_CUSTOM_TOOL } = TOOL_NAMES;
 
 const { studyMetadataManager } = OHIF.utils;
 
@@ -81,11 +82,19 @@ const commandsModule = ({ commandsManager }) => {
         console.log('Error in moving to the first segment slice');
       }
     },
+    customDrow: () => {
+      csTools.setToolActive(DICOM_SEG_CUSTOM_TOOL, { mouseButtonMask: 1 });
+    },
   };
 
   const definitions = {
     jumpToFirstSegment: {
       commandFn: actions.jumpToFirstSegment,
+      storeContexts: ['viewports'],
+      options: {},
+    },
+    customDrow: {
+      commandFn: actions.customDrow,
       storeContexts: ['viewports'],
       options: {},
     },
