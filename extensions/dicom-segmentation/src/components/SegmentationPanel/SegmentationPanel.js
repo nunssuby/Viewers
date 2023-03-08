@@ -389,11 +389,11 @@ const SegmentationPanel = ({
       }
     });
 
-    const avg = array => array.reduce((a, b) => a + b) / array.length;
+    const avg = array => array.reduce((a, b) => a + b,0) / array.length;
     const average = avg(validIndexList);
     const closest = validIndexList.reduce((prev, curr) => {
       return Math.abs(curr - average) < Math.abs(prev - average) ? curr : prev;
-    });
+    }, 0);
 
     if (isCornerstone()) {
       const element = getEnabledElement();

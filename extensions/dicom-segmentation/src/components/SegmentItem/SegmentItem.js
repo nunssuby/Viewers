@@ -85,6 +85,32 @@ const SegmentItem = ({
     });
   };
 
+  const deleteSegmentationLabel = () =>
+  {
+ 
+    
+    // const labelmap3Did = labelmap3D.colorLUTIndex-1;
+    console.log(labelmap3D);
+    for(let i=0;i<labelmap3D.labelmaps2D.length;i++){
+      if(!labelmap3D.labelmaps2D[i]){
+        continue;
+      }else{
+        for(let j=0;j<labelmap3D.labelmaps2D[i].pixelData.length;j++){
+          if(labelmap3D.labelmaps2D[i].pixelData[j] === index){
+            labelmap3D.labelmaps2D[i].pixelData[j] = 0;
+          }
+        }
+        for(let j=0; j<labelmap3D.labelmaps2D[i].segmentsOnLabelmap.length;j++){
+          if(labelmap3D.labelmaps2D[i].segmentsOnLabelmap[j] === index){
+            //labelmap3D.labelmaps2D[i].segmentsOnLabelmap.splice(j, 1);
+            labelmap3D.labelmaps2D[i].segmentsOnLabelmap[j] = 0;
+            break;
+          }
+        }
+      } 
+    }
+  };
+
   return (
     <div className="dcmseg-segment-item">
       <TableListItem
@@ -127,13 +153,25 @@ const SegmentItem = ({
                   showLabellingDialog(
                     { editLocation: true, skipAddLabelButton: true },
                     { location: '', description: '' }
+                  )}
+              >
+                <span style={{ marginRight: '4px' }}>
+                  <Icon name="edit" width="14px" height="14px" />
+                </span>
+                Relabel
+              </button>
+              <button
+                className="btnAction"
+                onClick={() =>
+                  deleteSegmentationLabel(
+                    
                   )
                 }
               >
                 <span style={{ marginRight: '4px' }}>
                   <Icon name="edit" width="14px" height="14px" />
                 </span>
-                Relabel
+                Delete
               </button>
               {/* <button
                 className="btnAction"
