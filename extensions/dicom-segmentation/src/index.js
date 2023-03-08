@@ -23,15 +23,12 @@ export default {
    * @param {object|array} [configuration.csToolsConfig] - Passed directly to `initCornerstoneTools`
    */
   preRegistration({ servicesManager, configuration = {} }) {
-    console.log('preRegistration');
     init({ servicesManager, configuration });
   },
   getToolbarModule({ servicesManager }) {
-    console.log('getToolbarModule');
     return toolbarModule;
   },
   getPanelModule({ commandsManager, api, servicesManager }) {
-    console.log('getPanelModule');
     const { UINotificationService, LoggerService } = servicesManager.services;
 
     const ExtendedSegmentationPanel = props => {
