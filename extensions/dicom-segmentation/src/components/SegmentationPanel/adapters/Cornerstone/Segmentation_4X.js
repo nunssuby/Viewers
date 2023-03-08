@@ -104,13 +104,19 @@ function fillSegmentation(segmentation, inputLabelmaps3D, userOptions = {}) {
     //for (let i = 1; i < metadata.length; i++) {
     let labelNum =0;
     for(let i=0; i < labelmaps3D[0].labelmaps2D.length; i++){
-      for(let j=0; j< labelmaps3D[0].labelmaps2D[i].segmentsOnLabelmap.length-1;j++){
-        labelNum++;
+      if(!labelmaps3D[0].labelmaps2D[i]){
+        continue;
+      }else{
+        for(let j=0; j< labelmaps3D[0].labelmaps2D[i].segmentsOnLabelmap.length;j++){     //segmentsonLabelmap에서 가장 큰값 + 1
+          if(labelNum < labelmaps3D[0].labelmaps2D[i].segmentsOnLabelmap[j]){
+            labelNum = labelmaps3D[0].labelmaps2D[i].segmentsOnLabelmap[j];
+          }
+        }
       }
     }
-
+    
     // for (let i = 1; i < labelmaps3D[0].activeSegmentIndex * labelmaps3D[0].labelmaps2D.length; i++) {
-    for (let i = 1; i < labelNum + 1; i++) {
+    for (let i = 1; i < labelNum + 2; i++) {
       if (metadata[i]) {
         referencedFramesPerSegment[i] = [];
       }
