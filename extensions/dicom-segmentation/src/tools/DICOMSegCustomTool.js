@@ -44,11 +44,6 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
 
     super(initialProps);
 
-    console.log(
-      '================================DICOMSegCustomTool',
-      MouseCursor
-    );
-
     this.touchDragCallback = this._paint.bind(this);
   }
 
@@ -72,7 +67,14 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
       return;
     }
 
+    console.log('================================configuration', configuration);
+
+    if (configuration.segsTolerance === undefined) {
+      configuration.segsTolerance = 250;
+    }
+
     const radius = configuration.radius;
+
     let pointerArray = [];
 
     const { labelmap2D, labelmap3D, shouldErase } = this.paintEventData;
@@ -84,7 +86,7 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
       stats.mo = stats.sp * image.slope + image.intercept;
     }
 
-    const Tolerance = 250;
+    const Tolerance = configuration.segsTolerance;
 
     pointerArray = this._magicwand(
       image,

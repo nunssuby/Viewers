@@ -10,7 +10,9 @@ const { DICOM_SEG_CUSTOM_TOOL, SYNC_BRUSH_TOOL } = TOOL_NAMES;
 const { setLayout } = redux.actions;
 const { studyMetadataManager } = OHIF.utils;
 
-const commandsModule = ({ commandsManager }) => {
+const commandsModule = ({ commandsManager, servicesManager }) => {
+  const { UINotificationService, LoggerService } = servicesManager.services;
+
   const actions = {
     jumpToFirstSegment: ({ viewports }) => {
       try {
@@ -89,6 +91,21 @@ const commandsModule = ({ commandsManager }) => {
       module.setters.radius(5);
 
       csTools.setToolActive(DICOM_SEG_CUSTOM_TOOL, { mouseButtonMask: 1 });
+
+      const { configuration } = csTools.getModule('segmentation');
+
+      if (configuration.segsTolerance === undefined) {
+        configuration.segsTolerance = 250;
+      }
+
+      configuration.segsTolerance = UINotificationService.show({
+        title: 'Segmentation tools',
+        message:
+          'Segmentation MagicTool Selected! \ntolerance value : ' +
+          configuration.segsTolerance,
+        type: 'success',
+        autoClose: true,
+      });
     },
     mprDrow: () => {
       // const numRows = 1;
@@ -226,7 +243,20 @@ const commandsModule = ({ commandsManager }) => {
       //   mouseButtonMask: 1,
       // });
     },
-    setTolerance: ({ tolerance }) => {},
+    setTolerance: ({ tolerance }) => {
+      const { configuration } = csTools.getModule('segmentation');
+
+      if (configuration.segsTolerance + tolerance > 0) {
+        configuration.segsTolerance = configuration.segsTolerance + tolerance;
+
+        UINotificationService.show({
+          title: 'Segmentation tolerance Change.',
+          message: 'tolerance value : ' + configuration.segsTolerance,
+          type: 'success',
+          autoClose: true,
+        });
+      }
+    },
   };
 
   const definitions = {
