@@ -10,15 +10,15 @@ const definitions = [
     label: 'Segmentation',
     icon: 'ellipse-circle',
     buttons: [
-      {
-        id: 'SegMpr',
-        label: 'mprDrow',
-        icon: 'sun',
-        //
-        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
-        commandName: 'mprDrow',
-        commandOptions: {},
-      },
+      // {
+      //   id: 'SegMpr',
+      //   label: 'mprDrow',
+      //   icon: 'sun',
+      //   //
+      //   type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+      //   commandName: 'mprDrow',
+      //   commandOptions: {},
+      // },
       {
         id: 'SegTempCrosshairs',
         label: 'Custom',
