@@ -41,11 +41,11 @@ window.config = {
     { commandName: 'customDrow', label: 'customDrow', keys: ['s'] },
     { commandName: 'toleranceUp', label: 'toleranceUp', keys: ['x'] },
     { commandName: 'toleranceDown', label: 'toleranceDown', keys: ['z'] },
-    { commandName: 'toleranceLargeUp', label: 'toleranceLargeUp', keys: ['c'] },
+    { commandName: 'toleranceLargeUp', label: 'toleranceLargeUp', keys: ['v'] },
     {
       commandName: 'toleranceLargeDown',
       label: 'toleranceLargeDown',
-      keys: ['v'],
+      keys: ['c'],
     },
     { commandName: 'invertViewport', label: 'Invert', keys: ['i'] },
     // {
