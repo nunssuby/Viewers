@@ -14,6 +14,11 @@ const { getters } = getModule('segmentation');
 
 // Cornerstone 3rd party dev kit imports
 const BaseBrushTool = importInternal('base/BaseBrushTool');
+
+const MouseCursor = importInternal('tools/cursors/MouseCursor');
+
+const { probeCursor } = MouseCursor;
+
 const {
   drawBrushPixels,
   getDiffBetweenPixelData,
@@ -32,13 +37,17 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: { alwaysEraseOnClick: false },
       mixins: ['renderBrushMixin'],
+      svgCursor: probeCursor,
     };
 
     const initialProps = Object.assign(defaultProps, props);
 
     super(initialProps);
 
-    console.log('================================DICOMSegCustomTool');
+    console.log(
+      '================================DICOMSegCustomTool',
+      MouseCursor
+    );
 
     this.touchDragCallback = this._paint.bind(this);
   }
@@ -52,316 +61,165 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
     // );
   }
 
-  /**
-   * Initialise painting with BaseBrushTool.
-   *
-   * @abstract
-   * @event
-   * @param {Object} evt - The event.
-   * @returns {void}
-   */
-  _startPainting(evt) {
-    const { configuration, getters } = getModule('segmentation');
-    const eventData = evt.detail;
-    const { element, image } = eventData;
-    const radius = configuration.radius;
-    const { rows, columns } = image;
-    const pixelSpacing = Math.max(
-      image.rowPixelSpacing,
-      image.columnPixelSpacing
-    );
-
-    const stackState = getToolState(element, 'stack');
-    const stackData = stackState.data[0];
-    const { imageIds } = stackData;
-
-    const {
-      labelmap2D,
-      labelmap3D,
-      currentImageIdIndex,
-      activeLabelmapIndex,
-    } = getters.labelmap2D(element);
-
-    const shouldErase =
-      this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
-
-    const imagePlaneOfCurrentImage = cornerstone.metaData.get(
-      'imagePlaneModule',
-      image.imageId
-    );
-
-    let imagesInRange;
-
-    if (imagePlaneOfCurrentImage) {
-      const ippOfCurrentImage = imagePlaneOfCurrentImage.imagePositionPatient;
-
-      imagesInRange = this._getImagesInRange(
-        currentImageIdIndex,
-        ippOfCurrentImage,
-        imageIds,
-        radius,
-        pixelSpacing
-      );
-    } else {
-      console.warn(
-        `No imagePlane metadata found for image, defaulting to circle brush application.`
-      );
-
-      imagesInRange = [
-        // The current image.
-        {
-          imageIdIndex: currentImageIdIndex,
-          radiusOnImage: radius,
-        },
-      ];
-    }
-
-    this.paintEventData = {
-      labelmap2D,
-      labelmap3D,
-      currentImageIdIndex,
-      activeLabelmapIndex,
-      shouldErase,
-      imagesInRange,
-    };
-
-    if (configuration.storeHistory) {
-      const previousPixeldataForImagesInRange = [];
-
-      for (let i = 0; i < imagesInRange.length; i++) {
-        const { imageIdIndex } = imagesInRange[i];
-        const labelmap2DForImageIdIndex = getters.labelmap2DByImageIdIndex(
-          labelmap3D,
-          imageIdIndex,
-          rows,
-          columns
-        );
-
-        const previousPixeldata = labelmap2DForImageIdIndex.pixelData.slice();
-
-        previousPixeldataForImagesInRange.push(previousPixeldata);
-      }
-
-      this.paintEventData.previousPixeldataForImagesInRange = previousPixeldataForImagesInRange;
-    }
-  }
-
-  /**
-   * Paints the data to the labelmap.
-   *
-   * @private
-   * @param  {Object} evt The data object associated with the event.
-   * @returns {void}
-   */
-
   _paint(evt) {
-    const { getters } = getModule('segmentation');
+    const { configuration } = getModule('segmentation');
     const eventData = evt.detail;
     const element = eventData.element;
     const image = eventData.image;
-    const { rows, columns } = image;
     const { x, y } = eventData.currentPoints.image;
 
-    if (x < 0 || x > columns || y < 0 || y > rows) {
+    if (x < 0 || x > image.columns || y < 0 || y > image.rows) {
       return;
     }
 
-    const { labelmap3D, imagesInRange, shouldErase } = this.paintEventData;
+    const radius = configuration.radius;
+    let pointerArray = [];
+
+    const { labelmap2D, labelmap3D, shouldErase } = this.paintEventData;
 
     const stats = {};
 
     if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
-      stats.x = x;
-      stats.y = y;
-
-      stats.storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
-      stats.sp = stats.storedPixels[0];
+      stats.sp = cornerstone.getStoredPixels(element, x, y, 1, 1)[0];
       stats.mo = stats.sp * image.slope + image.intercept;
     }
 
-    console.log('===========================stats', stats, imagesInRange);
+    const Tolerance = 250;
 
-    for (let i = 0; i < imagesInRange.length; i++) {
-      const { imageIdIndex, radiusOnImage } = imagesInRange[i];
-      const pointerArray = getCircle(radiusOnImage, rows, columns, x, y);
+    pointerArray = this._magicwand(
+      image,
+      Math.floor(x),
+      Math.floor(y),
+      Tolerance,
+      stats.mo,
+      element
+    );
 
-      // Cache the view on this image if its not present.
-      const labelmap2DForImageIdIndex = getters.labelmap2DByImageIdIndex(
-        labelmap3D,
-        imageIdIndex,
-        rows,
-        columns
-      );
-
-      // Draw / Erase the active color.
-      drawBrushPixels(
-        pointerArray,
-        labelmap2DForImageIdIndex.pixelData,
-        labelmap3D.activeSegmentIndex,
-        columns,
-        shouldErase
-      );
-    }
+    // Draw / Erase the active color.
+    drawBrushPixels(
+      pointerArray,
+      labelmap2D.pixelData,
+      labelmap3D.activeSegmentIndex,
+      image.columns,
+      shouldErase
+    );
 
     cornerstone.updateImage(evt.detail.element);
   }
 
-  /**
-   * _getImagesInRange - Returns an array of image Ids within range of the
-   * sphere, and the in-plane brush radii of those images.
-   *
-   * @param  {string} currentImageIdIndex The imageId of the image displayed on
-   *                                   the cornerstone enabled element.
-   * @param  {number[]} ippOfCurrentImage   The image position patient of the image.
-   * @param  {string[]} imageIds           An array of images in the stack.
-   * @param  {number} radius             The radius of the sphere.
-   * @param  {number} pixelSpacing       The pixelSpacing.
-   * @returns {Object[]}                   An array of imageIds in range and their
-   *                                   in plane brush radii.
-   */
-  _getImagesInRange(
-    currentImageIdIndex,
-    ippOfCurrentImage,
-    imageIds,
-    radius,
-    pixelSpacing
-  ) {
-    const radiusInMM = radius * pixelSpacing;
-    const imagesInRange = [
-      // The current image.
-      {
-        imageIdIndex: currentImageIdIndex,
-        radiusOnImage: radius,
-      },
-    ];
+  _magicwand(image, px, py, Tolerance, base, element) {
+    var c,
+      x,
+      newY,
+      el,
+      xr,
+      xl,
+      dy,
+      dyl,
+      dyr,
+      checkY,
+      mo,
+      w = image.width,
+      h = image.height,
+      maxX = -1,
+      minX = w + 1,
+      maxY = -1,
+      minY = h + 1,
+      result = new Array(),
+      visited = [];
 
-    // Check images above
-    for (let i = currentImageIdIndex + 1; i < imageIds.length; i++) {
-      const radiusOnImage = this._getRadiusOnImage(
-        imageIds[i],
-        ippOfCurrentImage,
-        radiusInMM,
-        pixelSpacing
-      );
+    var stack = [{ y: py, left: px - 1, right: px + 1, dir: 1 }]; // first scanning line
+    do {
+      el = stack.shift(); // get line for scanning
+      checkY = false;
 
-      if (!radiusOnImage) {
-        break;
-      }
+      for (x = el.left + 1; x < el.right; x++) {
+        dy = el.y;
 
-      imagesInRange.push({
-        imageIdIndex: i,
-        radiusOnImage,
-      });
-    }
+        if (visited[dy * w + x] === 1) continue; // check whether the point has been visited
 
-    // Check images below
-    for (let i = currentImageIdIndex - 1; i >= 0; i--) {
-      const radiusOnImage = this._getRadiusOnImage(
-        imageIds[i],
-        ippOfCurrentImage,
-        radiusInMM,
-        pixelSpacing
-      );
+        // compare the color of the sample
 
-      if (!radiusOnImage) {
-        break;
-      }
+        if (x >= 0 && dy >= 0 && x < image.columns && dy < image.rows) {
+          mo =
+            cornerstone.getStoredPixels(element, x, dy, 1, 1)[0] * image.slope +
+            image.intercept;
 
-      imagesInRange.push({
-        imageIdIndex: i,
-        radiusOnImage,
-      });
-    }
+          if (mo > base + Tolerance || mo < base - Tolerance) continue;
 
-    return imagesInRange;
-  }
+          checkY = true; // if the color of the new point(x,y) is similar to the sample color need to check minmax for Y
 
-  /**
-   * _getRadiusOnImage - If the image is in range of the spherical brush, returns
-   *                     the in-plane brush radius on that image.
-   *
-   * @param  {string} imageId           The cornerstone imageId of the image.
-   * @param  {number[]} ippOfCurrentImage The image position patient of the current image.
-   * @param  {number} radiusInMM        The radius of the sphere in millimeters.
-   * @param  {string} pixelSpacing      The pixelspacing.
-   * @returns {number|undefined}        The brush radius on the image, undefined if
-   *                                    the image is out of range of the sphere.
-   */
-  _getRadiusOnImage(imageId, ippOfCurrentImage, radiusInMM, pixelSpacing) {
-    const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
+          result.push([x, dy]);
+        }
+        visited[dy * w + x] = 1; // mark a new point as visited
 
-    if (!imagePlane) {
-      console.warn(
-        `Can't find imagePlane metadata for image, cancelling spherical brushing on: ${imageId},`
-      );
+        xl = x - 1;
+        // walk to left side starting with the left neighbor
+        while (xl > -1) {
+          dyl = dy * w + xl;
 
-      return;
-    }
+          if (visited[dyl] === 1) break; // check whether the point has been visited
 
-    const ipp = imagePlane.imagePositionPatient;
+          if (xl >= 0 && dy >= 0 && xl < image.columns && dy < image.rows) {
+            mo =
+              cornerstone.getStoredPixels(element, xl, dy, 1, 1)[0] *
+                image.slope +
+              image.intercept;
 
-    const distance = Math.sqrt(
-      Math.pow(ipp[0] - ippOfCurrentImage[0], 2) +
-        Math.pow(ipp[1] - ippOfCurrentImage[1], 2) +
-        Math.pow(ipp[2] - ippOfCurrentImage[2], 2)
-    );
+            if (mo > base + Tolerance || mo < base - Tolerance) break;
 
-    if (distance > radiusInMM) {
-      // Image too far away, break!
-      return;
-    }
+            result.push([xl, dy]);
+          }
+          visited[dyl] = 1;
+          xl--;
+        }
+        xr = x + 1;
+        // walk to right side starting with the right neighbor
+        while (xr < w) {
+          dyr = dy * w + xr;
 
-    return Math.floor(
-      Math.sqrt(Math.pow(radiusInMM, 2) - Math.pow(distance, 2)) / pixelSpacing
-    );
-  }
+          if (visited[dyr] === 1) break; // check whether the point has been visited
 
-  _endPainting(evt) {
-    const { labelmap3D, imagesInRange } = this.paintEventData;
-    const operations = [];
-    const { configuration, setters } = getModule('segmentation');
+          if (xr >= 0 && dy >= 0 && xr < image.columns && dy < image.rows) {
+            mo =
+              cornerstone.getStoredPixels(element, xr, dy, 1, 1)[0] *
+                image.slope +
+              image.intercept;
 
-    for (let i = 0; i < imagesInRange.length; i++) {
-      const { imageIdIndex } = imagesInRange[i];
-      const labelmap2D = labelmap3D.labelmaps2D[imageIdIndex];
+            if (mo > base + Tolerance || mo < base - Tolerance) break;
 
-      // Grab the labels on the slice.
-      const segmentSet = new Set(labelmap2D.pixelData);
-      const iterator = segmentSet.values();
+            result.push([xr, dy]);
+          }
+          visited[dyr] = 1;
+          xr++;
+        }
 
-      const segmentsOnLabelmap = [];
-      let done = false;
+        // check minmax for X
+        if (xl < minX) minX = xl + 1;
+        if (xr > maxX) maxX = xr - 1;
 
-      while (!done) {
-        const next = iterator.next();
-
-        done = next.done;
-
-        if (!done) {
-          segmentsOnLabelmap.push(next.value);
+        newY = el.y - el.dir;
+        if (newY >= 0 && newY < h) {
+          // add two scanning lines in the opposite direction (y - dir) if necessary
+          if (xl < el.left)
+            stack.push({ y: newY, left: xl, right: el.left, dir: -el.dir }); // from "new left" to "current left"
+          if (el.right < xr)
+            stack.push({ y: newY, left: el.right, right: xr, dir: -el.dir }); // from "current right" to "new right"
+        }
+        newY = el.y + el.dir;
+        if (newY >= 0 && newY < h) {
+          // add the scanning line in the direction (y + dir) if necessary
+          if (xl < xr)
+            stack.push({ y: newY, left: xl, right: xr, dir: el.dir }); // from "new left" to "new right"
         }
       }
-
-      labelmap2D.segmentsOnLabelmap = segmentsOnLabelmap;
-
-      if (configuration.storeHistory) {
-        const { previousPixeldataForImagesInRange } = this.paintEventData;
-
-        const previousPixeldata = previousPixeldataForImagesInRange[i];
-        const labelmap2D = labelmap3D.labelmaps2D[imageIdIndex];
-        const newPixelData = labelmap2D.pixelData;
-
-        operations.push({
-          imageIdIndex,
-          diff: getDiffBetweenPixelData(previousPixeldata, newPixelData),
-        });
+      // check minmax for Y if necessary
+      if (checkY) {
+        if (el.y < minY) minY = el.y;
+        if (el.y > maxY) maxY = el.y;
       }
-    }
+    } while (stack.length > 0);
 
-    if (configuration.storeHistory) {
-      setters.pushState(this.element, operations);
-    }
-
-    triggerLabelmapModifiedEvent(this.element);
+    return result;
   }
 }

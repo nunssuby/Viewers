@@ -85,6 +85,9 @@ const commandsModule = ({ commandsManager }) => {
       }
     },
     customDrow: () => {
+      const module = csTools.getModule('segmentation');
+      module.setters.radius(5);
+
       csTools.setToolActive(DICOM_SEG_CUSTOM_TOOL, { mouseButtonMask: 1 });
     },
     mprDrow: () => {
@@ -223,6 +226,7 @@ const commandsModule = ({ commandsManager }) => {
       //   mouseButtonMask: 1,
       // });
     },
+    setTolerance: ({ tolerance }) => {},
   };
 
   const definitions = {
@@ -240,6 +244,27 @@ const commandsModule = ({ commandsManager }) => {
       commandFn: actions.mprDrow,
       storeContexts: ['viewports'],
       options: {},
+    },
+
+    toleranceUp: {
+      commandFn: actions.setTolerance,
+      storeContexts: ['viewports'],
+      options: { tolerance: +5 },
+    },
+    toleranceDown: {
+      commandFn: actions.setTolerance,
+      storeContexts: ['viewports'],
+      options: { tolerance: -5 },
+    },
+    toleranceLargeUp: {
+      commandFn: actions.setTolerance,
+      storeContexts: ['viewports'],
+      options: { tolerance: +25 },
+    },
+    toleranceLargeDown: {
+      commandFn: actions.setTolerance,
+      storeContexts: ['viewports'],
+      options: { tolerance: -25 },
     },
   };
 

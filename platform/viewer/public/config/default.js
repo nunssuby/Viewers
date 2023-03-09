@@ -38,6 +38,7 @@ window.config = {
     // ~ Cornerstone Extension
     { commandName: 'rotateViewportCW', label: 'Rotate Right', keys: ['r'] },
     { commandName: 'rotateViewportCCW', label: 'Rotate Left', keys: ['l'] },
+    { commandName: 'customDrow', label: 'customDrow', keys: ['s'] },
     { commandName: 'invertViewport', label: 'Invert', keys: ['i'] },
     {
       commandName: 'flipViewportVertical',

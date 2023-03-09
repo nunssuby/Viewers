@@ -22,7 +22,7 @@ const definitions = [
       {
         id: 'SegTempCrosshairs',
         label: 'Custom',
-        icon: 'sun',
+        icon: 'dot-circle',
         //
         type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
         commandName: 'customDrow',
