@@ -2,6 +2,8 @@ import dcmjs from 'dcmjs';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 
+cornerstoneTools.getModule('segmentation').configuration.shouldRenderInactiveLabelmaps = false;
+
 export default async function loadSegmentation(
   imageIds,
   segDisplaySet,
