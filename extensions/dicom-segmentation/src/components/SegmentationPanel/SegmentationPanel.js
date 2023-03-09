@@ -74,9 +74,9 @@ const SegmentationPanel = ({
    */
   const [state, setState] = useState({
     brushRadius: DEFAULT_BRUSH_RADIUS,
-    brushColor: 'rgba(255, 85, 85, 1)',
-    selectedSegment: 0,
-    selectedSegmentation: 0,
+    brushColor: 'rgb(136, 84, 222)',
+    selectedSegment: 1,
+    selectedSegmentation: 1,
     showSettings: true,
     labelMapList: [],
     segmentList: [],
