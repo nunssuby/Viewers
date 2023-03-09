@@ -1,11 +1,13 @@
 import csTools from 'cornerstone-tools';
 import cs from 'cornerstone-core';
 import OHIF from '@ohif/core';
+import { redux } from '@ohif/core';
 
 import DICOMSegTempCrosshairsTool from './tools/DICOMSegTempCrosshairsTool';
 import TOOL_NAMES from './tools/TOOL_NAMES';
-const { DICOM_SEG_CUSTOM_TOOL } = TOOL_NAMES;
+const { DICOM_SEG_CUSTOM_TOOL, SYNC_BRUSH_TOOL } = TOOL_NAMES;
 
+const { setLayout } = redux.actions;
 const { studyMetadataManager } = OHIF.utils;
 
 const commandsModule = ({ commandsManager }) => {
@@ -85,6 +87,142 @@ const commandsModule = ({ commandsManager }) => {
     customDrow: () => {
       csTools.setToolActive(DICOM_SEG_CUSTOM_TOOL, { mouseButtonMask: 1 });
     },
+    mprDrow: () => {
+      // const numRows = 1;
+      // const numColumns = 3;
+
+      // const displaySet =
+      //   viewports.viewportSpecificData[viewports.activeViewportIndex];
+
+      // const viewportPropsArray = [
+      //   {
+      //     //Axial
+      //     orientation: {
+      //       sliceNormal: [0, 0, 1],
+      //       viewUp: [0, -1, 0],
+      //     },
+      //   },
+      //   {
+      //     // Sagittal
+      //     orientation: {
+      //       sliceNormal: [1, 0, 0],
+      //       viewUp: [0, 0, 1],
+      //     },
+      //   },
+      //   {
+      //     // Coronal
+      //     orientation: {
+      //       sliceNormal: [0, 1, 0],
+      //       viewUp: [0, 0, 1],
+      //     },
+      //   },
+      // ];
+
+      // const newViewports = [];
+      // const numViewports = numRows * numColumns;
+
+      // if (viewportPropsArray && viewportPropsArray.length !== numViewports) {
+      //   reject(
+      //     new Error(
+      //       'viewportProps is supplied but its length is not equal to numViewports'
+      //     )
+      //   );
+      // }
+
+      // const viewportSpecificData = {};
+
+      // for (let i = 0; i < numViewports; i++) {
+      //   newViewports.push({});
+      //   viewportSpecificData[i] = displaySet;
+      //   viewportSpecificData[i].plugin = 'rt';
+      // }
+
+      // const apis = [];
+      // newViewports.forEach((viewport, index) => {
+      //   apis[index] = null;
+      //   const viewportProps = viewportPropsArray[index];
+      //   newViewports[index] = Object.assign({}, newViewports[index], {
+      //     vtk: {
+      //       mode: 'mpr',
+      //       ...viewportProps,
+      //     },
+      //   });
+      // });
+
+      // const layout = {
+      //   numRows,
+      //   numColumns,
+      //   viewports: newViewports,
+      // };
+
+      // console.log(
+      //   '=================================viewportSpecificData',
+      //   layout,
+      //   viewportSpecificData
+      // );
+
+      // const action = setViewportLayoutAndData(layout, viewportSpecificData);
+
+      // window.store.dispatch(action);
+
+      const viewportProps = [
+        {
+          //Axial
+          plugin: 'vtk',
+          orientation: {
+            sliceNormal: [0, 0, 1],
+            viewUp: [0, -1, 0],
+          },
+        },
+        {
+          // Sagittal
+          plugin: 'vtk',
+          orientation: {
+            sliceNormal: [1, 0, 0],
+            viewUp: [0, 0, 1],
+          },
+        },
+        {
+          // Coronal
+          plugin: 'vtk',
+          orientation: {
+            sliceNormal: [0, 1, 0],
+            viewUp: [0, 0, 1],
+          },
+        },
+        {
+          // Coronal
+          plugin: 'vtk',
+          orientation: {
+            sliceNormal: [0, 1, 0],
+            viewUp: [0, 0, 1],
+          },
+        },
+      ];
+
+      const viewports = [{ plugin: 'cornerstone' }, { plugin: 'cornerstone' }];
+
+      const layout = {
+        numRows: 1,
+        numColumns: 2,
+        viewports: viewports,
+      };
+
+      const action = setLayout(layout);
+
+      window.store.dispatch(action);
+
+      console.log(viewports);
+      const viewportDIV = Array.from(
+        document.getElementsByClassName('viewport-container')
+      );
+
+      console.log(viewportDIV);
+
+      // csTools.setToolActiveForElement(viewportDIV[0], SYNC_BRUSH_TOOL, {
+      //   mouseButtonMask: 1,
+      // });
+    },
   };
 
   const definitions = {
@@ -95,6 +233,11 @@ const commandsModule = ({ commandsManager }) => {
     },
     customDrow: {
       commandFn: actions.customDrow,
+      storeContexts: ['viewports'],
+      options: {},
+    },
+    mprDrow: {
+      commandFn: actions.mprDrow,
       storeContexts: ['viewports'],
       options: {},
     },

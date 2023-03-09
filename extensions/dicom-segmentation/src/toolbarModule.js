@@ -11,6 +11,15 @@ const definitions = [
     icon: 'ellipse-circle',
     buttons: [
       {
+        id: 'SegMpr',
+        label: 'mprDrow',
+        icon: 'sun',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'mprDrow',
+        commandOptions: {},
+      },
+      {
         id: 'SegTempCrosshairs',
         label: 'Custom',
         icon: 'sun',

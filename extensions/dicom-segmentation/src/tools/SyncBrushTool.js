@@ -9,7 +9,7 @@ import cornerstoneTools, {
 import cornerstone from 'cornerstone-core';
 import TOOL_NAMES from './TOOL_NAMES';
 
-const { DICOM_SEG_CUSTOM_TOOL } = TOOL_NAMES;
+const { SYNC_BRUSH_TOOL } = TOOL_NAMES;
 const { getters } = getModule('segmentation');
 
 // Cornerstone 3rd party dev kit imports
@@ -20,15 +20,14 @@ const {
   getCircle,
   triggerLabelmapModifiedEvent,
 } = cornerstoneTools.import('util/segmentationUtils');
-
 /**
  * @class RTStructDisplayTool - Renders RTSTRUCT data in a read only manner (i.e. as an overlay).
  * @extends cornerstoneTools.BaseTool
  */
-export default class DICOMSegCustomTool extends BaseBrushTool {
+export default class SyncBrushTool extends BaseBrushTool {
   constructor(props = {}) {
     const defaultProps = {
-      name: DICOM_SEG_CUSTOM_TOOL,
+      name: SYNC_BRUSH_TOOL,
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: { alwaysEraseOnClick: false },
       mixins: ['renderBrushMixin'],
@@ -38,18 +37,7 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
 
     super(initialProps);
 
-    console.log('================================DICOMSegCustomTool');
-
     this.touchDragCallback = this._paint.bind(this);
-  }
-
-  activeCallback(element) {
-    console.log(`Hello element ${element}!`, this, element);
-    // this.touchDragCallback = this._paint.bind(this);
-    // element.addEventListener(
-    //   'cornerstonetoolsmeasurementadded',
-    //   this.touchDragCallback
-    // );
   }
 
   /**
@@ -153,7 +141,6 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
    * @param  {Object} evt The data object associated with the event.
    * @returns {void}
    */
-
   _paint(evt) {
     const { getters } = getModule('segmentation');
     const eventData = evt.detail;
@@ -167,19 +154,6 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
     }
 
     const { labelmap3D, imagesInRange, shouldErase } = this.paintEventData;
-
-    const stats = {};
-
-    if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
-      stats.x = x;
-      stats.y = y;
-
-      stats.storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
-      stats.sp = stats.storedPixels[0];
-      stats.mo = stats.sp * image.slope + image.intercept;
-    }
-
-    console.log('===========================stats', stats, imagesInRange);
 
     for (let i = 0; i < imagesInRange.length; i++) {
       const { imageIdIndex, radiusOnImage } = imagesInRange[i];

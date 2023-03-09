@@ -1,10 +1,12 @@
 import React from 'react';
 import { asyncComponent, retryImport } from '@ohif/ui';
 
+import init from './init.js';
 import commandsModule from './commandsModule.js';
 import toolbarModule from './toolbarModule.js';
 import withCommandsManager from './withCommandsManager.js';
 import { version } from '../package.json';
+
 // This feels weird
 // import loadLocales from './loadLocales';
 
@@ -20,6 +22,10 @@ const vtkExtension = {
    */
   id: 'vtk',
   version,
+
+  preRegistration({ servicesManager, configuration = {} }) {
+    init({ servicesManager, configuration });
+  },
 
   getViewportModule({ commandsManager, servicesManager }) {
     const ExtendedVTKViewport = props => (

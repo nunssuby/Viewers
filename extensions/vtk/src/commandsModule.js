@@ -15,6 +15,10 @@ import OHIFVTKViewport from './OHIFVTKViewport';
 import Render3D from './Render3D';
 import ReactDOM from 'react-dom';
 import OHIF from '@ohif/core';
+import csTools from 'cornerstone-tools';
+import cs from 'cornerstone-core';
+import TOOL_NAMES from '../../dicom-segmentation/src/tools/TOOL_NAMES';
+const { DICOM_SEG_CUSTOM_TOOL } = TOOL_NAMES;
 
 const { studyMetadataManager } = OHIF.utils;
 
@@ -192,7 +196,7 @@ const commandsModule = ({ commandsManager, servicesManager, props }) => {
       const api = await _getActiveViewportVTKApi(viewports);
 
       apis[viewports.activeViewportIndex] = api;
-
+      console.log('====================================axial', api);
       _setView(api, [0, 0, 1], [0, -1, 0]);
     },
     sagittal: async ({ viewports }) => {
@@ -544,6 +548,15 @@ const commandsModule = ({ commandsManager, servicesManager, props }) => {
         }
       }
     },
+    customDrow: () => {
+      csTools.setToolActive(DICOM_SEG_CUSTOM_TOOL, { mouseButtonMask: 1 });
+    },
+    setToolActive: ({ toolName }) => {
+      if (!toolName) {
+        console.warn('No toolname provided to setToolActive command');
+      }
+      csTools.setToolActive(toolName, { mouseButtonMask: 1 });
+    },
   };
 
   window.vtkActions = actions;
@@ -639,6 +652,15 @@ const commandsModule = ({ commandsManager, servicesManager, props }) => {
       options: {
         change: -3,
       },
+    },
+    customDrow: {
+      commandFn: actions.customDrow,
+      options: {},
+    },
+    setToolActive: {
+      commandFn: actions.setToolActive,
+      storeContexts: [],
+      options: {},
     },
     mpr2d: {
       commandFn: actions.mpr2d,
