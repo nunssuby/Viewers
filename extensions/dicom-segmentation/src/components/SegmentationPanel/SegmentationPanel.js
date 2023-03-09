@@ -9,6 +9,7 @@ import { ScrollableArea, TableList, Icon } from '@ohif/ui';
 import DICOMSegTempCrosshairsTool from '../../tools/DICOMSegTempCrosshairsTool';
 import setActiveLabelmap from '../../utils/setActiveLabelMap';
 import refreshViewports from '../../utils/refreshViewports';
+import createSeg from './saveSeg';
 
 import axios from 'axios';
 
@@ -56,7 +57,7 @@ const SegmentationPanel = ({
 }) => {
   const isVTK = () => activeContexts.includes(contexts.VTK);
   const isCornerstone = () => activeContexts.includes(contexts.CORNERSTONE);
-
+  const { UINotificationService, UIDialogService } = servicesManager.services;
   /*
    * TODO: wrap get/set interactions with the cornerstoneTools
    * store with context to make these kind of things less blurry.
@@ -73,14 +74,15 @@ const SegmentationPanel = ({
    */
   const [state, setState] = useState({
     brushRadius: DEFAULT_BRUSH_RADIUS,
-    brushColor: 'rgba(255, 85, 85, 1)',
-    selectedSegment: 0,
-    selectedSegmentation: 0,
+    brushColor: 'rgb(136, 84, 222)',
+    selectedSegment: 1,
+    selectedSegmentation: 1,
     showSettings: true,
     labelMapList: [],
     segmentList: [],
     segmentsHidden: [],
     segmentNumbers: [],
+    labels: [],
     isLoading: true,
     isDisabled: false,
   });
@@ -124,6 +126,7 @@ const SegmentationPanel = ({
 
   const getActiveSegmentIndex = () => {
     const { activeSegmentIndex } = getActiveLabelMaps3D();
+
     return activeSegmentIndex;
   };
 
@@ -181,7 +184,10 @@ const SegmentationPanel = ({
     const brushStackState = getBrushStackState();
     brushStackState.activeLabelmapIndex = newLabelmapIndex;
     if (selectedSegmentation) {
-      setState(state => ({ ...state, selectedSegmentation }));
+      setState(state => ({
+        ...state,
+        selectedSegmentation,
+      }));
     }
 
     refreshViewports();
@@ -266,11 +272,11 @@ const SegmentationPanel = ({
       const brushStackState = getBrushStackState();
       if (brushStackState) {
         const labelMapList = getLabelMapList();
-        console.log('labelMapList======', labelMapList);
         const {
           items: segmentList,
           numbers: segmentNumbers,
           segmentsHidden,
+          labels,
         } = getSegmentList();
 
         setState(state => ({
@@ -279,6 +285,7 @@ const SegmentationPanel = ({
           segmentNumbers,
           labelMapList,
           segmentList,
+          labels,
           isDisabled,
         }));
       } else {
@@ -288,6 +295,7 @@ const SegmentationPanel = ({
           segmentNumbers: [],
           labelMapList: [],
           segmentList: [],
+          labels: [],
           isDisabled,
         }));
       }
@@ -315,22 +323,16 @@ const SegmentationPanel = ({
 
   const getLabelMapList = () => {
     const activeViewport = getActiveViewport();
-    console.log('getLabelMapList==========', activeViewport);
     /* Get list of SEG labelmaps specific to active viewport (reference series) */
     const referencedSegDisplaysets = _getReferencedSegDisplaysets(
       activeViewport.StudyInstanceUID,
       activeViewport.SeriesInstanceUID
     );
-    console.log('referencedSegDisplaysets==========', referencedSegDisplaysets);
 
     const filteredReferencedSegDisplaysets = referencedSegDisplaysets.filter(
       segDisplay => segDisplay.loadError !== true
     );
 
-    console.log(
-      'filteredReferencedSegDisplaysets==========',
-      filteredReferencedSegDisplaysets
-    );
     return filteredReferencedSegDisplaysets.map((displaySet, index) => {
       const {
         labelmapIndex,
@@ -372,7 +374,12 @@ const SegmentationPanel = ({
 
     const sameSegment = state.selectedSegment === segmentNumber;
     if (!sameSegment) {
-      setState(state => ({ ...state, selectedSegment: segmentNumber }));
+      const color = getActiveSegmentColor();
+      setState(state => ({
+        ...state,
+        selectedSegment: segmentNumber,
+        brushColor: color,
+      }));
     }
 
     const validIndexList = [];
@@ -382,11 +389,11 @@ const SegmentationPanel = ({
       }
     });
 
-    const avg = array => array.reduce((a, b) => a + b) / array.length;
+    const avg = array => array.reduce((a, b) => a + b, 0) / array.length;
     const average = avg(validIndexList);
     const closest = validIndexList.reduce((prev, curr) => {
       return Math.abs(curr - average) < Math.abs(prev - average) ? curr : prev;
-    });
+    }, 0);
 
     if (isCornerstone()) {
       const element = getEnabledElement();
@@ -438,12 +445,18 @@ const SegmentationPanel = ({
   const getColorLUTTable = () => {
     const { state } = cornerstoneTools.getModule('segmentation');
     const { colorLUTIndex } = getActiveLabelMaps3D();
-    return state.colorLutTables[colorLUTIndex];
+
+    return state.colorLutTables[0];
   };
 
   const getEnabledElement = () => {
     const enabledElements = cornerstone.getEnabledElements();
     return enabledElements[activeIndex].element;
+  };
+
+  const onLabelChange = (label, segmentNumber, labels) => {
+    labels[segmentNumber] = label;
+    setState(state => ({ ...state, labels }));
   };
 
   const onSegmentVisibilityChangeHandler = (
@@ -483,19 +496,18 @@ const SegmentationPanel = ({
       labelmap3D.segmentsHidden[segmentNumber] = !isVisible;
       segmentsHidden = [...labelmap3D.segmentsHidden];
     }
-
     setState(state => ({ ...state, segmentsHidden }));
 
     refreshSegmentations();
     refreshViewports();
 
     if (isVTK()) {
+      //TODO : 여기는 언제 쓰는지 나중에 확인 필요
       onSegmentVisibilityChange(segmentNumber, isVisible);
     }
   };
 
   const getSegmentList = () => {
-    console.log('getSegmentList');
     /*
      * Newly created segments have no `meta`
      * So we instead build a list of all segment indexes in use
@@ -520,6 +532,7 @@ const SegmentationPanel = ({
     const labelmap3D = getActiveLabelMaps3D();
     const colorLutTable = getColorLUTTable();
     const hasLabelmapMeta = labelmap3D.metadata && labelmap3D.metadata.data;
+    const labels = [];
 
     const segmentList = [];
     const segmentNumbers = [];
@@ -527,7 +540,7 @@ const SegmentationPanel = ({
       const segmentIndex = uniqueSegmentIndexes[i];
 
       const color = colorLutTable[segmentIndex];
-      let segmentLabel = '(???)';
+      let segmentLabel = '(unlabeled)';
       let segmentNumber = segmentIndex;
 
       /* Meta */
@@ -538,6 +551,7 @@ const SegmentationPanel = ({
           segmentLabel = segmentMeta.SegmentLabel;
         }
       }
+      labels[segmentNumber] = segmentLabel;
 
       const sameSegment = state.selectedSegment === segmentNumber;
 
@@ -551,8 +565,11 @@ const SegmentationPanel = ({
           index={segmentNumber}
           color={color}
           labelmap3D={labelmap3D}
+          labels={labels}
           visible={!labelmap3D.segmentsHidden[segmentIndex]}
           onVisibilityChange={onSegmentVisibilityChangeHandler}
+          servicesManager={servicesManager}
+          onLabelChange={onLabelChange}
         />
       );
     }
@@ -561,6 +578,7 @@ const SegmentationPanel = ({
       items: segmentList,
       numbers: segmentNumbers,
       segmentsHidden: labelmap3D.segmentsHidden,
+      labels: labels,
     };
 
     /*
@@ -582,33 +600,32 @@ const SegmentationPanel = ({
   };
 
   const decrementSegment = event => {
-    const activeSegmentIndex = getActiveSegmentIndex();
     event.preventDefault();
-    if (activeSegmentIndex > 1) {
-      activeSegmentIndex--;
+    if (checkBrushStackState()) {
+      let activeSegmentIndex = getActiveSegmentIndex();
+      if (activeSegmentIndex > 1) {
+        activeSegmentIndex--;
+      }
+      setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
+      setActiveSegment(activeSegmentIndex);
+      updateActiveSegmentColor();
     }
-    setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
-    updateActiveSegmentColor();
   };
 
   const incrementSegment = event => {
-    let activeSegmentIndex = getActiveSegmentIndex();
     event.preventDefault();
-    activeSegmentIndex++;
-    setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
-    updateActiveSegmentColor();
+    if (checkBrushStackState()) {
+      let activeSegmentIndex = getActiveSegmentIndex();
+      activeSegmentIndex++;
+      setState(state => ({ ...state, selectedSegment: activeSegmentIndex }));
+      setActiveSegment(activeSegmentIndex);
+      updateActiveSegmentColor();
+    }
   };
 
   const updateActiveSegmentColor = () => {
     const color = getActiveSegmentColor();
     setState(state => ({ ...state, brushColor: color }));
-  };
-
-  const getBrushStackState = () => {
-    const module = cornerstoneTools.getModule('segmentation');
-    const firstImageId = getFirstImageId();
-    const brushStackState = module.state.series[firstImageId];
-    return brushStackState;
   };
 
   const getActiveSegmentColor = () => {
@@ -618,8 +635,24 @@ const SegmentationPanel = ({
     }
     const labelmap3D = getActiveLabelMaps3D();
     const colorLutTable = getColorLUTTable();
+
     const color = colorLutTable[labelmap3D.activeSegmentIndex];
     return `rgba(${color.join(',')})`;
+  };
+
+  const getBrushStackState = () => {
+    const module = cornerstoneTools.getModule('segmentation');
+    const firstImageId = getFirstImageId();
+    const brushStackState = module.state.series[firstImageId];
+
+    return brushStackState;
+  };
+
+  const checkBrushStackState = () => {
+    const module = cornerstoneTools.getModule('segmentation');
+    const firstImageId = getFirstImageId();
+    const brushStackState = module.state.series[firstImageId];
+    return brushStackState === undefined ? false : true;
   };
 
   const updateConfiguration = newConfiguration => {
@@ -667,6 +700,12 @@ const SegmentationPanel = ({
   const selectedSegmentationOption = state.labelMapList.find(
     i => i.value === state.selectedSegmentation
   );
+
+  const onSaveComplete = message => {
+    if (UINotificationService) {
+      UINotificationService.show(message);
+    }
+  };
 
   if (state.showSettings) {
     return (
@@ -730,14 +769,24 @@ const SegmentationPanel = ({
           <div className="measurementTableFooter">
             <button
               onClick={() => {
-                let sendData = [];
-                state.segmentList.forEach(e => {
-                  sendData.push(e.props.labelmap3D);
-                });
-                let data = JSON.stringify(sendData);
+                const element = getEnabledElement();
+                const DisplaySet = getCurrentDisplaySet();
 
-                //TODO : 저쟁할때 viewports[0].SeriesInstanceUID 이거랑 넘겨주는 데이터 확인은 필요해보임
-                saveData(viewports[0].SeriesInstanceUID, data);
+                createSeg(element, studies, DisplaySet, state.labels)
+                  .then(() => {
+                    onSaveComplete({
+                      title: 'Save segmentaion',
+                      message: 'Segmentaions saved successfully',
+                      type: 'success',
+                    });
+                  })
+                  .catch(() => {
+                    onSaveComplete({
+                      title: 'Save segmentaion',
+                      message: 'Error while saving the segmentaions.',
+                      type: 'error',
+                    });
+                  });
               }}
               className="saveBtn"
               data-cy="save-measurements-btn"
@@ -843,8 +892,15 @@ const SegmentsSection = ({
   );
 };
 
-async function saveData(id, data) {
-  try {
+async function saveData(uuid, data) {
+  console.log('============================', JSON.stringify(data).length);
+  let sendData = [];
+  data.forEach(e => {
+    console.log(e.props);
+    sendData.push(e.props.labelmap3D.labelmaps2D);
+  });
+  console.log('============================', JSON.stringify(sendData));
+  /*try {
     axios({
       method: 'post',
       url: 'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
@@ -855,7 +911,23 @@ async function saveData(id, data) {
     });
   } catch (error) {
     console.error(error);
+  }*/
+}
+
+async function getData(uuid) {
+  try {
+    //응답 성공
+    const response = await axios.get(
+      'https://lg-ai-portal.carpediem.so/api/v1/segmentation/' + uuid,
+      {}
+    );
+    console.log(response.data.data.text);
+  } catch (error) {
+    //응답 실패
+    console.error(error);
   }
+
+  return response;
 }
 
 const noop = () => {};

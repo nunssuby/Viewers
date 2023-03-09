@@ -125,6 +125,67 @@ const definitions = [
       },
     ],
   },
+  // {
+  //   id: 'SegDropdown',
+  //   label: 'Segmentation',
+  //   icon: 'ellipse-circle',
+  //   buttons: [
+  //     {
+  //       id: 'Brush',
+  //       label: 'Brush',
+  //       icon: 'brush',
+  //       //
+  //       type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+  //       commandName: 'setToolActive',
+  //       commandOptions: { toolName: 'Brush' },
+  //     },
+  //     {
+  //       id: 'SegTempCrosshairs',
+  //       label: 'Custom',
+  //       icon: 'sun',
+  //       //
+  //       type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+  //       commandName: 'customDrow',
+  //       commandOptions: {},
+  //     },
+  //     {
+  //       id: 'FreehandScissors',
+  //       label: 'FreehandScissors',
+  //       icon: 'brush',
+  //       //
+  //       type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+  //       commandName: 'setToolActive',
+  //       commandOptions: { toolName: 'FreehandScissors' },
+  //     },
+  //     {
+  //       id: 'SphericalBrush',
+  //       label: 'Spherical',
+  //       icon: 'sphere',
+  //       //
+  //       type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+  //       commandName: 'setToolActive',
+  //       commandOptions: { toolName: 'SphericalBrush' },
+  //     },
+  //     {
+  //       id: 'CorrectionScissors',
+  //       label: 'Correction Scissors',
+  //       icon: 'scissors',
+  //       //
+  //       type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+  //       commandName: 'setToolActive',
+  //       commandOptions: { toolName: 'CorrectionScissors' },
+  //     },
+  //     {
+  //       id: 'BrushEraser',
+  //       label: 'Eraser',
+  //       icon: 'trash',
+  //       //
+  //       type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+  //       commandName: 'setToolActive',
+  //       commandOptions: { toolName: 'BrushEraser' },
+  //     },
+  //   ],
+  // },
   {
     id: '2DMPR',
     label: '2D MPR',

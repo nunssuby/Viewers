@@ -38,17 +38,26 @@ window.config = {
     // ~ Cornerstone Extension
     { commandName: 'rotateViewportCW', label: 'Rotate Right', keys: ['r'] },
     { commandName: 'rotateViewportCCW', label: 'Rotate Left', keys: ['l'] },
-    { commandName: 'invertViewport', label: 'Invert', keys: ['i'] },
+    { commandName: 'customDrow', label: 'customDrow', keys: ['s'] },
+    { commandName: 'toleranceUp', label: 'toleranceUp', keys: ['x'] },
+    { commandName: 'toleranceDown', label: 'toleranceDown', keys: ['z'] },
+    { commandName: 'toleranceLargeUp', label: 'toleranceLargeUp', keys: ['c'] },
     {
-      commandName: 'flipViewportVertical',
-      label: 'Flip Horizontally',
-      keys: ['h'],
-    },
-    {
-      commandName: 'flipViewportHorizontal',
-      label: 'Flip Vertically',
+      commandName: 'toleranceLargeDown',
+      label: 'toleranceLargeDown',
       keys: ['v'],
     },
+    { commandName: 'invertViewport', label: 'Invert', keys: ['i'] },
+    // {
+    //   commandName: 'flipViewportVertical',
+    //   label: 'Flip Horizontally',
+    //   keys: ['h'],
+    // },
+    // {
+    //   commandName: 'flipViewportHorizontal',
+    //   label: 'Flip Vertically',
+    //   keys: ['v'],
+    // },
     { commandName: 'scaleUpViewport', label: 'Zoom In', keys: ['+'] },
     { commandName: 'scaleDownViewport', label: 'Zoom Out', keys: ['-'] },
     { commandName: 'fitViewportToWindow', label: 'Zoom to Fit', keys: ['='] },
@@ -69,6 +78,6 @@ window.config = {
       keys: ['pageup'],
     },
     // ~ Cornerstone Tools
-    { commandName: 'setZoomTool', label: 'Zoom', keys: ['z'] },
+    // { commandName: 'setZoomTool', label: 'Zoom', keys: ['z'] },
   ],
 };

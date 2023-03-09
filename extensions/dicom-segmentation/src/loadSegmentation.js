@@ -2,6 +2,8 @@ import dcmjs from 'dcmjs';
 import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 
+cornerstoneTools.getModule('segmentation').configuration.shouldRenderInactiveLabelmaps = false;
+
 export default async function loadSegmentation(
   imageIds,
   segDisplaySet,
@@ -58,7 +60,6 @@ export default async function loadSegmentation(
    * allows us to easily watch the module or the segmentations loading process in any other component
    * without subscribing to external events.
    */
-  console.log('Segmentation loaded.');
   const event = new CustomEvent('extensiondicomsegmentationsegloaded', {
     detail: {
       imageIds,
@@ -123,18 +124,22 @@ function _makeColorLUTAndGetIndex(segMetadata) {
 
     const { ROIDisplayColor, RecommendedDisplayCIELabValue } = segment;
 
-    if (RecommendedDisplayCIELabValue) {
-      const rgb = dcmjs.data.Colors.dicomlab2RGB(
-        RecommendedDisplayCIELabValue
-      ).map(x => Math.round(x * 255));
+    // if (RecommendedDisplayCIELabValue) {
+    //   const rgb = dcmjs.data.Colors.dicomlab2RGB(
+    //     RecommendedDisplayCIELabValue
+    //   ).map(x => Math.round(x * 255));
 
-      colorLUT[i] = [...rgb, 255];
-    } else if (ROIDisplayColor) {
-      colorLUT[i] = [...ROIDisplayColor, 255];
-    } else {
-      colorLUT[i] = [...colorLutTables[0][i]];
-    }
+    //   colorLUT[i] = [...rgb, 255];
+    // } else if (ROIDisplayColor) {
+    //   colorLUT[i] = [...ROIDisplayColor, 255];
+    // } else {
+    //   colorLUT[i] = [...colorLutTables[0][i]];
+    // }
+
+    colorLUT[i] = [...colorLutTables[0][i]];
   }
+
+  
 
   colorLUT.shift();
   setters.colorLUT(colorLUTIndex, colorLUT);

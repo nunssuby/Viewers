@@ -3,6 +3,7 @@ import loadSegmentation from './loadSegmentation';
 import getSourceDisplaySet from './getSourceDisplaySet';
 import OHIF from '@ohif/core';
 import dcmjs from 'dcmjs';
+import Segmentation from './components/SegmentationPanel/adapters/Cornerstone/Segmentation_4X';
 
 const { DicomLoaderService } = OHIF.utils;
 const { DicomMessage, DicomMetaDictionary } = dcmjs.data;
@@ -162,13 +163,14 @@ function _parseSeg(
   skipOverlapping = false,
   cornerstoneToolsVersion = 4
 ) {
-  return dcmjs.adapters.Cornerstone.Segmentation.generateToolState(
+  //return dcmjs.adapters.Cornerstone.Segmentation.generateToolState(
+  return Segmentation.generateToolState(
     imageIds,
     arrayBuffer,
     cornerstone.metaData,
     skipOverlapping,
     tolerance,
-    cornerstoneToolsVersion
+    //cornerstoneToolsVersion
   );
 }
 

@@ -10,6 +10,24 @@ const definitions = [
     label: 'Segmentation',
     icon: 'ellipse-circle',
     buttons: [
+      // {
+      //   id: 'SegMpr',
+      //   label: 'mprDrow',
+      //   icon: 'sun',
+      //   //
+      //   type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+      //   commandName: 'mprDrow',
+      //   commandOptions: {},
+      // },
+      {
+        id: 'SegTempCrosshairs',
+        label: 'Custom',
+        icon: 'dot-circle',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'customDrow',
+        commandOptions: {},
+      },
       {
         id: 'Brush',
         label: 'Brush',
@@ -20,9 +38,28 @@ const definitions = [
         commandOptions: { toolName: 'Brush' },
       },
       {
+        id: 'RectangleScissors',
+        label: 'Rectangle',
+        icon: 'square-o',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'RectangleScissors' },
+      },
+      {
+        id: 'CircleScissors',
+        label: 'Circle',
+        icon: 'circle-o',
+        //
+        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+        commandName: 'setToolActive',
+        commandOptions: { toolName: 'CircleScissors' },
+      },
+
+      {
         id: 'FreehandScissors',
-        label: 'FreehandScissors',
-        icon: 'brush',
+        label: 'Freehand',
+        icon: 'palette',
         //
         type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
         commandName: 'setToolActive',
@@ -39,7 +76,7 @@ const definitions = [
       },
       {
         id: 'CorrectionScissors',
-        label: 'Correction Scissors',
+        label: 'Scissors',
         icon: 'scissors',
         //
         type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,

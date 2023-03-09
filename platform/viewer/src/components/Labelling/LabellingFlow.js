@@ -232,7 +232,7 @@ const LabellingFlow = ({
         <div
           className={`labellingComponent ${state.editDescription &&
             'editDescription'}`}
-          onMouseLeave={fadeOutAndLeave}
+          // onMouseLeave={fadeOutAndLeave}
           onMouseEnter={clearFadeOutTimer}
         >
           {labellingStateFragment()}

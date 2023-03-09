@@ -1,5 +1,7 @@
 import csTools from 'cornerstone-tools';
 import DICOMSegTempCrosshairsTool from './tools/DICOMSegTempCrosshairsTool';
+import DICOMSegCustomTool from './tools/DICOMSegCustomTool';
+import SyncBrushTool from './tools/SyncBrushTool';
 
 /**
  *
@@ -12,12 +14,16 @@ export default function init({ servicesManager, configuration = {} }) {
     SphericalBrushTool,
     CorrectionScissorsTool,
     FreehandScissorsTool,
+    CircleScissorsTool,
+    RectangleScissorsTool,
   } = csTools;
   const tools = [
     BrushTool,
     SphericalBrushTool,
     CorrectionScissorsTool,
     FreehandScissorsTool,
+    CircleScissorsTool,
+    RectangleScissorsTool,
   ];
 
   tools.forEach(tool => csTools.addTool(tool));
@@ -30,4 +36,6 @@ export default function init({ servicesManager, configuration = {} }) {
   });
 
   csTools.addTool(DICOMSegTempCrosshairsTool);
+  csTools.addTool(DICOMSegCustomTool);
+  csTools.addTool(SyncBrushTool);
 }
