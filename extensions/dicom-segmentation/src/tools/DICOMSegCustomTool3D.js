@@ -9,7 +9,7 @@ import cornerstoneTools, {
 import cornerstone from 'cornerstone-core';
 import TOOL_NAMES from './TOOL_NAMES';
 
-const { DICOM_SEG_CUSTOM_TOOL } = TOOL_NAMES;
+const { DICOM_SEG_CUSTOM_TOOL_3D } = TOOL_NAMES;
 const { getters } = getModule('segmentation');
 
 // Cornerstone 3rd party dev kit imports
@@ -30,11 +30,11 @@ const {
  * @class RTStructDisplayTool - Renders RTSTRUCT data in a read only manner (i.e. as an overlay).
  * @extends cornerstoneTools.BaseTool
  */
-export default class DICOMSegCustomTool extends BaseBrushTool {
+export default class DICOMSegCustomTool3D extends BaseBrushTool {
   constructor(props = {}) {
     const defaultProps = {
-      name: DICOM_SEG_CUSTOM_TOOL,
-      supportedInteractionTypes: ['Mouse', 'Touch', 'MouseWheel'],
+      name: DICOM_SEG_CUSTOM_TOOL_3D,
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: { alwaysEraseOnClick: false },
       mixins: ['renderBrushMixin'],
       svgCursor: probeCursor,
@@ -45,30 +45,15 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
     super(initialProps);
 
     this.touchDragCallback = this._paint.bind(this);
-    this.point = [];
   }
 
-  activeCallback(element) {}
-
-  mouseWheelCallback(evt) {
-    const { element, viewport, spinY } = evt.detail;
-
-    const { configuration } = getModule('segmentation');
-
-    let tolerance = configuration.segsTolerance + spinY;
-    if (this.point != [] && tolerance > 0) {
-      if (spinY > 0) {
-        this._paintToleranceUp(evt, tolerance, this.point);
-      } else {
-        this._paintToleranceDown(
-          evt,
-          tolerance,
-          configuration.segsTolerance,
-          this.point
-        );
-      }
-      configuration.segsTolerance = tolerance;
-    }
+  activeCallback(element) {
+    console.log(`Hello element ${element}!`, this, element);
+    // this.touchDragCallback = this._paint.bind(this);
+    // element.addEventListener(
+    //   'cornerstonetoolsmeasurementadded',
+    //   this.touchDragCallback
+    // );
   }
 
   _paint(evt) {
@@ -82,11 +67,11 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
       return;
     }
 
-    this.point = [x, y];
-
     if (configuration.segsTolerance === undefined) {
       configuration.segsTolerance = 250;
     }
+
+    const radius = configuration.radius;
 
     let pointerArray = [];
 
@@ -122,109 +107,7 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
     cornerstone.updateImage(evt.detail.element);
   }
 
-  _paintToleranceUp(evt, tolerance, point) {
-    const eventData = evt.detail;
-    const element = eventData.element;
-    const image = eventData.image;
-    const x = point[0];
-    const y = point[1];
-
-    if (x < 0 || x > image.columns || y < 0 || y > image.rows) {
-      return;
-    }
-
-    let pointerArray = [];
-
-    const { labelmap2D, labelmap3D, shouldErase } = this.paintEventData;
-
-    const stats = {};
-
-    if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
-      stats.sp = cornerstone.getStoredPixels(element, x, y, 1, 1)[0];
-      stats.mo = stats.sp * image.slope + image.intercept;
-    }
-
-    pointerArray = this._magicwand(
-      image,
-      Math.floor(x),
-      Math.floor(y),
-      tolerance,
-      stats.mo,
-      element
-    );
-
-    drawBrushPixels(
-      pointerArray,
-      labelmap2D.pixelData,
-      labelmap3D.activeSegmentIndex,
-      image.columns,
-      shouldErase
-    );
-
-    cornerstone.updateImage(evt.detail.element);
-  }
-
-  _paintToleranceDown(evt, tolerance, preTolerance, point) {
-    const eventData = evt.detail;
-    const element = eventData.element;
-    const image = eventData.image;
-    const x = point[0];
-    const y = point[1];
-
-    if (x < 0 || x > image.columns || y < 0 || y > image.rows) {
-      return;
-    }
-
-    let pointerArray = [];
-    let prePointerArray = [];
-
-    const { labelmap2D, labelmap3D, shouldErase } = this.paintEventData;
-
-    const stats = {};
-
-    if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
-      stats.sp = cornerstone.getStoredPixels(element, x, y, 1, 1)[0];
-      stats.mo = stats.sp * image.slope + image.intercept;
-    }
-
-    pointerArray = this._magicwand(
-      image,
-      Math.floor(x),
-      Math.floor(y),
-      tolerance,
-      stats.mo,
-      element
-    );
-
-    prePointerArray = this._magicwand(
-      image,
-      Math.floor(x),
-      Math.floor(y),
-      preTolerance,
-      stats.mo,
-      element
-    );
-
-    drawBrushPixels(
-      prePointerArray,
-      labelmap2D.pixelData,
-      labelmap3D.activeSegmentIndex,
-      image.columns,
-      true
-    );
-
-    drawBrushPixels(
-      pointerArray,
-      labelmap2D.pixelData,
-      labelmap3D.activeSegmentIndex,
-      image.columns,
-      false
-    );
-
-    cornerstone.updateImage(evt.detail.element);
-  }
-
-  _magicwand(image, px, py, Tolerance, base, element, except = []) {
+  _magicwand(image, px, py, Tolerance, base, element) {
     var c,
       x,
       newY,
@@ -254,7 +137,6 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
         dy = el.y;
 
         if (visited[dy * w + x] === 1) continue; // check whether the point has been visited
-        if (except.filter(p => p[0] == x && p[1] == dy).length > 0) continue;
 
         // compare the color of the sample
 
@@ -277,7 +159,6 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
           dyl = dy * w + xl;
 
           if (visited[dyl] === 1) break; // check whether the point has been visited
-          if (except.filter(p => p[0] == xl && p[1] == dy).length > 0) break;
 
           if (xl >= 0 && dy >= 0 && xl < image.columns && dy < image.rows) {
             mo =
@@ -298,7 +179,6 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
           dyr = dy * w + xr;
 
           if (visited[dyr] === 1) break; // check whether the point has been visited
-          if (except.filter(p => p[0] == xr && p[1] == dy).length > 0) break;
 
           if (xr >= 0 && dy >= 0 && xr < image.columns && dy < image.rows) {
             mo =

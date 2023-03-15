@@ -5,7 +5,11 @@ import { redux } from '@ohif/core';
 
 import DICOMSegTempCrosshairsTool from './tools/DICOMSegTempCrosshairsTool';
 import TOOL_NAMES from './tools/TOOL_NAMES';
-const { DICOM_SEG_CUSTOM_TOOL, SYNC_BRUSH_TOOL } = TOOL_NAMES;
+const {
+  DICOM_SEG_CUSTOM_TOOL,
+  DICOM_SEG_CUSTOM_TOOL_3D,
+  SYNC_BRUSH_TOOL,
+} = TOOL_NAMES;
 
 const { setLayout } = redux.actions;
 const { studyMetadataManager } = OHIF.utils;
@@ -98,7 +102,7 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
         configuration.segsTolerance = 250;
       }
 
-      configuration.segsTolerance = UINotificationService.show({
+      UINotificationService.show({
         title: 'Segmentation tools',
         message:
           'Segmentation MagicTool Selected! \ntolerance value : ' +
@@ -107,6 +111,29 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
         autoClose: true,
       });
     },
+
+    customDrow3D: () => {
+      const module = csTools.getModule('segmentation');
+      module.setters.radius(5);
+
+      csTools.setToolActive(DICOM_SEG_CUSTOM_TOOL_3D, { mouseButtonMask: 1 });
+
+      const { configuration } = csTools.getModule('segmentation');
+
+      if (configuration.segsTolerance === undefined) {
+        configuration.segsTolerance = 250;
+      }
+
+      UINotificationService.show({
+        title: 'Segmentation tools3D',
+        message:
+          'Segmentation MagicTool Selected! \ntolerance value : ' +
+          configuration.segsTolerance,
+        type: 'success',
+        autoClose: true,
+      });
+    },
+
     mprDrow: () => {
       // const numRows = 1;
       // const numColumns = 3;
@@ -247,7 +274,8 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
       const { configuration } = csTools.getModule('segmentation');
 
       if (configuration.segsTolerance + tolerance > 0) {
-        configuration.segsTolerance = configuration.segsTolerance + tolerance;
+        configuration.segsTolerance =
+          Math.floor(configuration.segsTolerance) + tolerance;
 
         UINotificationService.show({
           title: 'Segmentation tolerance Change.',
@@ -267,6 +295,11 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
     },
     customDrow: {
       commandFn: actions.customDrow,
+      storeContexts: ['viewports'],
+      options: {},
+    },
+    customDrow3D: {
+      commandFn: actions.customDrow3D,
       storeContexts: ['viewports'],
       options: {},
     },

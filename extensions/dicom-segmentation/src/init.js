@@ -1,6 +1,7 @@
 import csTools from 'cornerstone-tools';
 import DICOMSegTempCrosshairsTool from './tools/DICOMSegTempCrosshairsTool';
 import DICOMSegCustomTool from './tools/DICOMSegCustomTool';
+import DICOMSegCustomTool3D from './tools/DICOMSegCustomTool3D';
 import SyncBrushTool from './tools/SyncBrushTool';
 
 /**
@@ -37,5 +38,6 @@ export default function init({ servicesManager, configuration = {} }) {
 
   csTools.addTool(DICOMSegTempCrosshairsTool);
   csTools.addTool(DICOMSegCustomTool);
+  csTools.addTool(DICOMSegCustomTool3D);
   csTools.addTool(SyncBrushTool);
 }

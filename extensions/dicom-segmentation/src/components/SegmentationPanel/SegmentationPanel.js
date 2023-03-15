@@ -64,7 +64,7 @@ const SegmentationPanel = ({
    */
   const { configuration } = cornerstoneTools.getModule('segmentation');
   if (configuration.segsTolerance === undefined) {
-    configuration.segsTolerance = 1e-2;
+    configuration.segsTolerance = 250;
   }
   const DEFAULT_BRUSH_RADIUS = configuration.radius || 10;
 
