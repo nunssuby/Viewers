@@ -28,15 +28,15 @@ const definitions = [
         commandName: 'customDrow',
         commandOptions: {},
       },
-      {
-        id: 'SegTempCrosshairs3D',
-        label: 'Custom3D',
-        icon: 'lung',
-        //
-        type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
-        commandName: 'customDrow3D',
-        commandOptions: {},
-      },
+      // {
+      //   id: 'SegTempCrosshairs3D',
+      //   label: 'Custom3D',
+      //   icon: 'lung',
+      //   //
+      //   type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+      //   commandName: 'customDrow3D',
+      //   commandOptions: {},
+      // },
       {
         id: 'Brush',
         label: 'Brush',
