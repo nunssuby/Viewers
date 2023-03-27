@@ -6,7 +6,9 @@ import OHIF from '@ohif/core';
 import PropTypes from 'prop-types';
 import cornerstone from 'cornerstone-core';
 import checkForSRAnnotations from './tools/checkForSRAnnotations';
-
+import {
+  getModule,
+} from 'cornerstone-tools';
 const { StackManager } = OHIF.utils;
 
 class OHIFCornerstoneViewport extends Component {
@@ -247,9 +249,12 @@ class OHIFCornerstoneViewport extends Component {
         );
       }
 
+      const { configuration } = getModule('segmentation');
+
       return (
         <OHIFCornerstoneViewportOverlay
           {...props}
+          tolerance={configuration.segsTolerance}
           inconsistencyWarnings={inconsistencyWarnings}
           SRLabels={filteredSRLabels}
         />
