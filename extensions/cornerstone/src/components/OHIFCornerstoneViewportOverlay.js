@@ -18,6 +18,7 @@ import './OHIFCornerstoneViewportOverlay.css';
 
 class OHIFCornerstoneViewportOverlay extends PureComponent {
   static propTypes = {
+    tolerance: PropTypes.number.isRequired,
     scale: PropTypes.number.isRequired,
     windowWidth: PropTypes.oneOfType([
       PropTypes.number.isRequired,
@@ -35,6 +36,7 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
 
   render() {
     const {
+      tolerance,
       imageId,
       scale,
       windowWidth,
@@ -141,6 +143,7 @@ class OHIFCornerstoneViewportOverlay extends PureComponent {
           </div>
         </div>
         <div className="bottom-right overlay-element">
+          {tolerance && (<div>SegTolerance: {tolerance}</div>)}
           <div>Zoom: {zoomPercentage}%</div>
           <div>{wwwc}</div>
           <div className="compressionIndicator">{compression}</div>

@@ -55,7 +55,18 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
 
     const { configuration } = getModule('segmentation');
 
-    let tolerance = configuration.segsTolerance + spinY;
+    let addTolerance = spinY;
+
+    if(this._isCtrlDown(evt.detail.detail)){
+      addTolerance = addTolerance * 5;
+    }
+
+    if(this._isAltDown(evt.detail.detail)){
+      addTolerance = addTolerance * 10;
+    }
+
+    let tolerance = configuration.segsTolerance + Math.round(addTolerance);
+
     if (this.point != [] && tolerance > 0) {
       if (spinY > 0) {
         this._paintToleranceUp(evt, tolerance, this.point);
@@ -341,5 +352,13 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
     } while (stack.length > 0);
 
     return result;
+  }
+
+  _isCtrlDown(eventData) {
+    return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
+  }
+
+  _isAltDown(eventData) {
+    return (eventData.event && eventData.event.altKey) || eventData.altKey;
   }
 }
