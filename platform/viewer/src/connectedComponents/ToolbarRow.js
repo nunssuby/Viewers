@@ -53,7 +53,7 @@ class ToolbarRow extends Component {
     // Why ToolbarRow instead of just Toolbar? Do we have any others?
     this.state = {
       toolbarButtons: toolbarButtonDefinitions,
-      activeButtons: [],
+      activeButtons: [{id : 'Wwwc'}],
     };
 
     this.seriesPerStudyCount = [];
@@ -355,6 +355,7 @@ function _handleToolbarButtonClick(button, evt, props) {
     const toggables = activeButtons.filter(
       ({ options }) => options && !options.togglable
     );
+    console.log("===============toggables", button)
     this.setState({ activeButtons: [...toggables, button] });
   } else if (button.type === 'builtIn') {
     this._handleBuiltIn(button);

@@ -82,7 +82,9 @@ class ExpandableToolMenu extends React.Component {
   };
 
   activeIcon = () => {
+    console.log("active icon", this.props.activeCommand)
     if (this.props.activeCommand) {
+      console.log("active icon 111")
       return (
         this.props.buttons.find(btn => this.props.activeCommand === btn.id)
           .icon || this.props.icon

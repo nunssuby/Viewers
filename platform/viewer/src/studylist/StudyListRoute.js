@@ -209,10 +209,13 @@ function StudyListRoute(props) {
       {studyListFunctionsEnabled ? (
         <ConnectedDicomFilesUploader
           isOpen={activeModalId === 'DicomFilesUploader'}
-          onClose={() => setActiveModalId(null)}
+          onClose={() => {
+            setActiveModalId(null);
+            location.reload();
+          }}
         />
       ) : null}
-      {healthCareApiWindows}111
+      {healthCareApiWindows}
       <WhiteLabelingContext.Consumer>
         {whiteLabeling => (
           <UserManagerContext.Consumer>
