@@ -355,7 +355,6 @@ function _handleToolbarButtonClick(button, evt, props) {
     const toggables = activeButtons.filter(
       ({ options }) => options && !options.togglable
     );
-    console.log("===============toggables", button)
     this.setState({ activeButtons: [...toggables, button] });
   } else if (button.type === 'builtIn') {
     this._handleBuiltIn(button);
