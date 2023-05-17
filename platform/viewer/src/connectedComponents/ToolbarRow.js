@@ -53,7 +53,7 @@ class ToolbarRow extends Component {
     // Why ToolbarRow instead of just Toolbar? Do we have any others?
     this.state = {
       toolbarButtons: toolbarButtonDefinitions,
-      activeButtons: [],
+      activeButtons: [{id : 'Wwwc'}],
     };
 
     this.seriesPerStudyCount = [];

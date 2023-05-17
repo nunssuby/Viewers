@@ -254,7 +254,7 @@ class OHIFCornerstoneViewport extends Component {
       return (
         <OHIFCornerstoneViewportOverlay
           {...props}
-          tolerance={configuration.segsTolerance}
+          tolerance={configuration.segsTolerance || 250}
           inconsistencyWarnings={inconsistencyWarnings}
           SRLabels={filteredSRLabels}
         />
