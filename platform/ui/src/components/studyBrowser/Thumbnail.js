@@ -18,6 +18,7 @@ function ThumbnailFooter({
   numImageFrames,
   hasWarnings,
   hasDerivedDisplaySets,
+  StudyInstanceUID,
 }) {
   const [inconsistencyWarnings, inconsistencyWarningsSet] = useState([]);
   const [derivedDisplaySetsActive, derivedDisplaySetsActiveSet] = useState([]);
@@ -109,6 +110,20 @@ function ThumbnailFooter({
     );
   };
 
+  const DICOMdownload = () => {
+    //const studyMeta = studyMetadataManager.get(StudyInstanceUID);
+    //console.log(window.config, StudyInstanceUID, studyMeta, SeriesNumber)
+
+    const downloadUrl = `${window.config.servers.dicomWeb[0].wadoRoot}/studies/${StudyInstanceUID}?accept=application/zip`;
+
+    // const studyMeta = DicomMetadataStore.getStudy(StudyInstanceUID);
+    // const RetrieveURL =
+    //   studyMeta?.series?.filter(
+    //     series => series.SeriesNumber === seriesNumber
+    //   )[0].RetrieveURL + '?accept=application/zip';
+    window.open(downloadUrl);
+  };
+
   const getSeriesInformation = (
     SeriesNumber,
     numImageFrames,
@@ -136,6 +151,9 @@ function ThumbnailFooter({
         </React.Fragment>
         {getDerivedInfo(derivedDisplaySetsActive)}
         {getWarningInfo(SeriesNumber, inconsistencyWarnings)}
+        <div className="derived">
+          <Icon name="download" onClick={() => DICOMdownload()} />
+        </div>
       </div>
     );
 

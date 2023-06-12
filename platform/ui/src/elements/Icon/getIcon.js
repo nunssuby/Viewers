@@ -28,6 +28,7 @@ import cube from './icons/cube.svg';
 import d3Rotate from './icons/3d-rotate.svg';
 import database from './icons/database.svg';
 import dotCircle from './icons/dot-circle.svg';
+import download from './icons/file-download-svgrepo-com.svg';
 import edit from './icons/edit.svg';
 import ellipseCircle from './icons/ellipse-circle.svg';
 import ellipseH from './icons/ellipse-h.svg';
@@ -106,6 +107,7 @@ const ICONS = {
   cube,
   crosshairs,
   'dot-circle': dotCircle,
+  download,
   'angle-left': angleLeft,
   '3d-rotate': d3Rotate,
   plus,
