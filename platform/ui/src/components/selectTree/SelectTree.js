@@ -78,10 +78,11 @@ export class SelectTree extends Component {
     }
     return labelClass;
   };
-
-  filterItems() {
+  //20230612 type parameter 추가
+  filterItems(type) {
     const filteredItems = [];
     const rawItems = cloneDeep(this.props.items);
+    var idx = 0;
     rawItems.forEach(item => {
       if (Array.isArray(item.items)) {
         item.items.forEach(item => {
@@ -94,10 +95,15 @@ export class SelectTree extends Component {
       } else {
         const label = item.label.toLowerCase();
         const searchTerm = this.state.searchTerm.toLowerCase();
+        //20230612 추가한 부분 // 직접 입력일 경우, 첫번재 루프에서만 검색어를 배열에 넣는다
+        if (type == 'direInput' && idx == 0) {
+          filteredItems.push({ label: searchTerm });
+        }
         if (label.indexOf(searchTerm) !== -1) {
           filteredItems.push(item);
         }
       }
+      idx++; //20230612 추가한 부분
     });
     return filteredItems;
   }
@@ -113,7 +119,12 @@ export class SelectTree extends Component {
     } else {
       treeItems = cloneDeep(this.props.items);
     }
-
+    //20230612 추가한 부분
+    //검색어와 일치하는 리스트 데이터가 없을 때
+    //리스트 데이터를 생성하는 함수 filterItems를 호출하면서 direInput라는 파라미너를 넘긴다(구분자)
+    if (treeItems == '') {
+      treeItems = this.filterItems('direInput');
+    }
     return treeItems.map((item, index) => {
       let itemKey = index;
       if (this.state.currentNode) {

@@ -99,6 +99,12 @@
   margin-left: 55px;
 }
 
+.labellingComponent .commonButton.center {
+  float: right;
+  position: relative;
+  left: -55%;
+}
+
 .labellingComponent .commonButton.left {
   float: left;
 }
