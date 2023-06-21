@@ -11,6 +11,13 @@ const {
   SYNC_BRUSH_TOOL,
 } = TOOL_NAMES;
 
+const {
+  drawBrushPixels,
+  getDiffBetweenPixelData,
+  getCircle,
+  triggerLabelmapModifiedEvent,
+} = csTools.import('util/segmentationUtils');
+
 const { setLayout } = redux.actions;
 const { studyMetadataManager } = OHIF.utils;
 
@@ -18,6 +25,51 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
   const { UINotificationService, LoggerService } = servicesManager.services;
 
   const actions = {
+    eraserAll: ({ viewports }) => {
+      const enabledElements = cornerstone.getEnabledElements();
+      const element = enabledElements[viewports.activeViewportIndex].element;
+      const { getters } = csTools.getModule('segmentation');
+      const { labelmaps3D } = getters.labelmaps3D(element);
+      const labelmap3D = getters.labelmap3D(element);
+      const activeSegmentIndex = getters.activeSegmentIndex(element);
+      const activeLabelmapIndex = getters.activeLabelmapIndex(element);
+
+      //console.log('eraserAlleraserAlleraserAlleraserAlleraserAll', getters, activeSegmentIndex, activeLabelmapIndex, labelmaps3D, labelmap3D);
+
+      for (let i = 0; i < labelmap3D.labelmaps2D.length; i++) {
+        if (!labelmap3D.labelmaps2D[i]) {
+          continue;
+        } else {
+          for (let j = 0; j < labelmap3D.labelmaps2D[i].pixelData.length; j++) {
+            if (labelmap3D.labelmaps2D[i].pixelData[j] === activeSegmentIndex) {
+              labelmap3D.labelmaps2D[i].pixelData[j] = 0;
+            }
+          }
+          for (
+            let j = 0;
+            j < labelmap3D.labelmaps2D[i].segmentsOnLabelmap.length;
+            j++
+          ) {
+            if (
+              labelmap3D.labelmaps2D[i].segmentsOnLabelmap[j] ===
+              activeSegmentIndex
+            ) {
+              //labelmap3D.labelmaps2D[i].segmentsOnLabelmap.splice(j, 1);
+              labelmap3D.labelmaps2D[i].segmentsOnLabelmap[j] = 0;
+              break;
+            }
+          }
+        }
+      }
+      cornerstone.updateImage(element);
+
+      UINotificationService.show({
+        title: 'Segmentation Reset',
+        message: 'Segmentations All Deleted',
+        type: 'warning',
+        autoClose: true,
+      });
+    },
     jumpToFirstSegment: ({ viewports }) => {
       try {
         const { activeViewportIndex, viewportSpecificData } = viewports;
@@ -288,6 +340,11 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
   };
 
   const definitions = {
+    eraserAll: {
+      commandFn: actions.eraserAll,
+      storeContexts: ['viewports'],
+      options: {},
+    },
     jumpToFirstSegment: {
       commandFn: actions.jumpToFirstSegment,
       storeContexts: ['viewports'],

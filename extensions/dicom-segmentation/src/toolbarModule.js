@@ -101,6 +101,14 @@ const definitions = [
         commandName: 'setToolActive',
         commandOptions: { toolName: 'BrushEraser' },
       },
+      {
+        id: 'BrushEraser',
+        label: 'EraserAll',
+        icon: 'trash',
+        //
+        type: TOOLBAR_BUTTON_TYPES.COMMAND,
+        commandName: 'eraserAll',
+      },
     ],
   },
 ];

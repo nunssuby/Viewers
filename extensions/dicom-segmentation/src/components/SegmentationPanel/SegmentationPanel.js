@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
@@ -85,7 +85,11 @@ const SegmentationPanel = ({
     labels: [],
     isLoading: true,
     isDisabled: false,
+    isChecked: false,
   });
+
+  const [delay, setDelay] = useState(1000);
+  const [isRunning, setIsRunning] = useState(false);
 
   const getActiveViewport = () => viewports[activeIndex];
 
@@ -301,6 +305,12 @@ const SegmentationPanel = ({
       }
     }
   };
+  useInterval(
+    () => {
+      checkSeg();
+    },
+    isRunning ? delay : null
+  );
 
   useEffect(() => {
     refreshSegmentations();
@@ -311,6 +321,7 @@ const SegmentationPanel = ({
     state.selectedSegmentation,
     activeContexts,
     state.isLoading,
+    state.selectedSegment,
   ]);
 
   /* Handle open/closed panel behaviour */
@@ -319,6 +330,11 @@ const SegmentationPanel = ({
       ...state,
       showSettings: state.showSettings && !isOpen,
     }));
+    if (isOpen) {
+      setIsRunning(true);
+    } else {
+      setIsRunning(false);
+    }
   }, [isOpen]);
 
   const getLabelMapList = () => {
@@ -504,6 +520,36 @@ const SegmentationPanel = ({
     if (isVTK()) {
       //TODO : 여기는 언제 쓰는지 나중에 확인 필요
       onSegmentVisibilityChange(segmentNumber, isVisible);
+    }
+  };
+
+  const checkSeg = () => {
+    const check = getBrushStackState();
+    //console.log('=========check', check);
+    if (check != undefined) {
+      const activeSegmentIndex = getActiveSegmentIndex();
+
+      let segs = getActiveLabelMaps2D().reduce((acc, labelmap2D) => {
+        if (labelmap2D) {
+          const segmentIndexes = labelmap2D.segmentsOnLabelmap;
+
+          for (let i = 0; i < segmentIndexes.length; i++) {
+            if (!acc.includes(segmentIndexes[i]) && segmentIndexes[i] !== 0) {
+              acc.push(segmentIndexes[i]);
+            }
+          }
+        }
+
+        return acc;
+      }, []);
+
+      let flag = segs.includes(activeSegmentIndex);
+
+      //      console.log(flag, state.segmentList.length, segs);
+
+      if (flag && state.segmentList.length != segs.length) {
+        refreshSegmentations();
+      }
     }
   };
 
@@ -801,32 +847,6 @@ const SegmentationPanel = ({
   }
 };
 
-SegmentationPanel.propTypes = {
-  /*
-   * An object, with int index keys?
-   * Maps to: state.viewports.viewportSpecificData, in `viewer`
-   * Passed in MODULE_TYPES.PANEL when specifying component in viewer
-   */
-  viewports: PropTypes.shape({
-    displaySetInstanceUID: PropTypes.string,
-    frameRate: PropTypes.any,
-    InstanceNumber: PropTypes.number,
-    isMultiFrame: PropTypes.bool,
-    isReconstructable: PropTypes.bool,
-    Modality: PropTypes.string,
-    plugin: PropTypes.string,
-    SeriesDate: PropTypes.string,
-    SeriesDescription: PropTypes.string,
-    SeriesInstanceUID: PropTypes.string,
-    SeriesNumber: PropTypes.any,
-    SeriesTime: PropTypes.string,
-    sopClassUIDs: PropTypes.arrayOf(PropTypes.string),
-    StudyInstanceUID: PropTypes.string,
-  }),
-  activeIndex: PropTypes.number.isRequired,
-  studies: PropTypes.array.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-};
 SegmentationPanel.defaultProps = {};
 
 /**
@@ -928,6 +948,25 @@ async function getData(uuid) {
   }
 
   return response;
+}
+
+function useInterval(callback, delay) {
+  const savedCallback = useRef(); // 최근에 들어온 callback을 저장할 ref를 하나 만든다.
+
+  useEffect(() => {
+    savedCallback.current = callback; // callback이 바뀔 때마다 ref를 업데이트 해준다.
+  }, [callback]);
+
+  useEffect(() => {
+    function tick() {
+      savedCallback.current(); // tick이 실행되면 callback 함수를 실행시킨다.
+    }
+    if (delay !== null) {
+      // 만약 delay가 null이 아니라면
+      let id = setInterval(tick, delay); // delay에 맞추어 interval을 새로 실행시킨다.
+      return () => clearInterval(id); // unmount될 때 clearInterval을 해준다.
+    }
+  }, [delay]); // delay가 바뀔 때마다 새로 실행된다.
 }
 
 const noop = () => {};

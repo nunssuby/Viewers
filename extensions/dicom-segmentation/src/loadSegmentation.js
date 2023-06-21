@@ -139,8 +139,6 @@ function _makeColorLUTAndGetIndex(segMetadata) {
     colorLUT[i] = [...colorLutTables[0][i]];
   }
 
-  
-
   colorLUT.shift();
   setters.colorLUT(colorLUTIndex, colorLUT);
 

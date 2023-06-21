@@ -260,15 +260,15 @@ class Viewer extends Component {
       //TODO : 여기서 가져온 데이터를 seg객체에 담아야 함
       studies.map(study => {
         study.displaySets.map(displaySet => {
-          if (
-            displaySet.Modality &&
-            !['SEG', 'SR', 'RTSTRUCT'].includes(displaySet.Modality)
-          ) {
-            getData(displaySet.SeriesInstanceUID).then(res => {
-              console.log('=================res', res);
-            });
-          }
-        });
+                                              // if (
+                                              //   displaySet.Modality &&
+                                              //   !['SEG', 'SR', 'RTSTRUCT'].includes(displaySet.Modality)
+                                              // ) {
+                                              //   getData(displaySet.SeriesInstanceUID).then(res => {
+                                              //     console.log('=================res', res);
+                                              //   });
+                                              // }
+                                            });
       });
 
       const PatientID = studies[0] && studies[0].PatientID;
