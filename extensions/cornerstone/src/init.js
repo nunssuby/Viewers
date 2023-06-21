@@ -6,7 +6,6 @@ import merge from 'lodash.merge';
 import initCornerstoneTools from './initCornerstoneTools.js';
 import measurementServiceMappingsFactory from './utils/measurementServiceMappings/measurementServiceMappingsFactory';
 import dicomSRModule from './tools/modules/dicomSRModule';
-import RotateTool from './tools/RotateTool';
 import srModuleId from './tools/id';
 
 /**
@@ -171,7 +170,6 @@ export default function init({ servicesManager, configuration }) {
   csTools.setToolActive('StackScrollMouseWheel', {}); // TODO: Empty options should not be required
   csTools.setToolActive('PanMultiTouch', { pointers: 2 }); // TODO: Better error if no options
   csTools.setToolActive('ZoomTouchPinch', {});
-  csTools.setToolActive('RotateTool', {});
   csTools.setToolEnabled('Overlay', {});
 }
 

@@ -10,7 +10,6 @@ import getReferencedSeriesSequence from './getReferencedSeriesSequence';
  * @param {Object} aSopInstance a SOP Instance from which study information will be added
  */
 function createStudy(server, aSopInstance) {
-  console.log('createStudy');
   // TODO: Pass a reference ID to the server instead of including the URLs here
   return {
     series: [],

@@ -35,8 +35,14 @@ class Viewer extends Component {
           PropTypes.shape({
             displaySetInstanceUID: PropTypes.string.isRequired,
             SeriesDescription: PropTypes.string,
-            SeriesNumber: PropTypes.number,
-            InstanceNumber: PropTypes.number,
+            SeriesNumber: PropTypes.oneOfType([
+              PropTypes.string,
+              PropTypes.number,
+            ]),
+            InstanceNumber: PropTypes.oneOfType([
+              PropTypes.string,
+              PropTypes.number,
+            ]),
             numImageFrames: PropTypes.number,
             Modality: PropTypes.string.isRequired,
             images: PropTypes.arrayOf(
@@ -112,8 +118,6 @@ class Viewer extends Component {
   }
 
   retrieveTimepoints = filter => {
-    OHIF.log.info('retrieveTimepoints1');
-
     // Get the earliest and latest study date
     let earliestDate = new Date().toISOString();
     let latestDate = new Date().toISOString();
@@ -260,15 +264,15 @@ class Viewer extends Component {
       //TODO : 여기서 가져온 데이터를 seg객체에 담아야 함
       studies.map(study => {
         study.displaySets.map(displaySet => {
-                                              // if (
-                                              //   displaySet.Modality &&
-                                              //   !['SEG', 'SR', 'RTSTRUCT'].includes(displaySet.Modality)
-                                              // ) {
-                                              //   getData(displaySet.SeriesInstanceUID).then(res => {
-                                              //     console.log('=================res', res);
-                                              //   });
-                                              // }
-                                            });
+          // if (
+          //   displaySet.Modality &&
+          //   !['SEG', 'SR', 'RTSTRUCT'].includes(displaySet.Modality)
+          // ) {
+          //   getData(displaySet.SeriesInstanceUID).then(res => {
+          //     console.log('=================res', res);
+          //   });
+          // }
+        });
       });
 
       const PatientID = studies[0] && studies[0].PatientID;
