@@ -176,20 +176,23 @@ function StudyList(props) {
           </tr>
         )}
         {!isLoading &&
-          studies.map((study, index) => (
-            <TableRow
-              key={`${study.StudyInstanceUID}-${index}`}
-              onClick={StudyInstanceUID => handleSelectItem(StudyInstanceUID)}
-              AccessionNumber={study.AccessionNumber || ''}
-              modalities={study.modalities}
-              PatientID={study.PatientID || ''}
-              PatientName={study.PatientName || ''}
-              StudyDate={study.StudyDate}
-              StudyDescription={study.StudyDescription || ''}
-              StudyInstanceUID={study.StudyInstanceUID}
-              displaySize={displaySize}
-            />
-          ))}
+          studies.map((study, index) => {
+            console.log('---------------------------', study);
+            return (
+              <TableRow
+                key={`${study.StudyInstanceUID}-${index}`}
+                onClick={StudyInstanceUID => handleSelectItem(StudyInstanceUID)}
+                AccessionNumber={study.AccessionNumber || ''}
+                modalities={study.modalities}
+                PatientID={study.PatientID || ''}
+                PatientName={study.PatientName || ''}
+                StudyDate={study.StudyDate}
+                StudyDescription={study.StudyDescription || ''}
+                StudyInstanceUID={study.StudyInstanceUID}
+                displaySize={displaySize}
+              />
+            );
+          })}
       </tbody>
     </table>
   ) : null;

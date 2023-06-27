@@ -18,6 +18,7 @@ export default {
   },
 
   getPanelModule({ servicesManager, commandsManager }) {
+    console.log('getPanelModule11');
     const { UINotificationService, UIDialogService } = servicesManager.services;
 
     const showLabellingDialog = (props, measurementData) => {
