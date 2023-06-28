@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ViewerbaseDragDropContext } from '@ohif/ui';
 import { withRouter } from 'react-router';
+import axios from 'axios';
 
 
 class Login extends Component {
@@ -10,6 +11,58 @@ class Login extends Component {
     const handleSubmit = () =>{
 
     }
+
+    async function getToken() {
+      try {
+        //응답 성공
+        const response = await axios.post('http://grk-backend.medical-lab.co.kr/api/v1/token/', {
+                      'userId': "tester",
+                      'password': "asdfsadf",
+                    })
+        console.log(response.data);
+      } catch (error) {
+        //응답 실패
+        console.error(error);
+      }
+
+      return response;
+    }
+
+    // const getToken = async data =>{
+    //   console.log("asdfsadsdaf")
+    //   await new Promise(r => setTimeout(r, 1000));
+    //
+    //   //console.log(data);
+    //   data.id.toUpperCase();
+    //   try{
+    //     const responseToken = loginRequest
+    //         .post('/api/v1/token/', {
+    //           'userId': data.id,
+    //           'password': data.password,
+    //         })
+    //     const jwtToken = responseToken.data;
+    //     console.log(responseToken)
+    //     console.log(jwtToken.accessToken)
+    //     console.log(jwtToken.refreshToken)
+    //     sessionStorage.setItem("jwt", jwtToken)
+    //     localStorage.setItem("jwt", jwtToken); //토큰에 저장되어있는 userInfo 저장
+    //     return responseToken;
+    //   }catch{
+    //     alert('로그인이 실패했습니다. 정보가 올바른지 다시 확인해주세요');
+    //   }
+    //   console.log(responseToken);
+    //   if (data.id.toUpperCase() === 'GRK' && data.password === 'qwer1234') {
+    //     if (data.saveId) {
+    //       localStorage.setItem('saveId', data.id);
+    //     } else {
+    //       localStorage.removeItem('saveId');
+    //     }
+    //     localStorage.setItem('isLogin', 'OK');
+    //     navigate('/project');
+    //   } else {
+    //     alert('아이디 비번을 확인하세요');
+    //   }
+    // }
 
     const isDirty = undefined
     // const register = () =>{
@@ -95,7 +148,8 @@ class Login extends Component {
 
                 <div className="text-center lg:text-left">
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={getToken}
                     // disabled={isSubmitting}
                     className="inline-block w-full px-7 py-3 bg-primary-light text-gray-900 font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-primary-light hover:shadow-lg focus:bg-primary-light focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-light active:shadow-lg transition duration-150 ease-in-out"
                   >
