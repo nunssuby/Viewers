@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ViewerbaseDragDropContext } from '@ohif/ui';
 import { withRouter } from 'react-router';
+import loginRequest from "../utils/axios";
 import { Svg } from '@ohif/ui';
 
 class Login extends Component {
 
   render() {
     const handleSubmit = () =>{
-    
+
     }
     const onSubmit = () =>{
 
@@ -21,8 +22,8 @@ class Login extends Component {
 
     const errors = {'id':  'false'}
     // const isSubmitting = 'disabled'
-
-    return (  
+    loginRequest.post((`/login`)=>{} )
+    return (
       <section className="h-full gradient-form bg-black md:h-screen">
       <div className="w-full py-12 px-12 h-full">
         <div className="flex justify-center items-center flex-wrap h-full g-6  text-white">
@@ -146,4 +147,3 @@ const ConnectedLogin = connect(
 export default ViewerbaseDragDropContext(
   withRouter(ConnectedLogin)
 );
-
