@@ -3,7 +3,7 @@ import { OidcProvider } from 'redux-oidc';
 import { I18nextProvider } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { hot } from 'react-hot-loader/root';
 
 import OHIFCornerstoneExtension from '@ohif/extension-cornerstone';
@@ -48,6 +48,7 @@ import { GenericViewerCommands, MeasurementsPanel } from './appExtensions';
 
 /** Viewer */
 import OHIFStandaloneViewer from './OHIFStandaloneViewer';
+import Login from './Login';
 
 /** Store */
 import { getActiveContexts } from './store/layout/selectors.js';
@@ -179,7 +180,8 @@ class App extends Component {
       MeasurementService,
       LoggerService,
     } = servicesManager.services;
-
+    console.log('Login')
+    console.log(<Login></Login>)
     if (this._userManager) {
       return (
         <ErrorBoundary context="App">
@@ -197,9 +199,10 @@ class App extends Component {
                                 modal={OHIFModal}
                                 service={UIModalService}
                               >
-                                <OHIFStandaloneViewer
-                                  userManager={this._userManager}
-                                />
+                                <Switch>
+                                  <Route exact path="/login" component={<Login />} />
+                                  <Route path="/" component={<OHIFStandaloneViewer userManager={this._userManager}/>} />
+                                </Switch>
                               </ModalProvider>
                             </DialogProvider>
                           </SnackbarProvider>
@@ -229,7 +232,10 @@ class App extends Component {
                           modal={OHIFModal}
                           service={UIModalService}
                         >
-                          <OHIFStandaloneViewer />
+                          <Switch>
+                            <Route exact path="/login" component={Login} />
+                            <Route path="/" component={OHIFStandaloneViewer} />
+                          </Switch>
                         </ModalProvider>
                       </DialogProvider>
                     </SnackbarProvider>
