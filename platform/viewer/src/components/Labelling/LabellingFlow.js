@@ -182,7 +182,7 @@ const LabellingFlow = ({
               >
                 Relabel
               </button>
-              // 20230612 추가한 부분
+              {/* // 20230612 추가한 부분 */}
               <button
                 type="button"
                 className="commonButton center"

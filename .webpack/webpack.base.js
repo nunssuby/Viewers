@@ -57,6 +57,19 @@ module.exports = (env, argv, { SRC_DIR, DIST_DIR }) => {
     },
     resolve: {
       // Which directories to search when resolving modules
+      alias: {
+        // Viewer project
+        '@': path.resolve(__dirname, '../platform/viewer/src'),
+        '@components': path.resolve(
+          __dirname,
+          '../platform/viewer/src/components'
+        ),
+        '@hooks': path.resolve(__dirname, '../platform/viewer/src/hooks'),
+        '@routes': path.resolve(__dirname, '../platform/viewer/src/routes'),
+        '@state': path.resolve(__dirname, '../platform/viewer/src/state'),
+        'cornerstone-wado-image-loader':
+          'cornerstone-wado-image-loader/dist/dynamic-import/cornerstoneWADOImageLoader.min.js',
+      },
       modules: [
         // Modules specific to this package
         path.resolve(__dirname, '../node_modules'),

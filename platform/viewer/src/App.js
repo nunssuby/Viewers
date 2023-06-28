@@ -1,21 +1,30 @@
-import React, { Component } from 'react';
-import { OidcProvider } from 'redux-oidc';
-import { I18nextProvider } from 'react-i18next';
+// External
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { hot } from 'react-hot-loader/root';
 
 import OHIFCornerstoneExtension from '@ohif/extension-cornerstone';
+import i18n from '@ohif/i18n';
+import { I18nextProvider } from 'react-i18next';
+import { BrowserRouter } from 'react-router-dom';
+import Compose from './routes/Mode/Compose';
+
 
 import {
-  SnackbarProvider,
-  ModalProvider,
   DialogProvider,
-  OHIFModal,
-  LoggerProvider,
-  ErrorBoundary,
+  Modal,
+  ModalProvider,
+  SnackbarProvider,
+  ThemeWrapper,
+  ViewportDialogProvider,
+  ViewportGridProvider,
+  CineProvider,
+  UserAuthenticationProvider,
 } from '@ohif/ui';
+
 
 import {
   CommandsManager,
@@ -247,133 +256,148 @@ class App extends Component {
         </Provider>
       </ErrorBoundary>
     );
+
+// Viewer Project
+// TODO: Should this influence study list?
+import { AppConfigProvider } from '@state';
+import createRoutes from './routes';
+import appInit from './appInit.js';
+import OpenIdConnectRoutes from './utils/OpenIdConnectRoutes';
+
+let commandsManager, extensionManager, servicesManager, hotkeysManager;
+
+function App({ config, defaultExtensions, defaultModes }) {
+  const [init, setInit] = useState(null);
+  useEffect(() => {
+    const run = async () => {
+      appInit(config, defaultExtensions, defaultModes)
+        .then(setInit)
+        .catch(console.error);
+    };
+
+    run();
+  }, []);
+
+  if (!init) {
+    return null;
+
   }
 
-  initUserManager(oidc) {
-    if (oidc && !!oidc.length) {
-      const firstOpenIdClient = this._appConfig.oidc[0];
+  // Set above for named export
+  commandsManager = init.commandsManager;
+  extensionManager = init.extensionManager;
+  servicesManager = init.servicesManager;
+  hotkeysManager = init.hotkeysManager;
 
-      const { protocol, host } = window.location;
-      const { routerBasename } = this._appConfig;
-      const baseUri = `${protocol}//${host}${routerBasename}`;
+  // Set appConfig
+  const appConfigState = init.appConfig;
+  const {
+    routerBasename,
+    modes,
+    dataSources,
+    oidc,
+    showStudyList,
+  } = appConfigState;
 
-      const redirect_uri = firstOpenIdClient.redirect_uri || '/callback';
-      const silent_redirect_uri =
-        firstOpenIdClient.silent_redirect_uri || '/silent-refresh.html';
-      const post_logout_redirect_uri =
-        firstOpenIdClient.post_logout_redirect_uri || '/';
+  const {
+    UIDialogService,
+    UIModalService,
+    UINotificationService,
+    UIViewportDialogService,
+    ViewportGridService,
+    CineService,
+    UserAuthenticationService,
+    customizationService,
+  } = servicesManager.services;
 
-      const openIdConnectConfiguration = Object.assign({}, firstOpenIdClient, {
-        redirect_uri: _makeAbsoluteIfNecessary(redirect_uri, baseUri),
-        silent_redirect_uri: _makeAbsoluteIfNecessary(
-          silent_redirect_uri,
-          baseUri
-        ),
-        post_logout_redirect_uri: _makeAbsoluteIfNecessary(
-          post_logout_redirect_uri,
-          baseUri
-        ),
-      });
+  const providers = [
+    [AppConfigProvider, { value: appConfigState }],
+    [UserAuthenticationProvider, { service: UserAuthenticationService }],
+    [I18nextProvider, { i18n }],
+    [ThemeWrapper],
+    [ViewportGridProvider, { service: ViewportGridService }],
+    [ViewportDialogProvider, { service: UIViewportDialogService }],
+    [CineProvider, { service: CineService }],
+    [SnackbarProvider, { service: UINotificationService }],
+    [DialogProvider, { service: UIDialogService }],
+    [ModalProvider, { service: UIModalService, modal: Modal }],
+  ];
+  const CombinedProviders = ({ children }) =>
+    Compose({ components: providers, children });
 
-      this._userManager = getUserManagerForOpenIdConnectClient(
-        store,
-        openIdConnectConfiguration
-      );
-    }
-  }
-}
+  let authRoutes = null;
 
-function _initServices(services) {
-  servicesManager.registerServices(services);
-}
+  // Should there be a generic call to init on the extension manager?
+  customizationService.init(extensionManager);
 
-/**
- * @param
- */
-function _initExtensions(extensions, cornerstoneExtensionConfig, appConfig) {
-  extensionManager = new ExtensionManager({
-    commandsManager,
+  // Use config to create routes
+  const appRoutes = createRoutes({
+    modes,
+    dataSources,
+    extensionManager,
     servicesManager,
-    appConfig,
-    api: {
-      contexts: CONTEXTS,
-      hooks: {
-        useAppContext,
-      },
-    },
+    commandsManager,
+    hotkeysManager,
+    routerBasename,
+    showStudyList,
   });
 
-  const requiredExtensions = [
-    GenericViewerCommands,
-    [OHIFCornerstoneExtension, cornerstoneExtensionConfig],
-  ];
-
-  if (appConfig.disableMeasurementPanel !== true) {
-    /* WARNING: MUST BE REGISTERED _AFTER_ OHIFCornerstoneExtension */
-    requiredExtensions.push(MeasurementsPanel);
+  if (oidc) {
+    authRoutes = (
+      <OpenIdConnectRoutes
+        oidc={oidc}
+        routerBasename={routerBasename}
+        UserAuthenticationService={UserAuthenticationService}
+      />
+    );
   }
 
-  const mergedExtensions = requiredExtensions.concat(extensions);
-  extensionManager.registerExtensions(mergedExtensions);
-}
-
-/**
- *
- * @param {Object} appConfigHotkeys - Default hotkeys, as defined by app config
- */
-function _initHotkeys(appConfigHotkeys) {
-  // TODO: Use something more resilient
-  // TODO: Mozilla has a special library for this
-  const userPreferredHotkeys = JSON.parse(
-    localStorage.getItem('hotkey-definitions') || '{}'
+  return (
+    <CombinedProviders>
+      <BrowserRouter basename={routerBasename}>
+        {authRoutes}
+        {appRoutes}
+      </BrowserRouter>
+    </CombinedProviders>
   );
-
-  console.log(
-    '===========================================appConfigHotkeys',
-    userPreferredHotkeys,
-    appConfigHotkeys
-  );
-  // TODO: hotkeysManager.isValidDefinitionObject(/* */)
-  const hasUserPreferences =
-    userPreferredHotkeys && Object.keys(userPreferredHotkeys).length > 0;
-  if (hasUserPreferences) {
-    hotkeysManager.setHotkeys(userPreferredHotkeys);
-  } else {
-    hotkeysManager.setHotkeys(appConfigHotkeys);
-  }
-
-  hotkeysManager.setDefaultHotKeys(appConfigHotkeys);
 }
 
-function _initServers(servers) {
-  if (servers) {
-    utils.addServers(servers, store);
-  }
-}
+App.propTypes = {
+  config: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({
+      routerBasename: PropTypes.string.isRequired,
+      oidc: PropTypes.array,
+      whiteLabeling: PropTypes.object,
+      extensions: PropTypes.array,
+    }),
+  ]).isRequired,
+  /* Extensions that are "bundled" or "baked-in" to the application.
+   * These would be provided at build time as part of they entry point. */
+  defaultExtensions: PropTypes.array,
+};
 
-function _isAbsoluteUrl(url) {
-  return url.includes('http://') || url.includes('https://');
-}
+App.defaultProps = {
+  config: {
+    /**
+     * Relative route from domain root that OHIF instance is installed at.
+     * For example:
+     *
+     * Hosted at: https://ohif.org/where-i-host-the/viewer/
+     * Value: `/where-i-host-the/viewer/`
+     * */
+    routerBaseName: '/',
+    /**
+     *
+     */
+    showLoadingIndicator: true,
+    showStudyList: true,
+    oidc: [],
+    extensions: [],
+  },
+  defaultExtensions: [],
+};
 
-function _makeAbsoluteIfNecessary(url, base_url) {
-  if (_isAbsoluteUrl(url)) {
-    return url;
-  }
+export default App;
 
-  /*
-   * Make sure base_url and url are not duplicating slashes.
-   */
-  if (base_url[base_url.length - 1] === '/') {
-    base_url = base_url.slice(0, base_url.length - 1);
-  }
-
-  return base_url + url;
-}
-
-/*
- * Only wrap/use hot if in dev.
- */
-const ExportedApp = process.env.NODE_ENV === 'development' ? hot(App) : App;
-
-export default ExportedApp;
-export { commandsManager, extensionManager, hotkeysManager, servicesManager };
+export { commandsManager, extensionManager, servicesManager };

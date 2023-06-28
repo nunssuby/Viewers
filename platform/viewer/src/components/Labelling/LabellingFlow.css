@@ -97,9 +97,11 @@
 .labellingComponent .commonButtons {
   text-align: center;
   margin-left: 55px;
+  display: flex;
+  justify-content: space-between;
 }
 
-.labellingComponent .commonButton.center {
+/* .labellingComponent .commonButton.center {
   float: right;
   position: relative;
   left: -55%;
@@ -111,7 +113,7 @@
 
 .labellingComponent .commonButton.right {
   float: right;
-}
+} */
 
 .labellingComponent .checkIconWrapper {
   display: inline-block;

@@ -55,8 +55,21 @@ class DicomUploadService {
     if (!checkDicomFile(content))
       throw new Error('This is not a valid DICOM file.');
 
-    console.log('ss===================Uploading');
-    await client.storeInstances({ datasets: [content] });
+    let result = await client.storeInstances({ datasets: [content] }); // POST
+    console.log('ss===================Uploading', result);
+    var convert = require('xml-js');
+    var result1 = JSON.parse(
+      convert.xml2json(result, { compact: true, spaces: 4 })
+    );
+    console.log(typeof result1);
+    console.log('*-*-*-*-');
+    console.log(result1.NativeDicomModel.DicomAttribute[0]);
+    console.log(
+      result1.NativeDicomModel.DicomAttribute[1].Item.DicomAttribute[1].Value
+    );
+    // var oSerializer = new XMLSerializer();
+    // var sPrettyXML = XML(oSerializer.serializeToString(result)).toXMLString();
+    // console.log(sPrettyXML);
   }
 
   readFile(file) {
