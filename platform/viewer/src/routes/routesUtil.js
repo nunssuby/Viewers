@@ -39,6 +39,14 @@ const ViewerLocalFileData = asyncComponent(() =>
   )
 );
 
+const Login = asyncComponent(() =>
+  retryImport(() =>
+    import(
+        /* webpackChunkName: "ViewerLocalFileData" */ '../Login.js'
+        )
+    )
+);
+
 const reload = () => window.location.reload();
 
 const ROUTES_DEF = {
@@ -65,6 +73,10 @@ const ROUTES_DEF = {
     IHEInvokeImageDisplay: {
       path: '/IHEInvokeImageDisplay',
       component: IHEInvokeImageDisplay,
+    },
+    login: {
+      path: ['/login'],
+      component: Login,
     },
   },
   gcloud: {
