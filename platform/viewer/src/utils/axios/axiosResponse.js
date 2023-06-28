@@ -1,6 +1,6 @@
 import axios from "axios";
 
-VITE_BACKEND_URL = 'http://grk-backend.medical-lab.co.kr/'
+const VITE_BACKEND_URL = 'http://grk-backend.medical-lab.co.kr/'
 const request = axios.create({
   timeout: 30000,
   baseURL: VITE_BACKEND_URL,

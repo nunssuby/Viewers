@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ViewerbaseDragDropContext } from '@ohif/ui';
 import { withRouter } from 'react-router';
-import loginRequest from "../utils/axios";
+import loginRequest from "./utils/axios";
 import { Svg } from '@ohif/ui';
+import { sessionTerminated } from 'redux-oidc';
 
 class Login extends Component {
 
@@ -11,9 +12,40 @@ class Login extends Component {
     const handleSubmit = () =>{
 
     }
-    const onSubmit = () =>{
+    const onSubmit = async data =>{
+      await new Promise(r => setTimeout(r, 1000));
 
-    }
+      //console.log(data);
+      data.id.toUpperCase();
+      try{
+      const responseToken = loginRequest
+        .post('/api/v1/token/', {
+          'userId': data.id,
+          'password': data.password,
+        })
+      const jwtToken = responseToken.data;
+      console.log(responseToken)
+      console.log(jwtToken.accessToken)
+      console.log(jwtToken.refreshToken)
+      sessionStorage.setItem("jwt", jwtToken)
+      localStorage.setItem("jwt", jwtToken); //토큰에 저장되어있는 userInfo 저장
+      return responseToken;
+      }catch{
+        alert('로그인이 실패했습니다. 정보가 올바른지 다시 확인해주세요');
+      }
+      console.log(responseToken);
+      if (data.id.toUpperCase() === 'GRK' && data.password === 'qwer1234') {
+        if (data.saveId) {
+          localStorage.setItem('saveId', data.id);
+        } else {
+          localStorage.removeItem('saveId');
+        }
+        localStorage.setItem('isLogin', 'OK');
+        navigate('/project');
+      } else {
+        alert('아이디 비번을 확인하세요');
+      }
+    };
 
     const isDirty = undefined
     // const register = () =>{
@@ -22,7 +54,7 @@ class Login extends Component {
 
     const errors = {'id':  'false'}
     // const isSubmitting = 'disabled'
-    loginRequest.post((`/login`)=>{} )
+
     return (
       <section className="h-full gradient-form bg-black md:h-screen">
       <div className="w-full py-12 px-12 h-full">
