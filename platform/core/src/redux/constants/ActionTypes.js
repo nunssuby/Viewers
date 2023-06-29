@@ -25,3 +25,10 @@ export const SET_EXTENSION_DATA = 'SET_EXTENSION_DATA';
  * PREFERENCES
  * */
 export const SET_USER_PREFERENCES = 'SET_USER_PREFERENCES';
+
+/**
+ * SEGMANTATION
+ * */
+export const PUSH_SEG = 'PUSH_SEG';
+export const POP_SEG = 'POP_SEG';
+export const RESET_SEG = 'RESET_SEG';

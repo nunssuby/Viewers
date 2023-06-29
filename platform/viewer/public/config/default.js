@@ -38,6 +38,12 @@ window.config = {
     // ~ Cornerstone Extension
     { commandName: 'rotateViewportCW', label: 'Rotate Right', keys: ['r'] },
     { commandName: 'rotateViewportCCW', label: 'Rotate Left', keys: ['l'] },
+    {
+      commandName: 'setToolActive',
+      commandOptions: { toolName: 'Brush' },
+      label: 'Brush',
+      keys: ['1'],
+    },
     { commandName: 'customDrow', label: 'customDrow', keys: ['s'] },
     { commandName: 'customDrow3D', label: 'customDrow3D', keys: ['d'] },
     { commandName: 'toleranceUp', label: 'toleranceUp', keys: ['x'] },
@@ -49,6 +55,8 @@ window.config = {
       keys: ['c'],
     },
     { commandName: 'invertViewport', label: 'Invert', keys: ['i'] },
+    { commandName: 'undo', label: 'segmentation-undo', keys: [','] },
+    { commandName: 'redo', label: 'segmentation-redo', keys: ['.'] },
     // {
     //   commandName: 'flipViewportVertical',
     //   label: 'Flip Horizontally',

@@ -95,19 +95,43 @@ const definitions = [
       {
         id: 'BrushEraser',
         label: 'Eraser',
-        icon: 'trash',
+        icon: 'eraser',
         //
         type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
         commandName: 'setToolActive',
         commandOptions: { toolName: 'BrushEraser' },
       },
       {
-        id: 'BrushEraser',
+        id: 'BrushEraserSelect',
         label: 'EraserAll',
         icon: 'trash',
         //
         type: TOOLBAR_BUTTON_TYPES.COMMAND,
-        commandName: 'eraserAll',
+        commandName: 'eraserSelectSeg',
+      },
+      // {
+      //   id: 'BrushEraserAll',
+      //   label: 'EraserAll',
+      //   icon: 'trash',
+      //   //
+      //   type: TOOLBAR_BUTTON_TYPES.COMMAND,
+      //   commandName: 'eraserAll',
+      // },
+      {
+        id: 'Undo',
+        label: 'Undo',
+        icon: 'reset',
+        //
+        type: TOOLBAR_BUTTON_TYPES.COMMAND,
+        commandName: 'undo',
+      },
+      {
+        id: 'Redo',
+        label: 'Redo',
+        icon: 'rotate',
+        //
+        type: TOOLBAR_BUTTON_TYPES.COMMAND,
+        commandName: 'redo',
       },
     ],
   },

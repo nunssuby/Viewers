@@ -11,6 +11,9 @@ import {
   SET_VIEWPORT_LAYOUT,
   SET_VIEWPORT_LAYOUT_AND_DATA,
   SET_USER_PREFERENCES,
+  PUSH_SEG,
+  POP_SEG,
+  RESET_SEG,
 } from './constants/ActionTypes.js';
 
 /**
@@ -110,6 +113,19 @@ export const setServers = servers => ({
   servers,
 });
 
+export const pushSeg = data => ({
+  type: PUSH_SEG,
+  data,
+});
+
+export const popSeg = () => ({
+  type: POP_SEG,
+});
+
+export const resetSeg = () => ({
+  type: RESET_SEG,
+});
+
 const actions = {
   /**
    * VIEWPORT
@@ -129,6 +145,9 @@ const actions = {
   setMeasurements,
   setStudyData,
   setServers,
+  pushSeg,
+  popSeg,
+  resetSeg,
 };
 
 export default actions;

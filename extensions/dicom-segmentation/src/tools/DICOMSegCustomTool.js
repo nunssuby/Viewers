@@ -8,9 +8,10 @@ import cornerstoneTools, {
 } from 'cornerstone-tools';
 import cornerstone from 'cornerstone-core';
 import TOOL_NAMES from './TOOL_NAMES';
+import cloneDeep from 'lodash.clonedeep';
 
 const { DICOM_SEG_CUSTOM_TOOL } = TOOL_NAMES;
-const { getters } = getModule('segmentation');
+const { getters, configuration, setters } = getModule('segmentation');
 
 // Cornerstone 3rd party dev kit imports
 const BaseBrushTool = importInternal('base/BaseBrushTool');
@@ -53,15 +54,13 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
   mouseWheelCallback(evt) {
     const { element, viewport, spinY } = evt.detail;
 
-    const { configuration } = getModule('segmentation');
-
     let addTolerance = spinY;
 
-    if(this._isCtrlDown(evt.detail.detail)){
+    if (this._isCtrlDown(evt.detail.detail)) {
       addTolerance = addTolerance * 5;
     }
 
-    if(this._isAltDown(evt.detail.detail)){
+    if (this._isAltDown(evt.detail.detail)) {
       addTolerance = addTolerance * 10;
     }
 
@@ -83,7 +82,6 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
   }
 
   _paint(evt) {
-    const { configuration } = getModule('segmentation');
     const eventData = evt.detail;
     const element = eventData.element;
     const image = eventData.image;
@@ -130,7 +128,7 @@ export default class DICOMSegCustomTool extends BaseBrushTool {
       shouldErase
     );
 
-    cornerstone.updateImage(evt.detail.element);
+    cornerstone.updateImage(element);
   }
 
   _paintToleranceUp(evt, tolerance, point) {

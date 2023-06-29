@@ -30,6 +30,7 @@ import database from './icons/database.svg';
 import dotCircle from './icons/dot-circle.svg';
 import download from './icons/file-download-svgrepo-com.svg';
 import edit from './icons/edit.svg';
+import eraser from './icons/eraser.svg';
 import ellipseCircle from './icons/ellipse-circle.svg';
 import ellipseH from './icons/ellipse-h.svg';
 import ellipseV from './icons/ellipse-v.svg';
@@ -127,6 +128,7 @@ const ICONS = {
   'create-comment': createComment,
   'create-screen-capture': createScreenCapture,
   edit,
+  eraser,
   'fast-backward': fastBackward,
   'fast-forward': fastForward,
   'object-group': objectGroup,

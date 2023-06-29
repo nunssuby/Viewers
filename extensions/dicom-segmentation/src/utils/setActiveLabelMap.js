@@ -77,10 +77,6 @@ export default async function setActiveLabelmap(
   state = cornerstoneTools.getModule('segmentation').state;
 
   brushStackState = state.series[firstImageId];
-  console.log(
-    '============================brushStackState====',
-    brushStackState
-  );
   if (brushStackState) {
     brushStackState.activeLabelmapIndex = labelmapIndex;
   }
