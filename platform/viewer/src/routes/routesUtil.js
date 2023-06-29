@@ -17,13 +17,22 @@ const ViewerRouting = asyncComponent(() =>
   )
 );
 
-const StudyListRouting = asyncComponent(() =>
+const StudyListRouting = asyncComponent(() =>  // subject
   retryImport(() =>
     import(
       /* webpackChunkName: "StudyListRouting" */ '../studylist/StudyListRouting.js'
     )
   )
 );
+
+const GRKProjectList = asyncComponent(() =>  //study
+  retryImport(() =>
+    import(
+      /* webpackChunkName: "StudyBundleRouting" */ '../grkstudylist/grkStudyList.js'
+    )
+  )
+);
+
 const StandaloneRouting = asyncComponent(() =>
   retryImport(() =>
     import(
@@ -60,11 +69,15 @@ const ROUTES_DEF = {
       component: StandaloneRouting,
     },
     list: {  // subject 목록
-      path: ['/studylist', '/'],
+      path: ['/studylist'],
       component: StudyListRouting,
       condition: appConfig => {
         return appConfig.showStudyList;
       },
+    },
+    grkStudyList: {  // study 목록
+      path: ['/grkstudy', '/'],
+      component: GRKProjectList,
     },
     local: {
       path: ['/local'],
