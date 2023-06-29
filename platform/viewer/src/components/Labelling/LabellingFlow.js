@@ -16,10 +16,12 @@ const LabellingFlow = ({
   updateLabelling,
   labellingDoneCallback,
   editDescriptionOnDialog,
+  isSegmentation = false,
 }) => {
   const [fadeOutTimer, setFadeOutTimer] = useState();
   const [showComponent, setShowComponent] = useState(true);
   const descriptionInput = useRef();
+  const locationInput = useRef();
   const [state, setState] = useState({
     measurementData,
     editLocation,
@@ -28,6 +30,7 @@ const LabellingFlow = ({
   });
 
   useEffect(() => {
+    console.log(measurementData);
     const newMeasurementData = cloneDeep(measurementData);
 
     if (editDescription) {
@@ -35,7 +38,7 @@ const LabellingFlow = ({
     }
 
     if (editLocation) {
-      newMeasurementData.location = undefined;
+      newMeasurementData.locationLabel = newMeasurementData.location;
     }
 
     let newEditLocation = editLocation;
@@ -54,10 +57,13 @@ const LabellingFlow = ({
     if (descriptionInput.current) {
       descriptionInput.current.focus();
     }
+    if (locationInput.current) {
+      locationInput.current.focus();
+    }
   }, [state]);
 
   const relabel = event =>
-    setState(state => ({ ...state, editLocation: true }));
+    setState(state => ({ ...state, editLocation: false }));
 
   const setDescriptionUpdateMode = () => {
     descriptionInput.current.focus();
@@ -76,9 +82,16 @@ const LabellingFlow = ({
     }
   };
 
+  const handleKeyPressDone = event => {
+    if (event.key === 'Enter') {
+      fadeOutAndLeaveFast();
+    }
+  };
+
   const descriptionSave = () => {
     const description = descriptionInput.current.value;
-    updateLabelling({ description });
+    const location = locationInput.current.value;
+    updateLabelling({ location, description });
 
     setState(state => ({
       ...state,
@@ -96,7 +109,7 @@ const LabellingFlow = ({
 
     setState(state => ({
       ...state,
-      editLocation: false,
+      editLocation: true,
       measurementData: {
         ...state.measurementData,
         location,
@@ -109,7 +122,7 @@ const LabellingFlow = ({
     setState(state => ({
       ...state,
       skipAddLabelButton: true,
-      editLocation: false,
+      editLocation: true,
     }));
   };
 
@@ -120,8 +133,11 @@ const LabellingFlow = ({
   const fadeOutAndLeave = () =>
     setFadeOutTimer(setTimeout(fadeOutAndLeaveFast, 1000));
 
-  const fadeOutAndLeaveFast = () => setShowComponent(false);
-
+  const fadeOutAndLeaveFast = () => {
+    const location = locationInput.current.value;
+    updateLabelling({ location });
+    setShowComponent(false);
+  };
   const clearFadeOutTimer = () => {
     if (fadeOutTimer) {
       clearTimeout(fadeOutTimer);
@@ -149,7 +165,7 @@ const LabellingFlow = ({
         </button>
       );
     } else {
-      if (editLocation) {
+      if (!editLocation) {
         return (
           <SelectTree
             items={OHIFLabellingData}
@@ -161,11 +177,19 @@ const LabellingFlow = ({
       } else {
         return (
           <>
-            <div className="checkIconWrapper" onClick={fadeOutAndLeaveFast}>
+            {/* <div className="checkIconWrapper" onClick={fadeOutAndLeaveFast}>
               <Icon name="check" className="checkIcon" />
-            </div>
+            </div> */}
             <div className="locationDescriptionWrapper">
-              <div className="location">{locationLabel}</div>
+              <div className="location">
+                <input
+                  id="locationInput"
+                  ref={locationInput}
+                  defaultValue={locationLabel || ''}
+                  autoComplete="off"
+                  onKeyPress={handleKeyPressDone}
+                />
+              </div>
               <div className="description">
                 <input
                   id="descriptionInput"
@@ -192,14 +216,16 @@ const LabellingFlow = ({
               >
                 Save
               </button>
-              <button
-                type="button"
-                className="commonButton right"
-                onClick={setDescriptionUpdateMode}
-              >
-                {description ? 'Edit ' : 'Add '}
-                Description
-              </button>
+              {!isSegmentation && (
+                <button
+                  type="button"
+                  className="commonButton right"
+                  onClick={setDescriptionUpdateMode}
+                >
+                  {description ? 'Edit ' : 'Add '}
+                  Description
+                </button>
+              )}
             </div>
             <div className="editDescriptionButtons">
               <button

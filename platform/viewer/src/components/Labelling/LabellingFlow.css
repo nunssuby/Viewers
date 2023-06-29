@@ -77,6 +77,18 @@
   border: none;
 }
 
+.labellingComponent .locationDescriptionWrapper #locationInput {
+  transition-delay: all 300ms linear;
+  visibility: visible;
+  background: transparent;
+  outline: none;
+  height: 46px;
+  width: 266px;
+  line-height: 20px;
+  font-size: 13px;
+  border: none;
+}
+
 .labellingComponent.editDescription .locationDescriptionWrapper #descriptionInput {
   visibility: visible;
 }
@@ -87,7 +99,7 @@
 
 .labellingComponent .commonButtons, .labellingComponent.editDescription .editDescriptionButtons {
   display: block;
-  margin-left: 55px;
+  margin-left: 5px;
 }
 
 .labellingComponent.editDescription .commonButtons, .labellingComponent .editDescriptionButtons {
@@ -96,7 +108,7 @@
 
 .labellingComponent .commonButtons {
   text-align: center;
-  margin-left: 55px;
+  margin-left: 5px;
   display: flex;
   justify-content: space-between;
 }
