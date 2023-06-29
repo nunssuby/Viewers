@@ -88,7 +88,9 @@ const LabellingFlow = ({
   };
 
   const selectTreeSelectCallback = (event, itemSelected) => {
-    const location = itemSelected.value;
+    const location = itemSelected.value
+      ? itemSelected.value
+      : itemSelected.label;
     const locationLabel = itemSelected.label;
     updateLabelling({ location });
 
@@ -182,7 +184,7 @@ const LabellingFlow = ({
               >
                 Relabel
               </button>
-              // 20230612 추가한 부분
+              {/* // 20230612 추가한 부분 */}
               <button
                 type="button"
                 className="commonButton center"
