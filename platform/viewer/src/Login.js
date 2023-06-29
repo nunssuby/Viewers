@@ -60,15 +60,15 @@ class Login extends Component {
       const loginUser = this.getUserFromAccessToken(accessToken)
 
       localStorage.setItem('saveId', username);
-      localStorage.setItem('accessTokenPotal', {
+      localStorage.setItem('accessTokenPotal', JSON.stringify({
         token: accessToken,
         exp: this.parseToken(accessToken).exp,
-      })
-      localStorage.setItem('refreshTokenPotal', {
+      }))
+      localStorage.setItem('refreshTokenPotal', JSON.stringify({
         token: refreshToken,
         exp: this.parseToken(refreshToken).exp,
-      })
-      localStorage.setItem('loginUserPotal', loginUser)
+      }))
+      localStorage.setItem('loginUserPotal', JSON.stringify(loginUser))
       localStorage.setItem('isLogin', 'OK');
       // navigate('/project');
     } catch (error) {

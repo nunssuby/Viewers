@@ -69,12 +69,13 @@ const ROUTES_DEF = {
       component: StandaloneRouting,
     },
     list: {  // subject 목록
-      path: ['/studylist'],
+      path: ['/:studyOID/subjectlist'],
       component: StudyListRouting,
       condition: appConfig => {
         return appConfig.showStudyList;
       },
     },
+
     grkStudyList: {  // study 목록
       path: ['/grkstudy', '/'],
       component: GRKProjectList,
