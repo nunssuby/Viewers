@@ -6,6 +6,7 @@ import OHIF from '@ohif/core';
 import { errorHandler } from '@ohif/core';
 import getXHRRetryRequestHook from '@ohif/core/src/utils/xhrRetryRequestHook';
 import Segmentation from './adapters/Cornerstone/Segmentation';
+import iconv from 'iconv-lite';
 const { DicomLoaderService } = OHIF.utils;
 
 let metaData = {};
@@ -182,7 +183,9 @@ function generateMockMetadata(segmentIndex, colorLUTIndex, labels) {
       CodeMeaning: 'Tissue',
     },
     SegmentNumber: (segmentIndex + 1).toString(),
-    SegmentLabel: labels[segmentIndex] || 'Seg #' + segmentIndex,
+    SegmentLabel: labels[segmentIndex]
+      ? iconv.decode(labels[segmentIndex], 'utf-8')
+      : 'Seg #' + segmentIndex,
     SegmentAlgorithmType: 'SEMIAUTOMATIC',
     SegmentAlgorithmName: 'Slicer Prototype',
     RecommendedDisplayCIELabValue,

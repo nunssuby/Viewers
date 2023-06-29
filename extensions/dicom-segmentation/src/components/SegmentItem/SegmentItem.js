@@ -153,7 +153,7 @@ const SegmentItem = ({
                 className="btnAction"
                 onClick={() =>
                   showLabellingDialog(
-                    { editLocation: true, skipAddLabelButton: true },
+                    { editLocation: false, skipAddLabelButton: true },
                     { location: '', description: '' }
                   )
                 }
@@ -165,15 +165,6 @@ const SegmentItem = ({
               </button>
               <button
                 className="btnAction"
-                onClick={() => deleteSegmentationLabel()}
-              >
-                <span style={{ marginRight: '4px' }}>
-                  <Icon name="edit" width="14px" height="14px" />
-                </span>
-                Delete
-              </button>
-              {/* <button
-                className="btnAction"
                 onClick={tool =>
                   showLabellingDialog({ editDescriptionOnDialog: true }, tool)
                 }
@@ -182,7 +173,16 @@ const SegmentItem = ({
                   <Icon name="edit" width="14px" height="14px" />
                 </span>
                 Description
-              </button> */}
+              </button>
+              <button
+                className="btnAction"
+                onClick={() => deleteSegmentationLabel()}
+              >
+                <span style={{ marginRight: '4px' }}>
+                  <Icon name="edit" width="14px" height="14px" />
+                </span>
+                Delete
+              </button>
             </div>
           )}
         </div>

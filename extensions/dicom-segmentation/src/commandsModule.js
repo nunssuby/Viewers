@@ -1,7 +1,8 @@
-import csTools from 'cornerstone-tools';
+import cornerstoneTools from 'cornerstone-tools';
 import cs from 'cornerstone-core';
 import OHIF from '@ohif/core';
 import { redux } from '@ohif/core';
+import cloneDeep from 'lodash.clonedeep';
 
 import DICOMSegTempCrosshairsTool from './tools/DICOMSegTempCrosshairsTool';
 import TOOL_NAMES from './tools/TOOL_NAMES';
@@ -16,25 +17,156 @@ const {
   getDiffBetweenPixelData,
   getCircle,
   triggerLabelmapModifiedEvent,
-} = csTools.import('util/segmentationUtils');
+} = cornerstoneTools.import('util/segmentationUtils');
 
-const { setLayout } = redux.actions;
+const { setLayout, pushSeg, popSeg, resetSeg } = redux.actions;
 const { studyMetadataManager } = OHIF.utils;
+const { getters, setters, configuration } = cornerstoneTools.getModule(
+  'segmentation'
+);
 
 const commandsModule = ({ commandsManager, servicesManager }) => {
   const { UINotificationService, LoggerService } = servicesManager.services;
 
   const actions = {
+    undo: ({ viewports }) => {
+      const enabledElements = cornerstone.getEnabledElements();
+      const element = enabledElements[viewports.activeViewportIndex].element;
+
+      const labelmap3D = getters.labelmap3D(element);
+
+      if (labelmap3D.undo.length > 0) {
+        setters.undo(element);
+
+        // UINotificationService.show({
+        //   title: 'Segmentation Back',
+        //   message: 'Segmentations returned to previous state',
+        //   type: 'warning',
+        //   autoClose: true,
+        // });
+      } else {
+        UINotificationService.show({
+          title: 'Segmentation History Empty',
+          message: 'Segmentation History Empty',
+          type: 'error',
+          autoClose: true,
+        });
+      }
+    },
+    redo: ({ viewports }) => {
+      const enabledElements = cornerstone.getEnabledElements();
+      const element = enabledElements[viewports.activeViewportIndex].element;
+
+      const labelmap3D = getters.labelmap3D(element);
+
+      if (labelmap3D.redo.length > 0) {
+        setters.redo(element);
+
+        // UINotificationService.show({
+        //   title: 'Segmentation Back',
+        //   message: 'Segmentations returned to previous state',
+        //   type: 'warning',
+        //   autoClose: true,
+        // });
+      } else {
+        UINotificationService.show({
+          title: 'Segmentation History Empty',
+          message: 'Segmentation History Empty',
+          type: 'error',
+          autoClose: true,
+        });
+      }
+    },
     eraserAll: ({ viewports }) => {
       const enabledElements = cornerstone.getEnabledElements();
       const element = enabledElements[viewports.activeViewportIndex].element;
-      const { getters } = csTools.getModule('segmentation');
+      const labelmap3D = getters.labelmap3D(element);
+      const enabledElement = cornerstone.getEnabledElement(element);
+
+      const {
+        labelmap2D,
+        currentImageIdIndex,
+        activeLabelmapIndex,
+      } = getters.labelmap2D(element);
+
+      const oldLabelmap2D = cloneDeep(labelmap2D);
+
+      console.log(element, enabledElement, oldLabelmap2D);
+
+      const action = pushSeg(labelmap3D.labelmaps2D);
+      store.dispatch(action);
+
+      const newLabelmap2D = { pixelData: [] };
+      for (let i = 0; i < labelmap3D.labelmaps2D.length; i++) {
+        if (!labelmap3D.labelmaps2D[i]) {
+          continue;
+        } else {
+          for (let j = 0; j < labelmap3D.labelmaps2D[i].pixelData.length; j++) {
+            labelmap3D.labelmaps2D[i].pixelData[j] = 0;
+            newLabelmap2D.pixelData[j] = 0;
+          }
+          for (
+            let j = 0;
+            j < labelmap3D.labelmaps2D[i].segmentsOnLabelmap.length;
+            j++
+          ) {
+            labelmap3D.labelmaps2D[i].segmentsOnLabelmap[j] = 0;
+          }
+        }
+      }
+
+      const pointerArray = [];
+      const shouldErase = false;
+
+      // drawBrushPixels(
+      //   pointerArray,
+      //   labelmap2D.pixelData,
+      //   labelmap3D.activeSegmentIndex,
+      //   enabledElement.image.columns,
+      //   shouldErase
+      // );
+
+      if (configuration.storeHistory) {
+                                        const previousPixelData =
+                                          oldLabelmap2D.pixelData;
+                                        const newPixelData =
+                                          newLabelmap2D.pixelData;
+                                        const operation = {
+                                          imageIdIndex: currentImageIdIndex,
+                                          diff: getDiffBetweenPixelData(
+                                            previousPixelData,
+                                            newPixelData
+                                          ),
+                                        };
+
+                                        setters.pushState(element, [operation]);
+                                      }
+
+      cornerstone.updateImage(element);
+
+      UINotificationService.show({
+        title: 'Segmentation Deleted',
+        message: 'Segmentations All Deleted',
+        type: 'error',
+        autoClose: true,
+      });
+    },
+    eraserSelectSeg: ({ viewports }) => {
+      const enabledElements = cornerstone.getEnabledElements();
+      const element = enabledElements[viewports.activeViewportIndex].element;
+      const { getters } = cornerstoneTools.getModule('segmentation');
       const { labelmaps3D } = getters.labelmaps3D(element);
       const labelmap3D = getters.labelmap3D(element);
       const activeSegmentIndex = getters.activeSegmentIndex(element);
       const activeLabelmapIndex = getters.activeLabelmapIndex(element);
 
-      //console.log('eraserAlleraserAlleraserAlleraserAlleraserAll', getters, activeSegmentIndex, activeLabelmapIndex, labelmaps3D, labelmap3D);
+      const { labelmap2D, currentImageIdIndex } = getters.labelmap2D(element);
+
+      const oldLabelmap2D = cloneDeep(labelmap2D);
+
+      const newLabelmap2D = {
+        pixelData: [],
+      };
 
       for (let i = 0; i < labelmap3D.labelmaps2D.length; i++) {
         if (!labelmap3D.labelmaps2D[i]) {
@@ -43,6 +175,7 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
           for (let j = 0; j < labelmap3D.labelmaps2D[i].pixelData.length; j++) {
             if (labelmap3D.labelmaps2D[i].pixelData[j] === activeSegmentIndex) {
               labelmap3D.labelmaps2D[i].pixelData[j] = 0;
+              newLabelmap2D.pixelData[j] = 0;
             }
           }
           for (
@@ -61,12 +194,24 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
           }
         }
       }
+
+      if (configuration.storeHistory) {
+        const previousPixelData = oldLabelmap2D.pixelData;
+        const newPixelData = newLabelmap2D.pixelData;
+        const operation = {
+          imageIdIndex: currentImageIdIndex,
+          diff: getDiffBetweenPixelData(previousPixelData, newPixelData),
+        };
+
+        setters.pushState(element, [operation]);
+      }
+
       cornerstone.updateImage(element);
 
       UINotificationService.show({
-        title: 'Segmentation Reset',
-        message: 'Segmentations All Deleted',
-        type: 'warning',
+        title: 'Segmentation Changed',
+        message: 'Segmentation returned to previous state',
+        type: 'success',
         autoClose: true,
       });
     },
@@ -80,7 +225,7 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
           displaySetInstanceUID
         );
 
-        const module = csTools.getModule('segmentation');
+        const module = cornerstoneTools.getModule('segmentation');
         const brushStackState = module.state.series[firstImageId];
         const { labelmaps3D, activeLabelmapIndex } = brushStackState;
         const { labelmaps2D } = labelmaps3D[activeLabelmapIndex];
@@ -107,7 +252,7 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
         const enabledElements = cs.getEnabledElements();
         const element = enabledElements[activeViewportIndex].element;
 
-        const toolState = csTools.getToolState(element, 'stack');
+        const toolState = cornerstoneTools.getToolState(element, 'stack');
         if (!toolState) return;
 
         const imageIds = toolState.data[0].imageIds;
@@ -143,12 +288,14 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
       }
     },
     customDrow: () => {
-      const module = csTools.getModule('segmentation');
+      const module = cornerstoneTools.getModule('segmentation');
       module.setters.radius(5);
 
-      csTools.setToolActive(DICOM_SEG_CUSTOM_TOOL, { mouseButtonMask: 1 });
+      cornerstoneTools.setToolActive(DICOM_SEG_CUSTOM_TOOL, {
+        mouseButtonMask: 1,
+      });
 
-      const { configuration } = csTools.getModule('segmentation');
+      const { configuration } = cornerstoneTools.getModule('segmentation');
 
       if (configuration.segsTolerance === undefined) {
         configuration.segsTolerance = 250;
@@ -165,12 +312,14 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
     },
 
     customDrow3D: () => {
-      const module = csTools.getModule('segmentation');
+      const module = cornerstoneTools.getModule('segmentation');
       module.setters.radius(5);
 
-      csTools.setToolActive(DICOM_SEG_CUSTOM_TOOL_3D, { mouseButtonMask: 1 });
+      cornerstoneTools.setToolActive(DICOM_SEG_CUSTOM_TOOL_3D, {
+        mouseButtonMask: 1,
+      });
 
-      const { configuration } = csTools.getModule('segmentation');
+      const { configuration } = cornerstoneTools.getModule('segmentation');
 
       if (configuration.segsTolerance === undefined) {
         configuration.segsTolerance = 250;
@@ -318,12 +467,12 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
 
       console.log(viewportDIV);
 
-      // csTools.setToolActiveForElement(viewportDIV[0], SYNC_BRUSH_TOOL, {
+      // cornerstoneTools.setToolActiveForElement(viewportDIV[0], SYNC_BRUSH_TOOL, {
       //   mouseButtonMask: 1,
       // });
     },
     setTolerance: ({ tolerance }) => {
-      const { configuration } = csTools.getModule('segmentation');
+      const { configuration } = cornerstoneTools.getModule('segmentation');
 
       if (configuration.segsTolerance + tolerance > 0) {
         configuration.segsTolerance =
@@ -340,8 +489,23 @@ const commandsModule = ({ commandsManager, servicesManager }) => {
   };
 
   const definitions = {
+    undo: {
+      commandFn: actions.undo,
+      storeContexts: ['viewports'],
+      options: {},
+    },
+    redo: {
+      commandFn: actions.redo,
+      storeContexts: ['viewports'],
+      options: {},
+    },
     eraserAll: {
       commandFn: actions.eraserAll,
+      storeContexts: ['viewports'],
+      options: {},
+    },
+    eraserSelectSeg: {
+      commandFn: actions.eraserSelectSeg,
       storeContexts: ['viewports'],
       options: {},
     },

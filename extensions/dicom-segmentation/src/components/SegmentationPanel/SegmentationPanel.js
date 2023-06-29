@@ -10,8 +10,7 @@ import DICOMSegTempCrosshairsTool from '../../tools/DICOMSegTempCrosshairsTool';
 import setActiveLabelmap from '../../utils/setActiveLabelMap';
 import refreshViewports from '../../utils/refreshViewports';
 import createSeg from './saveSeg';
-
-import axios from 'axios';
+import iconv from 'iconv-lite';
 
 import {
   BrushColorSelector,
@@ -594,7 +593,7 @@ const SegmentationPanel = ({
         const segmentMeta = labelmap3D.metadata.data[segmentIndex];
         if (segmentMeta) {
           segmentNumber = segmentMeta.SegmentNumber;
-          segmentLabel = segmentMeta.SegmentLabel;
+          segmentLabel = iconv.decode(segmentMeta.SegmentLabel, 'utf-8');
         }
       }
       labels[segmentNumber] = segmentLabel;
@@ -825,6 +824,9 @@ const SegmentationPanel = ({
                       message: 'Segmentaions saved successfully',
                       type: 'success',
                     });
+                    setTimeout(() => {
+                      location.reload();
+                    }, 1000);
                   })
                   .catch(() => {
                     onSaveComplete({
@@ -911,44 +913,6 @@ const SegmentsSection = ({
     </div>
   );
 };
-
-async function saveData(uuid, data) {
-  console.log('============================', JSON.stringify(data).length);
-  let sendData = [];
-  data.forEach(e => {
-    console.log(e.props);
-    sendData.push(e.props.labelmap3D.labelmaps2D);
-  });
-  console.log('============================', JSON.stringify(sendData));
-  /*try {
-    axios({
-      method: 'post',
-      url: 'https://lg-ai-portal.carpediem.so/api/v1/segmentation',
-      data: {
-        uuid: id,
-        text: data,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-  }*/
-}
-
-async function getData(uuid) {
-  try {
-    //응답 성공
-    const response = await axios.get(
-      'https://lg-ai-portal.carpediem.so/api/v1/segmentation/' + uuid,
-      {}
-    );
-    console.log(response.data.data.text);
-  } catch (error) {
-    //응답 실패
-    console.error(error);
-  }
-
-  return response;
-}
 
 function useInterval(callback, delay) {
   const savedCallback = useRef(); // 최근에 들어온 callback을 저장할 ref를 하나 만든다.

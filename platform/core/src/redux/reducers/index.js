@@ -2,6 +2,7 @@ import extensions from './extensions';
 import preferences from './preferences';
 import servers from './servers';
 import studies from './studies';
+import segmentation from './segmentation';
 import timepointManager from './timepointManager';
 import viewports from './viewports';
 
@@ -12,6 +13,7 @@ const reducers = {
   studies,
   timepointManager,
   viewports,
+  segmentation,
 };
 
 export default reducers;
