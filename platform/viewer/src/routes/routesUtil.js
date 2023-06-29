@@ -59,7 +59,7 @@ const ROUTES_DEF = {
       path: '/viewer',
       component: StandaloneRouting,
     },
-    list: {
+    list: {  // subject 목록
       path: ['/studylist', '/'],
       component: StudyListRouting,
       condition: appConfig => {

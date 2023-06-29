@@ -3,71 +3,90 @@ import { connect } from 'react-redux';
 import { ViewerbaseDragDropContext } from '@ohif/ui';
 import { withRouter } from 'react-router';
 import axios from 'axios';
+import jwt_decode from 'jwt-decode'
 
 
 class Login extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '',
+      password: '',
+    };
+  }
+
+  parseToken = (tk) => {
+    let tokenData = {}
+    try {
+      tokenData = jwt_decode(tk)
+    } catch (error) {
+      throw new Error(error)
+    }
+    return tokenData
+  }
+
+  getUserFromAccessToken = (accessToken) => {
+    let tokenData = {}
+    let user = {}
+    tokenData = this.parseToken(accessToken)
+    user = {
+      jti: tokenData.jti,
+      userIdx: tokenData.userIdx,
+      userId: tokenData.userId,
+      username: tokenData.username,
+      iat: tokenData.iat,
+      exp: tokenData.exp,
+      //profileFileId: tokenData.profileFileId,
+    }
+    return user
+  }
+
+  handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { username, password } = this.state;
+      const response = await axios.post('http://grk-backend.medical-lab.co.kr/api/v1/token/', {
+        'userId': username,
+        'password': password,
+      });
+
+      console.log('test message: 로그인 성공:', response.data);
+      console.log( response.data.data.accessToken)
+      // 로그인 성공 후 처리할 작업을 여기에 추가합니다.
+      const accessToken = response.data.data.accessToken
+      const refreshToken = response.data.data.refreshToken
+      const loginUser = this.getUserFromAccessToken(accessToken)
+
+      localStorage.setItem('saveId', username);
+      localStorage.setItem('accessTokenPotal', {
+        token: accessToken,
+        exp: this.parseToken(accessToken).exp,
+      })
+      localStorage.setItem('refreshTokenPotal', {
+        token: refreshToken,
+        exp: this.parseToken(refreshToken).exp,
+      })
+      localStorage.setItem('loginUserPotal', loginUser)
+      localStorage.setItem('isLogin', 'OK');
+      // navigate('/project');
+    } catch (error) {
+      console.error('test message: 로그인 실패:', error);
+      // 로그인 실패 처리를 여기에 추가합니다.
+    }
+  };
+
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
   render() {
+    const { username, password } = this.state;
     const handleSubmit = () =>{
-
     }
-
-    async function getToken() {
-      try {
-        //응답 성공
-        const response = await axios.post('http://grk-backend.medical-lab.co.kr/api/v1/token/', {
-                      'userId': "tester",
-                      'password': "asdfsadf",
-                    })
-        console.log(response.data);
-      } catch (error) {
-        //응답 실패
-        console.error(error);
-      }
-
-      return response;
-    }
-
-    // const getToken = async data =>{
-    //   console.log("asdfsadsdaf")
-    //   await new Promise(r => setTimeout(r, 1000));
-    //
-    //   //console.log(data);
-    //   data.id.toUpperCase();
-    //   try{
-    //     const responseToken = loginRequest
-    //         .post('/api/v1/token/', {
-    //           'userId': data.id,
-    //           'password': data.password,
-    //         })
-    //     const jwtToken = responseToken.data;
-    //     console.log(responseToken)
-    //     console.log(jwtToken.accessToken)
-    //     console.log(jwtToken.refreshToken)
-    //     sessionStorage.setItem("jwt", jwtToken)
-    //     localStorage.setItem("jwt", jwtToken); //토큰에 저장되어있는 userInfo 저장
-    //     return responseToken;
-    //   }catch{
-    //     alert('로그인이 실패했습니다. 정보가 올바른지 다시 확인해주세요');
-    //   }
-    //   console.log(responseToken);
-    //   if (data.id.toUpperCase() === 'GRK' && data.password === 'qwer1234') {
-    //     if (data.saveId) {
-    //       localStorage.setItem('saveId', data.id);
-    //     } else {
-    //       localStorage.removeItem('saveId');
-    //     }
-    //     localStorage.setItem('isLogin', 'OK');
-    //     navigate('/project');
-    //   } else {
-    //     alert('아이디 비번을 확인하세요');
-    //   }
-    // }
-
-    const isDirty = undefined
-    // const register = () =>{
-
-    // }
 
     const errors = {'id':  'false'}
     // const isSubmitting = 'disabled'
@@ -81,15 +100,14 @@ class Login extends Component {
               <div className="text-center">
                 <h4 className="text-2xl font-semibold mt-1 mb-4 pb-1">LOGIN</h4>
               </div>
+              <form onSubmit={this.handleLogin}>
                 <div className="mb-4">
                   <input
                     type="text"
                     className="form-control block w-full px-3 py-2 text-base font-normal text-gray-300 bg-gray-900 bg-clip-padding border border-solid border-gray-800 rounded transition ease-in-out m-0 focus:text-gray-300 focus:bg-gray-800 focus:border-cyan-600 focus:outline-none"
-                    id="id"
-                    placeholder="ID"
-                    aria-invalid={
-                      !isDirty ? undefined : errors.id ? 'true' : 'false'
-                    }
+                    name="username"
+                    value={username}
+                    onChange={this.handleChange}
                     // {...register('id', {
                     //   required: '아이디를 입력바랍니다.',
                     // })}
@@ -104,11 +122,10 @@ class Login extends Component {
                   <input
                     type="password"
                     className="form-control block w-full px-3 py-2 text-base font-normal text-gray-300 bg-gray-900 bg-clip-padding border border-solid border-gray-800 rounded transition ease-in-out m-0 focus:text-gray-300 focus:bg-gray-800 focus:border-cyan-600 focus:outline-none"
-                    id="password"
+                    name="password"
                     placeholder="PASSWORD"
-                    aria-invalid={
-                      !isDirty ? undefined : errors.password ? 'true' : 'false'
-                    }
+                    value={password}
+                    onChange={this.handleChange}
                     // {...register('password', {
                     //   required: '비밀번호는 필수 입력입니다.',
                     //   minLength: {
@@ -148,9 +165,7 @@ class Login extends Component {
 
                 <div className="text-center lg:text-left">
                   <button
-                    type="button"
-                    onClick={getToken}
-                    // disabled={isSubmitting}
+                    type="submit"
                     className="inline-block w-full px-7 py-3 bg-primary-light text-gray-900 font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-primary-light hover:shadow-lg focus:bg-primary-light focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-light active:shadow-lg transition duration-150 ease-in-out"
                   >
                     Login
@@ -171,6 +186,7 @@ class Login extends Component {
                     style={{ width: '180px', height: '40px' }}
                   />
                 </div> */}
+              </form>
             </div>
           </div>
         </div>
