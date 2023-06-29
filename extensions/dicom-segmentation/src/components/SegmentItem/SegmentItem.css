@@ -34,7 +34,9 @@
   /* overflow: hidden; */
   transition: all 0.3s ease;
   /* visibility: hidden; */
-  padding-left: 0px;
+  padding-right: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .dcmseg-segment-item .segment-actions .btnAction {

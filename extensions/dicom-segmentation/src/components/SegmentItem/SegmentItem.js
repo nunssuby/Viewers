@@ -38,6 +38,10 @@ const SegmentItem = ({
   const [labelText, setLabelText] = useState(label);
 
   useEffect(() => {
+    console.log('================================', labels);
+  }, []);
+
+  useEffect(() => {
     setIsVisible(visible);
   }, [visible]);
 
@@ -85,8 +89,7 @@ const SegmentItem = ({
     });
   };
 
-  const deleteSegmentationLabel = () =>
-  {
+  const deleteSegmentationLabel = () => {
     // const labelmap3Did = labelmap3D.colorLUTIndex-1;
     console.log(labelmap3D);
     for (let i = 0; i < labelmap3D.labelmaps2D.length; i++) {
@@ -153,8 +156,12 @@ const SegmentItem = ({
                 className="btnAction"
                 onClick={() =>
                   showLabellingDialog(
-                    { editLocation: false, skipAddLabelButton: true },
-                    { location: '', description: '' }
+                    {
+                      editLocation: true,
+                      skipAddLabelButton: true,
+                      isSegmentation: true,
+                    },
+                    { location: labelText, description: '' }
                   )
                 }
               >
@@ -163,7 +170,7 @@ const SegmentItem = ({
                 </span>
                 Relabel
               </button>
-              <button
+              {/* <button
                 className="btnAction"
                 onClick={tool =>
                   showLabellingDialog({ editDescriptionOnDialog: true }, tool)
@@ -173,7 +180,7 @@ const SegmentItem = ({
                   <Icon name="edit" width="14px" height="14px" />
                 </span>
                 Description
-              </button>
+              </button> */}
               <button
                 className="btnAction"
                 onClick={() => deleteSegmentationLabel()}
