@@ -69,10 +69,12 @@ class Login extends Component {
       localStorage.setItem('loginUserPotal', JSON.stringify(loginUser))
       localStorage.setItem('isLogin', 'OK');
       // navigate('/project');
-      console.error('test message: 로그인 성공: '+username);
+      console.log('test message: 로그인 성공: '+username);
       alert("로그인 성공");
+      window.location.assign("../grkstudy")
     } catch (error) {
       console.error('test message: 로그인 실패:', error);
+      alert("로그인 실패");
       // 로그인 실패 처리를 여기에 추가합니다.
     }
   };
