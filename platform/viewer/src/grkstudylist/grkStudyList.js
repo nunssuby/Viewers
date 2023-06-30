@@ -2,21 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { ViewerbaseDragDropContext } from '@ohif/ui';
 import { withRouter } from 'react-router';
-// import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// const navigate = useNavigate();   /////////////////////////////
+
+let haveToken = false
 const Login = () => {
   const [studyObj, setStudyObj] = useState([]);
-
   useEffect(() => {
+    checkToken();
     fetchData();
   }, []);
 
   const goStudy = oid => {
-    this.navigate(`/${oid}/subjectlist`);
-    console.log(oid, '스터디 목록 눌림');
+    window.location.assign(`/${oid}/subjectlist`);
   };
+
+  const checkToken = async() => {
+    const accessToken = localStorage.getItem('accessTokenPotal')
+    if(!accessToken){
+      window.location.assign("./login");
+      }
+  }
 
   const fetchData = async () => {
     try {
@@ -39,9 +45,6 @@ const Login = () => {
   };
 
   return (
-    // (!token)?
-    // // this.navigate('/login'):
-    // console.log("!!!!!!!!!!!!!!!!!!no token"):
     <section className="bg-black  md:h-screen">
       <div className="flex flex-row items-center bg-black border-b border-gray-900 z-20 sticky top-0 justify-between">
         <div className="flex justify-between flex-1  container py-4  m-auto">
@@ -108,7 +111,7 @@ const Login = () => {
                     <tr
                       key={index}
                       className="bg-gray-800 cursor-pointer hover:bg-secondary-main"
-                      onClick={() => this.goStudy(row.oid)}
+                      onClick={() => goStudy(row.oid)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100">
                         {index + 1}
