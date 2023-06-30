@@ -10,7 +10,24 @@ class Login extends Component {
     this.state = {
       username: '',
       password: '',
+      isSave: false,
+      errors: { id: { message: '' }, password: { message: '' } },
     };
+    this.inputRef = React.createRef();
+    this.inputPassRef = React.createRef();
+  }
+
+  componentDidMount() {
+    let saveId = localStorage.getItem('saveId');
+    if (saveId) {
+      this.setState({ username: saveId, isSave: true });
+      this.inputPassRef.current.focus();
+    } else {
+      this.inputRef.current.focus();
+    }
+
+
+    window.ohif.app.hotkeysManager.destroy();
   }
 
   parseToken = tk => {
@@ -41,9 +58,30 @@ class Login extends Component {
 
   handleLogin = async e => {
     e.preventDefault();
+    const { username, password, isSave, errors } = this.state;
+
+    if (!username) {
+      //alert('Please enter a username');
+      errors.id.message = 'Please enter a username';
+      this.setState({
+        ...this.state,
+        errors: errors,
+      });
+      this.inputRef.current.focus();
+      return;
+    }
+
+    if (!password) {
+      errors.password.message = 'Please enter a password';
+      this.setState({
+        ...this.state,
+        errors: errors,
+      });
+      this.inputPassRef.current.focus();
+      return;
+    }
 
     try {
-      const { username, password } = this.state;
       const response = await axios.post(
         'http://grk-backend.medical-lab.co.kr/api/v1/token/',
         {
@@ -57,7 +95,10 @@ class Login extends Component {
       const refreshToken = response.data.data.refreshToken;
       const loginUser = this.getUserFromAccessToken(accessToken);
 
-      localStorage.setItem('saveId', username);
+      if (isSave) {
+        localStorage.setItem('saveId', username);
+      }
+
       localStorage.setItem(
         'accessTokenPotal',
         JSON.stringify({
@@ -75,29 +116,31 @@ class Login extends Component {
       localStorage.setItem('loginUserPotal', JSON.stringify(loginUser));
       localStorage.setItem('isLogin', 'OK');
       // navigate('/project');
-      console.log('test message: 로그인 성공: '+username);
-      alert("로그인 성공");
-      window.location.assign("../grkstudy")
+      //console.log('test message: 로그인 성공: ' + username);
+      //alert('');
+      window.location.assign('../grkstudy');
     } catch (error) {
-      console.error('test message: 로그인 실패:', error);
-      alert("로그인 실패");
-      // 로그인 실패 처리를 여기에 추가합니다.
-    }
+                      //console.error('test message: 로그인 실패:', error);
+                      alert(
+                        '로그인 실패하였습니다. 아이디와 비밀번호를 확인해 주세요'
+                      );
+                      // 로그인 실패 처리를 여기에 추가합니다.
+                    }
+  };
+
+  handleCheckboxChange = event => {
+    this.setState({ isSave: event.target.checked }); // 체크 여부를 상태에 업데이트
   };
 
   handleChange = e => {
     this.setState({
       [e.target.name]: e.target.value,
+      errors: { id: { message: '' }, password: { message: '' } },
     });
   };
 
   render() {
-    console.log(this.props);
-    const { username, password } = this.state;
-    const handleSubmit = () => {};
-
-    const errors = { id: 'false' };
-    // const isSubmitting = 'disabled'
+    const { username, password, isSave, errors } = this.state;
 
     return (
       <section>
@@ -112,9 +155,7 @@ class Login extends Component {
                 name="username"
                 value={username}
                 onChange={this.handleChange}
-                // {...register('id', {
-                //   required: '아이디를 입력바랍니다.',
-                // })}
+                ref={this.inputRef}
               />
               {errors.id && <small role="alert">{errors.id.message}</small>}
             </div>
@@ -125,23 +166,19 @@ class Login extends Component {
                 placeholder="PASSWORD"
                 value={password}
                 onChange={this.handleChange}
-                // {...register('password', {
-                //   required: '비밀번호는 필수 입력입니다.',
-                //   minLength: {
-                //     value: 8,
-                //     message: '8자리 이상 비밀번호를 사용하세요.',
-                //   },
-                // })}
+                ref={this.inputPassRef}
               />
               {errors.password && (
-                <small className="mt-2 text-red-600" role="alert">
-                  {errors.password.message}
-                </small>
+                <small role="alert">{errors.password.message}</small>
               )}
             </div>
             <div className="bottom-box">
               <label className="checkbox-container">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={this.state.isSave} // 체크 여부를 상태 변수로 설정
+                  onChange={this.handleCheckboxChange}
+                />
                 <span className="checkmark"></span>
                 Remember ID
               </label>
