@@ -1,18 +1,55 @@
+html{
+     /* 드래그 방지 */
+     -ms-user-select: none;
+     -moz-user-select: -moz-none;
+     -webkit-user-select: none;
+     -khtml-user-select: none;
+     user-select: none;
+}
+
 section{
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   color: #fff;
   position: relative;
 }
-.logo-box{
-  position: absolute;
-  top: 0;
-  display: flex;
-  justify-content: left;
+
+/* Home Page */
+.entry-header.header-big {
+  background: rgba(21, 25, 30, 0.7);
+  padding: 35px var(--study-list-padding);
+  height: auto;
+  display: inline-block;
   width: 100%;
-  align-items: center;
+}
+.entry-header.header-big .header-brand {
+  height: 50px;
+  padding: 0;
+}
+.entry-header.header-big .header-logo-image {
+  margin-right: 20px;
+  width: 280px;
+  height: 60px;
+}
+.entry-header.header-big .header-logo-text {
+  width: 474px;
+  height: auto;
+}
+
+.header-logo-text {
+    fill: #fff;
+    display: none;
+}
+.container{
+  padding: 35px var(--study-list-padding);
+}
+
+h3{
+  font-size: 24px;
+  font-weight: 600;
+}
+
+p.condition{
+  font-size: 16px;
 }
 
 .condition-highlight{
@@ -20,23 +57,47 @@ section{
   color: rgba(89, 229, 198, var(--tw-text-opacity));
 }
 
+.table-top{
+margin-bottom: 50px;
+}
 table {
+  position: relative;
   text-indent: 0;
   border-color: inherit;
   border-collapse: collapse;
   text-align: center;
   --tw-bg-opacity: 1;
   background-color: rgba(23, 23, 23, var(--tw-bg-opacity));
-  display: inline-block;
-  font-size: 12;
-  font-family: 'Malgun Gothic';
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  font-size: 12px;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 thead {
+  --tw-border-opacity: 1;
+  border-bottom: 1px solid rgba(89,229,198,var(--tw-border-opacity));
+}
+
+th{
+  padding: 1rem;
+  text-align: center;
+}
+
+td{
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+tbody tr:nth-child(2n-1){
   --tw-bg-opacity: 1;
   background-color: rgba(50, 50, 50, var(--tw-bg-opacity));
+}
+
+tbody tr:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgba(10, 10, 10, var(--tw-bg-opacity));
 }
 
 .left{
