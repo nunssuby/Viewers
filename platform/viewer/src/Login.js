@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { ViewerbaseDragDropContext } from '@ohif/ui';
-import { withRouter } from 'react-router';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode'
+import jwt_decode from 'jwt-decode';
 import './Login.css';
 import OHIFLogo from './components/OHIFLogo/OHIFLogo.js';
 
@@ -93,6 +90,7 @@ class Login extends Component {
   };
 
   render() {
+    console.log(this.props);
     const { username, password } = this.state;
     const handleSubmit = () => {};
 
@@ -140,9 +138,9 @@ class Login extends Component {
               )}
             </div>
             <div className="bottom-box">
-              <label class="checkbox-container">
+              <label className="checkbox-container">
                 <input type="checkbox" />
-                <span class="checkmark"></span>
+                <span className="checkmark"></span>
                 Remember ID
               </label>
 
@@ -164,18 +162,4 @@ class Login extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    user: state.oidc.user,
-  };
-};
-
-
-const ConnectedLogin = connect(
-  mapStateToProps,
-  null
-)(Login);
-
-export default ViewerbaseDragDropContext(
-  withRouter(ConnectedLogin)
-);
+export default Login;
