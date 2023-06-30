@@ -104,7 +104,7 @@ function StudyListRoute(props) {
            */
 
           const userToken = localStorage.getItem('accessTokenPotal').token;
-          const studyOID = 'test';
+          const studyOID = window.location.href.split('/')[3];
           const responseGrkStudy = await axios.get(
             `http://grk-backend.medical-lab.co.kr/api/v1/study/${studyOID}/subject`,
             {
