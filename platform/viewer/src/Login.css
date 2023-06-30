@@ -144,3 +144,10 @@ p a{
 .checkbox-container input:disabled ~ .checkmark:after {
   border-color: #999;
 }
+
+small{
+  font-size: 11px;
+  color: red;
+  margin-top: 10px;
+  display: block;
+}
