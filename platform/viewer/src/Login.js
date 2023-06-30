@@ -60,8 +60,6 @@ class Login extends Component {
     e.preventDefault();
     const { username, password, isSave, errors } = this.state;
 
-    console.log(isSave);
-
     if (!username) {
       //alert('Please enter a username');
       errors.id.message = 'Please enter a username';
@@ -118,14 +116,16 @@ class Login extends Component {
       localStorage.setItem('loginUserPotal', JSON.stringify(loginUser));
       localStorage.setItem('isLogin', 'OK');
       // navigate('/project');
-      console.log('test message: 로그인 성공: ' + username);
-      alert('로그인 성공');
+      //console.log('test message: 로그인 성공: ' + username);
+      //alert('');
       window.location.assign('../grkstudy');
     } catch (error) {
-      console.error('test message: 로그인 실패:', error);
-      alert('로그인 실패');
-      // 로그인 실패 처리를 여기에 추가합니다.
-    }
+                      //console.error('test message: 로그인 실패:', error);
+                      alert(
+                        '로그인 실패하였습니다. 아이디와 비밀번호를 확인해 주세요'
+                      );
+                      // 로그인 실패 처리를 여기에 추가합니다.
+                    }
   };
 
   handleCheckboxChange = event => {
