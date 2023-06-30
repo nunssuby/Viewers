@@ -53,8 +53,8 @@ class Login extends Component {
       });
 
       // 로그인 성공 후 처리할 작업을 여기에 추가합니다.
-      const accessToken = response.accessToken
-      const refreshToken = response.refreshToken
+      const accessToken = response.data.data.accessToken
+      const refreshToken = response.data.data.refreshToken
       const loginUser = this.getUserFromAccessToken(accessToken)
 
       localStorage.setItem('saveId', username);
@@ -69,6 +69,8 @@ class Login extends Component {
       localStorage.setItem('loginUserPotal', JSON.stringify(loginUser))
       localStorage.setItem('isLogin', 'OK');
       // navigate('/project');
+      console.error('test message: 로그인 성공: '+username);
+      alert("로그인 성공");
     } catch (error) {
       console.error('test message: 로그인 실패:', error);
       // 로그인 실패 처리를 여기에 추가합니다.
