@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import { ViewerbaseDragDropContext } from '@ohif/ui';
 import { withRouter } from 'react-router';
 import axios from 'axios';
+import './grkStudyList.css';
+import OHIFLogo from '../components/OHIFLogo/OHIFLogo.js';
 
-
-let haveToken = false
+let haveToken = false;
 const Login = () => {
   const [studyObj, setStudyObj] = useState([]);
   useEffect(() => {
@@ -17,12 +18,12 @@ const Login = () => {
     window.location.assign(`/${oid}/subjectlist`);
   };
 
-  const checkToken = async() => {
-    const accessToken = localStorage.getItem('accessTokenPotal')
-    if(!accessToken){
-      window.location.assign("./login");
-      }
-  }
+  const checkToken = async () => {
+    const accessToken = localStorage.getItem('accessTokenPotal');
+    if (!accessToken) {
+      window.location.assign('./login');
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -45,96 +46,46 @@ const Login = () => {
   };
 
   return (
-    <section className="bg-black  md:h-screen">
-      <div className="flex flex-row items-center bg-black border-b border-gray-900 z-20 sticky top-0 justify-between">
-        <div className="flex justify-between flex-1  container py-4  m-auto">
-          <div className="flex items-center">
-            <div className="inline-flex items-center mr-3">
-              <div className="ml-4">
-                {/* <Svg
-                    name="logo-ohif"
-                    style={{ width: '180px', height: '40px' }}
-                  /> */}
-              </div>
-            </div>
-          </div>
-        </div>
+    <section>
+      <div className="header">
+        <div className="logo-box">{OHIFLogo()}</div>
       </div>
-      <div className="container relative flex flex-col m-auto">
-        <div className="mt-10 py-5 border-b border-gray-900">
-          <h3 className="text-white text-bold text-2xl">Study List</h3>
-          <p className="text-white text-bold text-base mt-2">
+      <div className="container">
+        <div>
+          <h3 className="title">Study List</h3>
+          <p className="condition">
             {studyObj.length}{' '}
-            <span className="text-primary-light ml-2">Studys</span>
+            <span className="condition-highlight">Studies</span>
           </p>
         </div>
-        <div className="overflow-x-auto sm:-mx-6 lg:-mx-8 mt-5">
-          <div className="py-4 inline-block min-w-full sm:px-6 lg:px-8">
-            <div className="overflow-hidden rounded-lg">
-              <table className="min-w-full text-center ">
-                <thead className="border-b bg-gray-900 border-primary-light">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium text-white px-6 py-4"
-                    >
-                      #
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium text-white px-6 py-4 text-left"
-                    >
-                      Name
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium text-white px-6 py-4"
-                    >
-                      Description
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium text-white px-6 py-4"
-                    >
-                      Start
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium text-white px-6 py-4"
-                    >
-                      End
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {studyObj.map((row, index) => (
-                    <tr
-                      key={index}
-                      className="bg-gray-800 cursor-pointer hover:bg-secondary-main"
-                      onClick={() => goStudy(row.oid)}
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100">
-                        {index + 1}
-                      </td>
-                      <td className="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap text-left">
-                        {row.studyName}
-                      </td>
-                      <td className="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap">
-                        {row.studyDescription}
-                      </td>
-                      <td className="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap">
-                        {row.startDate}
-                      </td>
-                      <td className="text-sm text-gray-100 font-light px-6 py-4 whitespace-nowrap">
-                        {row.endDate}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Start</th>
+              <th scope="col">End</th>
+            </tr>
+          </thead>
+          <tbody>
+            {studyObj.map((row, index) => (
+              <tr
+                key={index}
+                className="study line"
+                onClick={() => goStudy(row.oid)}
+              >
+                <td className="study number">{index + 1}</td>
+                <td className="study name left">{row.studyName}</td>
+                <td className="study description left">
+                  {row.studyDescription}
+                </td>
+                <td className="study start">{row.startDate}</td>
+                <td className="study end">{row.endDate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   );
