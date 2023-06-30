@@ -1,6 +1,8 @@
 import { httpErrorToStr, checkDicomFile } from '../utils/helpers';
 import { api } from 'dicomweb-client';
 import { errorHandler } from '@ohif/core';
+import xmlConverter from 'xml-js'
+import axios from "axios";
 
 class DicomUploadService {
   async smartUpload(files, url, uploadCallback, cancellationToken) {
@@ -52,7 +54,44 @@ class DicomUploadService {
     if (!checkDicomFile(content))
       throw new Error('This is not a valid DICOM file.');
 
-    await client.storeInstances({ datasets: [content] });
+
+    console.log('ss===================Uploading');
+    const responseXml = await client.storeInstances({ datasets: [content] });
+  //   responseXml가 xml인데 json으로 파싱해야함 , 파싱전 ?xml version 제거
+
+    if(responseXml) {
+      const responseJson = xmlConverter.xml2js(responseXml)
+      //   const firstArray = responseJson.elements
+      // //   firstArray loop를 수행
+      //     firstArray.forEach((element) => {
+      //       const selectedElement = element.elements[1]
+      //       console.log("adsfjaskdfjkasdfksadfksdjfsakdjf")
+      //
+      //     })
+      // }
+      //     20230630 위치를 핀셋으로 발송하고 나중에 오류 발생시 loop를 돌리거나 그때그때 다이콤따라 변형 가능하게 가야함
+      const studyIuid = responseJson.elements[0].elements[1].elements[0].elements[1].elements[0].elements[0].text
+
+
+      // 이때 grkStudy api를 사용해서 grkStudy와 ohifStudy를 연결해야함
+      const userToken ="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxYnp4NzdtbTFyeHB2IiwidXNlcklkeCI6MTIsInVzZXJJZCI6InRlc3RlciIsInVzZXJuYW1lIjoi7YWM7Iqk7YSwIiwiaWF0IjoxNjg4MDkyOTMxLCJleHAiOjE3MDM2NDQ5MzF9.PNhHc1G2rpYdyMqes3j8YDjkqpPFUulKu37xEWVViv4"
+      const studyOID = 'test'
+      const responseGrkStudy = await axios.post(`http://grk-backend.medical-lab.co.kr/api/v1/study/${studyOID}/subject`, {
+
+        studyIuid: studyIuid,
+      },{
+        headers: {
+          'Authorization': `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+
+      console.log("fdjskfjsdkfjksdjfksdjfksdf")
+      console.log(responseGrkStudy)
+    }
+
+
   }
 
   readFile(file) {

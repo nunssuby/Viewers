@@ -1,0 +1,153 @@
+section{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  position: relative;
+}
+.login-box{
+  width: 320px;
+  height: 530px;
+  position: relative;
+}
+
+h4{
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 auto 10px;
+}
+
+input[type=text], input[type=password]{
+  background-color: #171717;
+  border: 1px solid #2d2d2d;
+  border-radius: 5px;
+  font-size: 13px;
+  color: #e2e8f0;
+  padding: 10px 10px;
+  width: 100%;
+}
+
+
+.input-box{
+  margin-bottom: 15px;
+}
+
+.bottom-box{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+a{
+  color: #fff;
+  text-decoration: underline;
+}
+
+.bottom-area{
+  width: 100%;
+}
+
+button{
+  width: 100%;
+  background-color: #59e5c6;
+  padding: 12px;
+  border-radius: 5px;
+  border: 0px;
+  font-weight: bold;
+}
+
+p{
+  text-align: center;
+}
+p a{
+  padding-left: 20px;
+  color: #59e5c6;
+}
+
+.logo-box{
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+/* Checkbox 컨테이너 스타일 */
+.checkbox-container {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  padding-left: 25px;
+  font-size: 13px;
+}
+
+/* 실제 Checkbox 숨김 */
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* 커스텀 스타일의 Checkbox 디자인 */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #171717;
+  border: 1px solid #2d2d2d;
+  border-radius: 3px;
+}
+
+/* 체크 표시 스타일 */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* 체크된 상태 스타일 */
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* 체크 표시 아이콘 */
+.checkbox-container .checkmark:after {
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Hover 상태 스타일 */
+.checkbox-container:hover .checkmark {
+  background-color: #ccc;
+}
+
+/* 체크된 Hover 상태 스타일 */
+.checkbox-container input:checked:hover ~ .checkmark {
+  background-color: #59e5c6;
+}
+
+/* 비활성화된 Checkbox 스타일 */
+.checkbox-container input:disabled ~ .checkmark {
+  background-color: #e6e6e6;
+  cursor: not-allowed;
+}
+
+/* 비활성화된 체크 표시 아이콘 스타일 */
+.checkbox-container input:disabled ~ .checkmark:after {
+  border-color: #999;
+}
+
+small{
+  font-size: 11px;
+  color: red;
+  margin-top: 10px;
+  display: block;
+}

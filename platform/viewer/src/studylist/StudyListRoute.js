@@ -16,6 +16,7 @@ import moment from 'moment';
 import ConnectedDicomFilesUploader from '../googleCloud/ConnectedDicomFilesUploader';
 import ConnectedDicomStorePicker from '../googleCloud/ConnectedDicomStorePicker';
 import filesToStudies from '../lib/filesToStudies.js';
+import axios from 'axios';
 
 // Contexts
 import UserManagerContext from '../context/UserManagerContext';
@@ -89,6 +90,40 @@ function StudyListRoute(props) {
       const fetchStudies = async () => {
         try {
           setSearchStatus({ error: null, isSearchingForStudies: true });
+
+          /**
+           * 여기서 한번 탈취해서 studyOID를 달아주면 좋을 듯 하다.
+           * 20230630 - grkstudy 구현을 위해 subject(ohif의 원래 study를 추출하기 위한 기법 사용)
+           * StudyInstanceUIDList 라는 키워드를 집중해 보면 좋다.
+           * 흐름은,
+           * 현재 선택된 grkStudy의 studyOID로 부터
+           * grkStudy 와 ohifStudy(비즈니스상 subject)와 연계된 api로 부터 ohifStudy를 받아온다.
+           * 그리고 ohifStudy의 StudyInstanceUIDList를 추출하여 검색 조건에 슬쩍 구겨 넣었다.
+           * StudyInstanceUIDList를 키워드를 검색해보면 흐름을 알 수 있을 것이다.
+           * nunssuby
+           */
+
+          const userToken = localStorage.getItem('accessTokenPotal').token;
+          const studyOID = window.location.href.split('/')[3];
+          const responseGrkStudy = await axios.get(
+            `http://grk-backend.medical-lab.co.kr/api/v1/study/${studyOID}/subject`,
+            {
+              headers: {
+                Authorization: `Bearer ${userToken}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          let StudyInstanceUIDList = [];
+
+          if (responseGrkStudy && responseGrkStudy.data.code == 'RT_SUCCESS') {
+            responseGrkStudy.data.data.forEach(grkStudy => {
+              StudyInstanceUIDList.push(grkStudy.study_iuid);
+            });
+          }
+
+          debouncedFilters.StudyInstanceUIDList = StudyInstanceUIDList;
 
           const response = await getStudyList(
             server,
@@ -344,6 +379,7 @@ async function getStudyList(
   const sortFieldName = sort.fieldName || 'PatientName';
   const sortDirection = sort.direction || 'desc';
 
+  // 20230630 - grkstudy 구현을 위해 subject(ohif의 원래 study를 추출하기 위한 기법 사용)
   const mappedFilters = {
     PatientID: filters.PatientID,
     PatientName: filters.PatientName,
@@ -353,6 +389,7 @@ async function getStudyList(
     // NEVER CHANGE
     studyDateFrom: filters.studyDateFrom,
     studyDateTo: filters.studyDateTo,
+    StudyInstanceUIDList: filters.StudyInstanceUIDList,
     limit: rowsPerPage,
     offset: pageNumber * rowsPerPage,
     fuzzymatching: server.supportsFuzzyMatching === true,
@@ -483,7 +520,28 @@ async function _fetchStudies(
   displaySize,
   { allFields, patientNameOrId, accessionOrModalityOrDescription }
 ) {
-  let queryFiltersArray = [filters];
+  /**
+   * 20230630 - grkstudy 구현을 위해 subject(ohif의 원래 study를 추출하기 위한 기법 사용)
+   */
+  // 20230630 원래의 queryFiltersArray를 변경하기 위해 주석함
+  // let queryFiltersArray = [filters];
+  let queryFiltersArray = [];
+
+  if (filters.StudyInstanceUIDList) {
+    console.log('fjdksfjksdjfksdjfsdkfjsdf');
+    // filters.StudyInstanceUIDs 를 루프돌면서 queryFiltersArray에 추가한다.
+    filters.StudyInstanceUIDList.forEach(element => {
+      // queryFilter 에 filters를 deep copy 한다.
+      let queryFilter = JSON.parse(JSON.stringify(filters));
+      // console.log("fjskdfjsdfsdf")
+      // console.log(element)
+      // console.log(queryFilter)
+      queryFilter.StudyInstanceUID = element;
+      queryFiltersArray.push(queryFilter);
+    });
+  } else {
+    queryFiltersArray = [filters];
+  }
 
   if (displaySize === 'small') {
     const firstSet = _getQueryFiltersForValue(
