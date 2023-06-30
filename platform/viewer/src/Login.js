@@ -52,11 +52,9 @@ class Login extends Component {
         'password': password,
       });
 
-      console.log('test message: 로그인 성공:', response.data);
-      console.log( response.data.data.accessToken)
       // 로그인 성공 후 처리할 작업을 여기에 추가합니다.
-      const accessToken = response.data.data.accessToken
-      const refreshToken = response.data.data.refreshToken
+      const accessToken = response.data.accessToken
+      const refreshToken = response.data.refreshToken
       const loginUser = this.getUserFromAccessToken(accessToken)
 
       localStorage.setItem('saveId', username);
