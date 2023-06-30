@@ -53,8 +53,8 @@ class Login extends Component {
       });
 
       // 로그인 성공 후 처리할 작업을 여기에 추가합니다.
-      const accessToken = response.data.accessToken
-      const refreshToken = response.data.refreshToken
+      const accessToken = response.accessToken
+      const refreshToken = response.refreshToken
       const loginUser = this.getUserFromAccessToken(accessToken)
 
       localStorage.setItem('saveId', username);
