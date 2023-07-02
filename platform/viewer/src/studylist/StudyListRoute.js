@@ -103,17 +103,22 @@ function StudyListRoute(props) {
            * nunssuby
            */
 
-          const userToken = localStorage.getItem('accessTokenPotal').token;
+          // const userToken = localStorage.getItem('accessTokenPotal').token;
+          const accessTokenPotal = JSON.parse(
+            localStorage.getItem('accessTokenPotal')
+          );
           const studyOID = window.location.href.split('/')[3];
           const responseGrkStudy = await axios.get(
             `http://grk-backend.medical-lab.co.kr/api/v1/study/${studyOID}/subject`,
             {
               headers: {
-                Authorization: `Bearer ${userToken}`,
+                Authorization: `Bearer ${accessTokenPotal.token}`,
                 'Content-Type': 'application/json',
               },
             }
           );
+
+          console.log("asdjfkasdjfkasdjfsadfsadfasdf")
 
           let StudyInstanceUIDList = [];
 

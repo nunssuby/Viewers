@@ -69,26 +69,35 @@ class DicomUploadService {
       //
       //     })
       // }
+      console.log("jfsdkfsdkfjsdkjfsdkfjsdf",responseJson)
+      console.log(responseJson)
       //     20230630 위치를 핀셋으로 발송하고 나중에 오류 발생시 loop를 돌리거나 그때그때 다이콤따라 변형 가능하게 가야함
-      const studyIuid = responseJson.elements[0].elements[1].elements[0].elements[1].elements[0].elements[0].text
+      // const studyIuid = responseJson.elements[0].elements[1].elements[0].elements[1].elements[0].elements[0].text
 
+      // http://101.101.211.211:8080/dcm4chee-arc/aets/DCM4CHEE/rs/studies/1.3.6.1.4.1.14519.5.2.1.7009.2401.209000980135320089181470178645
+      const urlWithstudyIuid = responseJson.elements[0].elements[0].elements[0].elements[0].text
+
+      // urlWithstudyIuid을 studies 을 기준으로 split 하여 studyIuidTemp에 저장한다.
+      const studyIuidTemp = urlWithstudyIuid.split("studies")[1]
+      const studyIuid =studyIuidTemp.split("/")[1]
+
+      console.log("adsfsadfsadfasdf",urlWithstudyIuid)
 
       // 이때 grkStudy api를 사용해서 grkStudy와 ohifStudy를 연결해야함
-      const userToken ="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxYnp4NzdtbTFyeHB2IiwidXNlcklkeCI6MTIsInVzZXJJZCI6InRlc3RlciIsInVzZXJuYW1lIjoi7YWM7Iqk7YSwIiwiaWF0IjoxNjg4MDkyOTMxLCJleHAiOjE3MDM2NDQ5MzF9.PNhHc1G2rpYdyMqes3j8YDjkqpPFUulKu37xEWVViv4"
-      const studyOID = 'test'
+      const accessTokenPotal = JSON.parse(
+        localStorage.getItem('accessTokenPotal')
+      );
+      const studyOID = window.location.href.split('/')[3];
       const responseGrkStudy = await axios.post(`http://grk-backend.medical-lab.co.kr/api/v1/study/${studyOID}/subject`, {
 
         studyIuid: studyIuid,
       },{
         headers: {
-          'Authorization': `Bearer ${userToken}`,
+          'Authorization': `Bearer ${accessTokenPotal.token}`,
           'Content-Type': 'application/json',
         },
       });
 
-
-      console.log("fdjskfjsdkfjksdjfksdjfksdf")
-      console.log(responseGrkStudy)
     }
 
 
