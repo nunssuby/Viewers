@@ -15,6 +15,7 @@ const Login = () => {
   }, []);
 
   const goStudy = oid => {
+    localStorage.setItem('studyOid', oid);
     window.location.assign(`/${oid}/subjectlist`);
   };
 
@@ -66,7 +67,7 @@ const Login = () => {
             <col width="15%" />
             <col width="" />
             <col width="20%" />
-            <col width="20%" />
+            <col width="20%" />ㅖ
           </colgroup>
           <thead>
             <tr>

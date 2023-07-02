@@ -264,6 +264,8 @@ function StudyListRoute(props) {
                 useLargeLogo={true}
                 user={user}
                 userManager={userManager}
+                linkPath={'/'}
+                linkText="StudyList"
               >
                 {whiteLabeling &&
                   whiteLabeling.createLogoComponentFn &&
@@ -276,7 +278,7 @@ function StudyListRoute(props) {
       <div className="study-list-header">
         <div className="header">
           <h1 style={{ fontWeight: 300, fontSize: '22px' }}>
-            {t('StudyList')}
+            {t('Subject List')}
           </h1>
         </div>
         <div className="actions">

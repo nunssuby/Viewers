@@ -320,6 +320,8 @@ class Viewer extends Component {
       });
     });
 
+    let oid = localStorage.getItem('studyOid');
+
     return (
       <>
         {/* HEADER */}
@@ -332,11 +334,13 @@ class Viewer extends Component {
                     <ConnectedHeader
                       linkText={
                         appContext.appConfig.showStudyList
-                          ? 'Study List'
+                          ? 'Subject List'
                           : undefined
                       }
                       linkPath={
-                        appContext.appConfig.showStudyList ? '/' : undefined
+                        appContext.appConfig.showStudyList
+                          ? `/${oid}/subjectlist`
+                          : undefined
                       }
                       userManager={userManager}
                     >
