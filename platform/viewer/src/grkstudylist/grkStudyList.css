@@ -32,6 +32,9 @@ table {
   font-family: 'Malgun Gothic';
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
+  width: 720px;
+  height: 530px;
+  position: relative;
 }
 
 thead {
@@ -48,4 +51,24 @@ thead {
   border-width: 0;
   border-style: solid;
   border-color: #f0e2e2;
+}
+
+a{
+  color: #fff;
+  text-decoration: underline;
+}
+
+p a{
+  padding-left: 20px;
+  color: #59e5c6;
+  position: relative;
+}
+
+.container{
+}
+
+h3{
+  font-size: 30px;
+  font-weight: bold;
+  margin: 0 auto 10px;
 }

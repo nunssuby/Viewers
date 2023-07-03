@@ -6,7 +6,6 @@ import axios from 'axios';
 import './grkStudyList.css';
 import OHIFLogo from '../components/OHIFLogo/OHIFLogo.js';
 
-let haveToken = false;
 const Login = () => {
   const [studyObj, setStudyObj] = useState([]);
   useEffect(() => {
@@ -18,6 +17,14 @@ const Login = () => {
     window.location.assign(`/${oid}/subjectlist`);
   };
 
+  const logout = () => {
+    localStorage.removeItem('accessTokenPotal');
+    localStorage.removeItem('refreshTokenPotal');
+    localStorage.removeItem('loginUserPotal');
+    localStorage.removeItem('saveId');
+    localStorage.setItem('isLogin', false);
+    window.location.assign('./login');
+  };
   const checkToken = async () => {
     const accessToken = localStorage.getItem('accessTokenPotal');
     if (!accessToken) {
@@ -50,6 +57,11 @@ const Login = () => {
       <div className="header">
         <div className="logo-box">{OHIFLogo()}</div>
       </div>
+      <p>
+        <a href="#" className="logout" onClick={() => logout()}>
+          logout
+        </a>
+      </p>
       <div className="container">
         <div>
           <h3 className="title">Study List</h3>
