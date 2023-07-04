@@ -15,7 +15,6 @@ const Login = () => {
   }, []);
 
   const goStudy = oid => {
-    localStorage.setItem('studyOid', oid);
     window.location.assign(`/${oid}/subjectlist`);
   };
 
@@ -48,13 +47,11 @@ const Login = () => {
 
   return (
     <section>
-      <div className="entry-header header-big">
-        <div className="header-left-box">
-          <div className="logo-box">{OHIFLogo()}</div>
-        </div>
+      <div className="header">
+        <div className="logo-box">{OHIFLogo()}</div>
       </div>
       <div className="container">
-        <div className="table-top">
+        <div>
           <h3 className="title">Study List</h3>
           <p className="condition">
             {studyObj.length}{' '}
@@ -62,13 +59,6 @@ const Login = () => {
           </p>
         </div>
         <table>
-          <colgroup>
-            <col width="8%" />
-            <col width="15%" />
-            <col width="" />
-            <col width="20%" />
-            <col width="20%" />ㅖ
-          </colgroup>
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -86,8 +76,10 @@ const Login = () => {
                 onClick={() => goStudy(row.oid)}
               >
                 <td className="study number">{index + 1}</td>
-                <td className="study name">{row.studyName}</td>
-                <td className="study description">{row.studyDescription}</td>
+                <td className="study name left">{row.studyName}</td>
+                <td className="study description left">
+                  {row.studyDescription}
+                </td>
                 <td className="study start">{row.startDate}</td>
                 <td className="study end">{row.endDate}</td>
               </tr>

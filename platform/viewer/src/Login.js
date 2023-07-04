@@ -26,7 +26,6 @@ class Login extends Component {
       this.inputRef.current.focus();
     }
 
-
     window.ohif.app.hotkeysManager.destroy();
   }
 
@@ -120,12 +119,10 @@ class Login extends Component {
       //alert('');
       window.location.assign('../grkstudy');
     } catch (error) {
-                      //console.error('test message: 로그인 실패:', error);
-                      alert(
-                        '로그인 실패하였습니다. 아이디와 비밀번호를 확인해 주세요'
-                      );
-                      // 로그인 실패 처리를 여기에 추가합니다.
-                    }
+      //console.error('test message: 로그인 실패:', error);
+      alert('로그인 실패하였습니다. 아이디와 비밀번호를 확인해 주세요');
+      // 로그인 실패 처리를 여기에 추가합니다.
+    }
   };
 
   handleCheckboxChange = event => {
