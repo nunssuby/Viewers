@@ -31,3 +31,9 @@
     display: none;
   }
 }
+
+.logout{
+  position: absolute;
+  left: 95%;
+  color: white;
+}

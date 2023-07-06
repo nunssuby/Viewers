@@ -24,16 +24,7 @@ function OHIFLogo() {
          */}
         <Icon name="ohif-text-logo" className="header-logo-text" />
       </span>
-      <a
-        href="#"
-        style={{
-          position: 'absolute',
-          left: '95%',
-          color: 'white',
-        }}
-        className="logout"
-        onClick={() => logout()}
-      >
+      <a href="#" className="logout" onClick={() => logout()}>
         logout
       </a>
     </div>
