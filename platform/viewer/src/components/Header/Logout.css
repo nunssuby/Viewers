@@ -1,0 +1,10 @@
+#root .entry-header.header-big,
+#root .entry-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout{
+  color: var(--text-secondary-color);
+}

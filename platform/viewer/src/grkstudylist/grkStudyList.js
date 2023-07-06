@@ -5,6 +5,7 @@ import { withRouter } from 'react-router';
 import axios from 'axios';
 import './grkStudyList.css';
 import OHIFLogo from '../components/OHIFLogo/OHIFLogo.js';
+import Logout from '../components/Header/Logout.js';
 
 let haveToken = false;
 const Login = () => {
@@ -52,6 +53,7 @@ const Login = () => {
         <div className="header-left-box">
           <div className="logo-box">{OHIFLogo()}</div>
         </div>
+        {Logout()}
       </div>
       <div className="container">
         <div className="table-top">

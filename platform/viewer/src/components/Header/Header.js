@@ -5,7 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Link, withRouter } from 'react-router-dom';
 import OHIFLogo from '../OHIFLogo/OHIFLogo.js';
-//
+import Logout from '../Header/Logout.js';
+
 import { UserPreferences } from './../UserPreferences';
 import './Header.css';
 
@@ -26,40 +27,40 @@ function Header(props) {
   const hasLink = linkText && linkPath;
 
   useEffect(() => {
-                    //console.log(hasLink, linkText, linkPath);
-                    const optionsValue = [
-                      {
-                        title: t('About'),
-                        icon: { name: 'info' },
-                        onClick: () =>
-                          show({
-                            content: AboutContent,
-                            title: t('OHIF Viewer - About'),
-                          }),
-                      },
-                      {
-                        title: t('Preferences'),
-                        icon: {
-                          name: 'user',
-                        },
-                        onClick: () =>
-                          show({
-                            content: UserPreferences,
-                            title: t('User Preferences'),
-                          }),
-                      },
-                    ];
+    //console.log(hasLink, linkText, linkPath);
+    const optionsValue = [
+      {
+        title: t('About'),
+        icon: { name: 'info' },
+        onClick: () =>
+          show({
+            content: AboutContent,
+            title: t('OHIF Viewer - About'),
+          }),
+      },
+      {
+        title: t('Preferences'),
+        icon: {
+          name: 'user',
+        },
+        onClick: () =>
+          show({
+            content: UserPreferences,
+            title: t('User Preferences'),
+          }),
+      },
+    ];
 
-                    if (user && userManager) {
-                      optionsValue.push({
-                        title: t('Logout'),
-                        icon: { name: 'power-off' },
-                        onClick: () => userManager.signoutRedirect(),
-                      });
-                    }
+    if (user && userManager) {
+      optionsValue.push({
+        title: t('Logout'),
+        icon: { name: 'power-off' },
+        onClick: () => userManager.signoutRedirect(),
+      });
+    }
 
-                    setOptions(optionsValue);
-                  }, [setOptions, show, t, user, userManager]);
+    setOptions(optionsValue);
+  }, [setOptions, show, t, user, userManager]);
 
   return (
     <>
@@ -95,6 +96,7 @@ function Header(props) {
           {/* <span className="research-use">{t('INVESTIGATIONAL USE ONLY')}</span> */}
           <Dropdown title={t('Options')} list={options} align="right" />
         </div>
+        {Logout()}
       </div>
     </>
   );
