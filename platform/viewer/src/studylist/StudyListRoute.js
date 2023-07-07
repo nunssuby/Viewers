@@ -103,9 +103,9 @@ function StudyListRoute(props) {
            * nunssuby
            */
 
-          // const userToken = localStorage.getItem('accessTokenPotal').token;
+          // const userToken = sessionStorage.getItem('accessTokenPotal').token;
           const accessTokenPotal = JSON.parse(
-            localStorage.getItem('accessTokenPotal')
+            sessionStorage.getItem('accessTokenPotal')
           );
           const studyOID = window.location.href.split('/')[3];
           const responseGrkStudy = await axios.get(
@@ -118,7 +118,7 @@ function StudyListRoute(props) {
             }
           );
 
-          console.log("asdjfkasdjfkasdjfsadfsadfasdf")
+          console.log('asdjfkasdjfkasdjfsadfsadfasdf');
 
           let StudyInstanceUIDList = [];
 
@@ -264,7 +264,7 @@ function StudyListRoute(props) {
                 useLargeLogo={true}
                 user={user}
                 userManager={userManager}
-                linkPath={'/'}
+                linkPath={'/grkstudy'}
                 linkText="StudyList"
               >
                 {whiteLabeling &&

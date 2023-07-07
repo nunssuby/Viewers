@@ -28,7 +28,7 @@ class StudyList extends Component {
   fetchData = async () => {
     try {
       const { studyOID, studyList } = this.state;
-      const accessTokenPotal = JSON.parse(localStorage.getItem("accessTokenPotal"));
+      const accessTokenPotal = JSON.parse(sessionStorage.getItem("accessTokenPotal"));
       const response = await axios.get(`http://grk-backend.medical-lab.co.kr/api/v1/study/:${studyOID}/subject`, {
         headers: {
           'Authorization': `Bearer ${accessTokenPotal.token}`,

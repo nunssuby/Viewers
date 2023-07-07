@@ -320,7 +320,7 @@ class Viewer extends Component {
       });
     });
 
-    let oid = localStorage.getItem('studyOid');
+    let oid = sessionStorage.getItem('studyOid');
 
     return (
       <>

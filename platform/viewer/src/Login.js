@@ -99,22 +99,22 @@ class Login extends Component {
         localStorage.setItem('saveId', username);
       }
 
-      localStorage.setItem(
+      sessionStorage.setItem(
         'accessTokenPotal',
         JSON.stringify({
           token: accessToken,
           exp: this.parseToken(accessToken).exp,
         })
       );
-      localStorage.setItem(
+      sessionStorage.setItem(
         'refreshTokenPotal',
         JSON.stringify({
           token: refreshToken,
           exp: this.parseToken(refreshToken).exp,
         })
       );
-      localStorage.setItem('loginUserPotal', JSON.stringify(loginUser));
-      localStorage.setItem('isLogin', 'OK');
+      sessionStorage.setItem('loginUserPotal', JSON.stringify(loginUser));
+      sessionStorage.setItem('isLogin', 'OK');
       // navigate('/project');
       //console.log('test message: 로그인 성공: ' + username);
       //alert('');

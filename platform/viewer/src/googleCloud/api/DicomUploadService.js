@@ -85,7 +85,7 @@ class DicomUploadService {
 
       // 이때 grkStudy api를 사용해서 grkStudy와 ohifStudy를 연결해야함
       const accessTokenPotal = JSON.parse(
-        localStorage.getItem('accessTokenPotal')
+        sessionStorage.getItem('accessTokenPotal')
       );
       const studyOID = window.location.href.split('/')[3];
       const responseGrkStudy = await axios.post(`http://grk-backend.medical-lab.co.kr/api/v1/study/${studyOID}/subject`, {

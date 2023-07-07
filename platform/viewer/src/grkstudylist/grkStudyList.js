@@ -16,12 +16,12 @@ const Login = () => {
   }, []);
 
   const goStudy = oid => {
-    localStorage.setItem('studyOid', oid);
+    sessionStorage.setItem('studyOid', oid);
     window.location.assign(`/${oid}/subjectlist`);
   };
 
   const checkToken = async () => {
-    const accessToken = localStorage.getItem('accessTokenPotal');
+    const accessToken = sessionStorage.getItem('accessTokenPotal');
     if (!accessToken) {
       window.location.assign('./login');
     }
@@ -30,7 +30,7 @@ const Login = () => {
   const fetchData = async () => {
     try {
       const accessTokenPotal = JSON.parse(
-        localStorage.getItem('accessTokenPotal')
+        sessionStorage.getItem('accessTokenPotal')
       );
       const response = await axios.get(
         'http://grk-backend.medical-lab.co.kr/api/v1/study',

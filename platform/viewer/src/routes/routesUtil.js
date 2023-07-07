@@ -68,7 +68,8 @@ const ROUTES_DEF = {
       path: '/viewer',
       component: StandaloneRouting,
     },
-    list: {  // subject 목록
+    list: {
+      // subject 목록
       path: ['/:studyOID/subjectlist'],
       component: StudyListRouting,
       condition: appConfig => {
@@ -76,8 +77,9 @@ const ROUTES_DEF = {
       },
     },
 
-    grkStudyList: {  // study 목록
-      path: ['/grkstudy', '/'],
+    grkStudyList: {
+      // study 목록
+      path: ['/grkstudy'],
       component: GRKProjectList,
     },
     local: {
@@ -89,7 +91,7 @@ const ROUTES_DEF = {
       component: IHEInvokeImageDisplay,
     },
     login: {
-      path: ['/login'],
+      path: ['/login', '/'],
       component: Login,
     },
   },
