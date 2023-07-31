@@ -23,7 +23,7 @@ function StudyListRouting({ match: routeMatch, location: routeLocation }) {
 
   const filters = UrlUtil.queryString.getQueryFilters(routeLocation);
 
-  let studyListFunctionsEnabled = false;
+  let studyListFunctionsEnabled = true;
   if (appConfig.studyListFunctionsEnabled) {
     studyListFunctionsEnabled = appConfig.studyListFunctionsEnabled;
   }

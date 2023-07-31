@@ -1,35 +1,55 @@
 window.config = {
-  // default: '/'
   routerBasename: '/',
   extensions: [],
   showStudyList: true,
-  filterQueryParam: false,
-  disableServersCache: false,
-  studyPrefetcher: {
-    enabled: true,
-    order: 'closest',
-    displaySetCount: 3,
-    preventCache: false,
-    prefetchDisplaySetsTimeout: 300,
-    maxNumPrefetchRequests: 100,
-    displayProgress: true,
-    includeActiveDisplaySet: true,
-  },
   servers: {
     dicomWeb: [
       {
         name: 'DCM4CHEE',
-        wadoUriRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/wado',
-        qidoRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs',
-        wadoRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs',
+        wadoUriRoot:
+          'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/wado',
+        qidoRoot: 'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/rs',
+        wadoRoot: 'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/rs',
         qidoSupportsIncludeField: true,
         imageRendering: 'wadors',
         thumbnailRendering: 'wadors',
-        enableStudyLazyLoad: true,
-        supportsFuzzyMatching: true,
+        requestOptions: {
+          requestFromBrowser: true,
+        },
       },
     ],
   },
+  // default: '/'
+  // routerBasename: '/',
+  // extensions: [],
+  // showStudyList: true,
+  // filterQueryParam: false,
+  // disableServersCache: false,
+  // studyPrefetcher: {
+  //   enabled: true,
+  //   order: 'closest',
+  //   displaySetCount: 3,
+  //   preventCache: false,
+  //   prefetchDisplaySetsTimeout: 300,
+  //   maxNumPrefetchRequests: 100,
+  //   displayProgress: true,
+  //   includeActiveDisplaySet: true,
+  // },
+  // servers: {
+  //   dicomWeb: [
+  //     {
+  //       name: 'DCM4CHEE',
+  //       wadoUriRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/wado',
+  //       qidoRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs',
+  //       wadoRoot: 'https://server.dcmjs.org/dcm4chee-arc/aets/DCM4CHEE/rs',
+  //       qidoSupportsIncludeField: true,
+  //       imageRendering: 'wadors',
+  //       thumbnailRendering: 'wadors',
+  //       enableStudyLazyLoad: true,
+  //       supportsFuzzyMatching: true,
+  //     },
+  //   ],
+  // },
 
   // Extensions should be able to suggest default values for these?
   // Or we can require that these be explicitly set
