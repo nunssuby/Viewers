@@ -82,6 +82,11 @@ function StudyListRoute(props) {
   // Watches filters and sort, debounced
   useEffect(
     () => {
+      const isLogin = localStorage.getItem('isLogin');
+      console.log('isLogin', isLogin);
+      if (isLogin != 'OK') {
+        location.href = '/login/';
+      }
       const fetchStudies = async () => {
         try {
           setSearchStatus({ error: null, isSearchingForStudies: true });
@@ -200,6 +205,11 @@ function StudyListRoute(props) {
     });
   }
 
+  function logout() {
+    localStorage.removeItem('isLogin');
+    location.href = '/login/';
+  }
+
   return (
     <>
       {studyListFunctionsEnabled ? (
@@ -240,6 +250,9 @@ function StudyListRoute(props) {
             />
           )}
           <span className="study-count">{studies.length}</span>
+          <a onClick={() => logout()} className="btn-logout">
+            LOGOUT
+          </a>
         </div>
       </div>
 

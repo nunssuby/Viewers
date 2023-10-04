@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
 import './Login.css';
 import OHIFLogo from './components/OHIFLogo/OHIFLogo.js';
 
@@ -13,70 +12,21 @@ class Login extends Component {
     };
   }
 
-  parseToken = tk => {
-    let tokenData = {};
-    try {
-      tokenData = jwt_decode(tk);
-    } catch (error) {
-      throw new Error(error);
-    }
-    return tokenData;
-  };
-
-  getUserFromAccessToken = accessToken => {
-    let tokenData = {};
-    let user = {};
-    tokenData = this.parseToken(accessToken);
-    user = {
-      jti: tokenData.jti,
-      userIdx: tokenData.userIdx,
-      userId: tokenData.userId,
-      username: tokenData.username,
-      iat: tokenData.iat,
-      exp: tokenData.exp,
-      //profileFileId: tokenData.profileFileId,
-    };
-    return user;
-  };
-
   handleLogin = async e => {
     e.preventDefault();
 
     try {
       const { username, password } = this.state;
-      const response = await axios.post(
-        'http://grk-backend.medical-lab.co.kr/api/v1/token/',
-        {
-          userId: username,
-          password: password,
-        }
-      );
 
-      // 로그인 성공 후 처리할 작업을 여기에 추가합니다.
-      const accessToken = response.data.data.accessToken;
-      const refreshToken = response.data.data.refreshToken;
-      const loginUser = this.getUserFromAccessToken(accessToken);
-
-      localStorage.setItem('saveId', username);
-      localStorage.setItem(
-        'accessTokenPotal',
-        JSON.stringify({
-          token: accessToken,
-          exp: this.parseToken(accessToken).exp,
-        })
-      );
-      localStorage.setItem(
-        'refreshTokenPotal',
-        JSON.stringify({
-          token: refreshToken,
-          exp: this.parseToken(refreshToken).exp,
-        })
-      );
-      localStorage.setItem('loginUserPotal', JSON.stringify(loginUser));
-      localStorage.setItem('isLogin', 'OK');
-      // navigate('/project');
-      console.error('test message: 로그인 성공: ' + username);
-      alert('로그인 성공');
+      console.log(username, password);
+      if (username == 'admin' && password == 'qwer1234') {
+        localStorage.setItem('isLogin', 'OK');
+        location.href = '/';
+        //console.error('test message: 로그인 성공: ' + username);
+        alert('로그인 성공');
+      } else {
+        alert('아이디와 패스워드를 확인하세요');
+      }
     } catch (error) {
       console.error('test message: 로그인 실패:', error);
       // 로그인 실패 처리를 여기에 추가합니다.
@@ -90,7 +40,8 @@ class Login extends Component {
   };
 
   render() {
-    console.log(this.props);
+    localStorage.removeItem('isLogin');
+    //console.log(this.props);
     const { username, password } = this.state;
     const handleSubmit = () => {};
 
@@ -137,7 +88,7 @@ class Login extends Component {
                 </small>
               )}
             </div>
-            <div className="bottom-box">
+            {/* <div className="bottom-box">
               <label className="checkbox-container">
                 <input type="checkbox" />
                 <span className="checkmark"></span>
@@ -145,17 +96,16 @@ class Login extends Component {
               </label>
 
               <a href="#">Forgot Password?</a>
-            </div>
+            </div> */}
 
             <div className="bottom-area">
               <button type="submit">Login</button>
-              <p>
+              {/* <p>
                 Don't have an account?
                 <a href="#">Sing Up</a>
-              </p>
+              </p> */}
             </div>
           </form>
-          <div className="logo-box">{OHIFLogo()}</div>
         </div>
       </section>
     );
