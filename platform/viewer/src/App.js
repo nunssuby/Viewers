@@ -322,11 +322,6 @@ function _initHotkeys(appConfigHotkeys) {
     localStorage.getItem('hotkey-definitions') || '{}'
   );
 
-  console.log(
-    '===========================================appConfigHotkeys',
-    userPreferredHotkeys,
-    appConfigHotkeys
-  );
   // TODO: hotkeysManager.isValidDefinitionObject(/* */)
   const hasUserPreferences =
     userPreferredHotkeys && Object.keys(userPreferredHotkeys).length > 0;

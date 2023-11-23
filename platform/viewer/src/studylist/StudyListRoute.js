@@ -25,7 +25,6 @@ import AppContext from '../context/AppContext';
 const { urlUtil: UrlUtil } = OHIF.utils;
 
 function StudyListRoute(props) {
-  console.log(props);
   const { history, server, user, studyListFunctionsEnabled } = props;
   const [t] = useTranslation('Common');
   // ~~ STATE
@@ -83,9 +82,9 @@ function StudyListRoute(props) {
   // Watches filters and sort, debounced
   useEffect(
     () => {
-      console.log(studyListFunctionsEnabled);
-      console.log(isGoogleCHAIntegrationEnabled);
-      console.log(appConfig.enableGoogleCloudAdapter);
+      //console.log(studyListFunctionsEnabled);
+      //console.log(isGoogleCHAIntegrationEnabled);
+      //console.log(appConfig.enableGoogleCloudAdapter);
       const fetchStudies = async () => {
         try {
           setSearchStatus({ error: null, isSearchingForStudies: true });
