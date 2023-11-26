@@ -154,24 +154,14 @@ export default {
               if (study && study.series) {
                 for (let j = 0; j < study.series.length; j++) {
                   const series = study.series[j];
-
-                  if (series.Modality === 'SEG') {
-                    if (activeViewport) {
-                      const studyMetadata = studyMetadataManager.get(
-                        activeViewport.StudyInstanceUID
-                      );
-                      if (!studyMetadata) {
-                        return;
-                      }
-                      const referencedDS = studyMetadata.getDerivedDatasets({
-                        referencedSeriesInstanceUID:
-                          activeViewport.SeriesInstanceUID,
-                        Modality: 'SEG',
-                      });
-                      triggerSegmentationPanelTabUpdatedEvent({
-                        badgeNumber: referencedDS.length,
-                        target: 'segmentation-panel',
-                      });
+                  //console.log(series.Modality);
+                  //if (series.Modality === 'CT') {
+                  if (activeViewport) {
+                    const studyMetadata = studyMetadataManager.get(
+                      activeViewport.StudyInstanceUID
+                    );
+                    if (!studyMetadata) {
+                      return;
                     }
                     return false;
                   }

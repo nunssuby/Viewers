@@ -34,7 +34,7 @@ const definitions = [
     commandName: 'resetMPRView',
     commandOptions: {},
   },
-  /*
+
   {
     id: 'Rotate',
     label: 'Rotate',
@@ -44,8 +44,6 @@ const definitions = [
     commandName: 'enableRotateTool',
     commandOptions: {},
   },
-  */
-  /*
   {
     id: 'setBlendModeToComposite',
     label: 'Disable MIP',
@@ -83,7 +81,7 @@ const definitions = [
     commandName: 'decreaseSlabThickness',
     commandOptions: {},
   },
-  */
+
   {
     id: 'changeSlabThickness',
     label: 'Slab Thickness',
@@ -135,6 +133,15 @@ const definitions = [
     CustomComponent: VTKMPRToolbarButton,
     type: TOOLBAR_BUTTON_TYPES.COMMAND,
     commandName: 'mpr2d',
+    context: 'ACTIVE_VIEWPORT::CORNERSTONE',
+  },
+  {
+    id: '3D',
+    label: '3D',
+    icon: 'cube',
+    CustomComponent: VTKMPRToolbarButton,
+    type: TOOLBAR_BUTTON_TYPES.COMMAND,
+    commandName: 'render',
     context: 'ACTIVE_VIEWPORT::CORNERSTONE',
   },
 ];

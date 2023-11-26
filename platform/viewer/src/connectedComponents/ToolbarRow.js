@@ -306,6 +306,7 @@ function _getDefaultButtonComponent(button, activeButtons) {
  */
 function _getButtonComponents(toolbarButtons, activeButtons) {
   const _this = this;
+
   return toolbarButtons.map(button => {
     const hasCustomComponent = button.CustomComponent;
     const hasNestedButtonDefinitions = button.buttons && button.buttons.length;
