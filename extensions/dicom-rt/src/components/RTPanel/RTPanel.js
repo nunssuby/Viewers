@@ -324,7 +324,7 @@ RTPanel.propTypes = {
   viewports: PropTypes.shape({
     displaySetInstanceUID: PropTypes.string,
     frameRate: PropTypes.any,
-    InstanceNumber: PropTypes.number,
+    InstanceNumber: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     isMultiFrame: PropTypes.bool,
     isReconstructable: PropTypes.bool,
     Modality: PropTypes.string,

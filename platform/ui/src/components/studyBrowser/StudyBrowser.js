@@ -88,7 +88,10 @@ StudyBrowser.propTypes = {
           derivedDisplaySetsNumber: PropTypes.number,
           numImageFrames: PropTypes.number,
           SeriesDescription: PropTypes.string,
-          SeriesNumber: PropTypes.number,
+          SeriesNumber: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number,
+          ]),
           stackPercentComplete: PropTypes.number,
         })
       ),

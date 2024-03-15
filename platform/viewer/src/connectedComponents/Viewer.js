@@ -36,8 +36,14 @@ class Viewer extends Component {
           PropTypes.shape({
             displaySetInstanceUID: PropTypes.string.isRequired,
             SeriesDescription: PropTypes.string,
-            SeriesNumber: PropTypes.number,
-            InstanceNumber: PropTypes.number,
+            SeriesNumber: PropTypes.oneOfType([
+              PropTypes.string,
+              PropTypes.number,
+            ]),
+            InstanceNumber: PropTypes.oneOfType([
+              PropTypes.string,
+              PropTypes.number,
+            ]),
             numImageFrames: PropTypes.number,
             Modality: PropTypes.string.isRequired,
             images: PropTypes.arrayOf(
