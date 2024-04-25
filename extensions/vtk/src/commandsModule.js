@@ -123,80 +123,126 @@ const commandsModule = ({ commandsManager, servicesManager, props }) => {
     return pos;
   };
 
+  function flipImageHorizontally(volume) {
+    const imageData = volume.getMapper().getInputData();
+    const dimensions = imageData.getDimensions();
+    const numComponents = imageData
+      .getPointData()
+      .getScalars()
+      .getNumberOfComponents(); // 수정된 부분
+    let pixels = imageData
+      .getPointData()
+      .getScalars()
+      .getData();
+
+    for (let z = 0; z < dimensions[2]; z++) {
+      for (let y = 0; y < dimensions[1]; y++) {
+        for (let x = 0; x < Math.floor(dimensions[0] / 2); x++) {
+          const index1 =
+            ((z * dimensions[1] + y) * dimensions[0] + x) * numComponents;
+          const index2 =
+            ((z * dimensions[1] + y) * dimensions[0] +
+              (dimensions[0] - x - 1)) *
+            numComponents;
+          for (let component = 0; component < numComponents; component++) {
+            const temp = pixels[index1 + component];
+            pixels[index1 + component] = pixels[index2 + component];
+            pixels[index2 + component] = temp;
+          }
+        }
+      }
+    }
+
+    // Update the modified image data
+    imageData.modified();
+  }
+
+  function flipImageVertically(volume) {
+    const imageData = volume.getMapper().getInputData();
+    const dimensions = imageData.getDimensions();
+    const numComponents = imageData
+      .getPointData()
+      .getScalars()
+      .getNumberOfComponents();
+    let pixels = imageData
+      .getPointData()
+      .getScalars()
+      .getData();
+
+    for (let z = 0; z < dimensions[2]; z++) {
+      for (let x = 0; x < dimensions[0]; x++) {
+        for (let y = 0; y < Math.floor(dimensions[1] / 2); y++) {
+          const index1 =
+            ((z * dimensions[1] + y) * dimensions[0] + x) * numComponents;
+          const index2 =
+            ((z * dimensions[1] + (dimensions[1] - y - 1)) * dimensions[0] +
+              x) *
+            numComponents;
+          for (let component = 0; component < numComponents; component++) {
+            const temp = pixels[index1 + component];
+            pixels[index1 + component] = pixels[index2 + component];
+            pixels[index2 + component] = temp;
+          }
+        }
+      }
+    }
+
+    // Update the modified image data
+    imageData.modified();
+  }
+
   const actions = {
     render: async ({ viewports }) => {
-                                       //
+      //
 
-                                       const displaySet =
-                                         viewports.viewportSpecificData[
-                                           viewports.activeViewportIndex
-                                         ];
-                                       const viewportProps = [
-                                         {
-                                           orientation: {
-                                             sliceNormal: [0, 0, 1],
-                                             viewUp: [0, -1, 0],
-                                           },
-                                         },
-                                       ];
+      const displaySet =
+        viewports.viewportSpecificData[viewports.activeViewportIndex];
+      const viewportProps = [
+        {
+          orientation: {
+            sliceNormal: [0, 0, 1],
+            viewUp: [0, -1, 0],
+          },
+        },
+      ];
 
-                                       const study = studyMetadataManager.get(
-                                         displaySet.StudyInstanceUID
-                                       );
-                                       const images = study.findDisplaySet(
-                                         ds => {
-                                           return (
-                                             ds.images &&
-                                             ds.images.find(
-                                               i =>
-                                                 i.getSOPInstanceUID() ===
-                                                 displaySet.SOPInstanceUID
-                                             )
-                                           );
-                                         }
-                                       );
+      const study = studyMetadataManager.get(displaySet.StudyInstanceUID);
+      const images = study.findDisplaySet(ds => {
+        return (
+          ds.images &&
+          ds.images.find(
+            i => i.getSOPInstanceUID() === displaySet.SOPInstanceUID
+          )
+        );
+      });
 
-                                       try {
-                                         await setMPRLayout(
-                                           displaySet,
-                                           viewportProps,
-                                           1,
-                                           1
-                                         );
-                                       } catch (error) {
-                                         throw new Error(error);
-                                       }
-                                       const vistaActivada = Array.from(
-                                         document.getElementsByClassName(
-                                           'vtk-viewport-handler'
-                                         )
-                                       );
-                                       vistaActivada[0].innerHTML = '';
-                                       ReactDOM.render(
-                                         <Render3D images={images} />,
-                                         vistaActivada[0]
-                                       );
+      try {
+        await setMPRLayout(displaySet, viewportProps, 1, 1);
+      } catch (error) {
+        throw new Error(error);
+      }
+      const vistaActivada = Array.from(
+        document.getElementsByClassName('vtk-viewport-handler')
+      );
+      vistaActivada[0].innerHTML = '';
+      ReactDOM.render(<Render3D images={images} />, vistaActivada[0]);
 
-                                       const Toolbar = Array.from(
-                                         document.getElementsByClassName(
-                                           'toolbar-button'
-                                         )
-                                       );
+      const Toolbar = Array.from(
+        document.getElementsByClassName('toolbar-button')
+      );
 
-                                       Toolbar.forEach(tool => {
-                                         if (
-                                           tool.getElementsByClassName(
-                                             'toolbar-button-label'
-                                           )[0].innerText == 'Exit 2D MPR'
-                                         ) {
-                                           tool.getElementsByClassName(
-                                             'toolbar-button-label'
-                                           )[0].innerText = 'Exit 3D';
-                                         } else {
-                                           tool.style.display = 'none';
-                                         }
-                                       });
-                                     },
+      Toolbar.forEach(tool => {
+        if (
+          tool.getElementsByClassName('toolbar-button-label')[0].innerText ==
+          'Exit 2D MPR'
+        ) {
+          tool.getElementsByClassName('toolbar-button-label')[0].innerText =
+            'Exit 3D';
+        } else {
+          tool.style.display = 'none';
+        }
+      });
+    },
     getVtkApis: ({ index }) => {
       return apis[index];
     },
@@ -209,6 +255,18 @@ const commandsModule = ({ commandsManager, servicesManager, props }) => {
 
       // Reset the crosshairs
       apis[0].svgWidgets.rotatableCrosshairsWidget.resetCrosshairs(apis, 0);
+    },
+    flipViewportHorizontal: ({ viewports }) => {
+      const api = apis[viewports.activeViewportIndex];
+      const volume = api.volumes[0]; // 'volumes' 배열에서 첫 번째 볼륨을 가져옴
+      flipImageHorizontally(volume);
+      api.genericRenderWindow.getRenderWindow().render(); // 화면 갱신
+    },
+    flipViewportVertical: ({ viewports }) => {
+      const api = apis[viewports.activeViewportIndex];
+      const volume = api.volumes[0]; // 'volumes' 배열에서 첫 번째 볼륨을 가져옴
+      flipImageVertically(volume);
+      api.genericRenderWindow.getRenderWindow().render(); // 화면 갱신
     },
     axial: async ({ viewports }) => {
       const api = await _getActiveViewportVTKApi(viewports);
@@ -627,6 +685,16 @@ const commandsModule = ({ commandsManager, servicesManager, props }) => {
     },
     resetMPRView: {
       commandFn: actions.resetMPRView,
+      options: {},
+    },
+    flipViewportVertical: {
+      commandFn: actions.flipViewportVertical,
+      storeContexts: ['viewports'],
+      options: {},
+    },
+    flipViewportHorizontal: {
+      commandFn: actions.flipViewportHorizontal,
+      storeContexts: ['viewports'],
       options: {},
     },
     setBlendModeToComposite: {

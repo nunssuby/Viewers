@@ -34,6 +34,22 @@ const definitions = [
     commandName: 'resetMPRView',
     commandOptions: {},
   },
+  {
+    id: 'FlipH',
+    label: 'Flip H',
+    icon: 'ellipse-h',
+    //
+    type: TOOLBAR_BUTTON_TYPES.COMMAND,
+    commandName: 'flipViewportHorizontal',
+  },
+  {
+    id: 'FlipV',
+    label: 'Flip V',
+    icon: 'ellipse-v',
+    //
+    type: TOOLBAR_BUTTON_TYPES.COMMAND,
+    commandName: 'flipViewportVertical',
+  },
 
   {
     id: 'Rotate',
