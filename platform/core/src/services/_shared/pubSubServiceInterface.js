@@ -24,7 +24,7 @@ function subscribe(eventName, callback) {
     const listenerId = guid();
     const subscription = { id: listenerId, callback };
 
-    console.info(`Subscribing to '${eventName}'.`);
+    //console.info(`Subscribing to '${eventName}'.`);
     if (Array.isArray(this.listeners[eventName])) {
       this.listeners[eventName].push(subscription);
     } else {
