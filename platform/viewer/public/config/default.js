@@ -7,9 +7,9 @@ window.config = {
       {
         name: 'DCM4CHEE',
         wadoUriRoot:
-          'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/wado',
-        qidoRoot: 'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/rs',
-        wadoRoot: 'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/rs',
+          'https://dcm4chee.aim-aicro.com/dcm4chee-arc/aets/DCM4CHEE/wado',
+        qidoRoot: 'https://dcm4chee.aim-aicro.com/dcm4chee-arc/aets/DCM4CHEE/rs',
+        wadoRoot: 'https://dcm4chee.aim-aicro.com/dcm4chee-arc/aets/DCM4CHEE/rs',
         qidoSupportsIncludeField: true,
         imageRendering: 'wadors',
         thumbnailRendering: 'wadors',
