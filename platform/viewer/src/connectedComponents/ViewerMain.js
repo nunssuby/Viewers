@@ -46,13 +46,15 @@ class ViewerMain extends Component {
       return study.StudyInstanceUID === StudyInstanceUID;
     });
 
-    if (!study) {
-      return;
+    if (!study || !Array.isArray(study.displaySets) || !study.displaySets.length) {
+      return null;
     }
 
-    return study.displaySets.find(displaySet => {
-      return displaySet.displaySetInstanceUID === displaySetInstanceUID;
-    });
+    return (
+      study.displaySets.find(displaySet => {
+        return displaySet.displaySetInstanceUID === displaySetInstanceUID;
+      }) || study.displaySets[0]
+    );
   }
 
   componentDidMount() {
@@ -141,7 +143,7 @@ class ViewerMain extends Component {
 
     const { LoggerService, UINotificationService } = servicesManager.services;
 
-    if (displaySet.isDerived) {
+    if (displaySet && displaySet.isDerived) {
       const { Modality } = displaySet;
       if (Modality === 'SEG' && servicesManager) {
         const onDisplaySetLoadFailureHandler = error => {
@@ -197,7 +199,7 @@ class ViewerMain extends Component {
       }
     }
 
-    if (displaySet.isSOPClassUIDSupported === false) {
+    if (displaySet && displaySet.isSOPClassUIDSupported === false) {
       const error = new Error('Modality not supported');
       const message = 'Modality not supported';
       LoggerService.error({ error, message });
@@ -209,7 +211,9 @@ class ViewerMain extends Component {
       });
     }
 
-    this.props.setViewportSpecificData(viewportIndex, displaySet);
+    if (displaySet) {
+      this.props.setViewportSpecificData(viewportIndex, displaySet);
+    }
   };
 
   render() {

@@ -17,7 +17,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       const { LoggerService, UINotificationService } = servicesManager.services;
 
       //console.log(displaySet.isDerived, displaySet);
-      if (displaySet.isDerived) {
+      if (displaySet && displaySet.isDerived) {
         const { Modality } = displaySet;
         if (Modality === 'SEG' && servicesManager) {
           const onDisplaySetLoadFailureHandler = error => {
@@ -99,7 +99,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         });
       }
 
-      if (displaySet.isSOPClassUIDSupported === false) {
+      if (displaySet && displaySet.isSOPClassUIDSupported === false) {
         const error = new Error('Modality not supported');
         const message = 'Modality not supported';
         LoggerService.error({
@@ -114,7 +114,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         });
       }
 
-      dispatch(setActiveViewportSpecificData(displaySet));
+      if (displaySet) {
+        dispatch(setActiveViewportSpecificData(displaySet));
+      }
     },
   };
 };

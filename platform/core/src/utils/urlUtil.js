@@ -1,6 +1,6 @@
 import lib from 'query-string';
 
-const PARAM_SEPARATOR = ';';
+const PARAM_SEPARATOR = /[;,]/;
 const PARAM_PATTERN_IDENTIFIER = ':';
 
 function toLowerCaseFirstLetter(word) {
@@ -42,7 +42,10 @@ const parse = toParse => {
 const parseParam = paramStr => {
   const _paramDecoded = decode(paramStr);
   if (_paramDecoded && typeof _paramDecoded === 'string') {
-    return _paramDecoded.split(PARAM_SEPARATOR);
+    return _paramDecoded
+      .split(PARAM_SEPARATOR)
+      .map(value => value.trim())
+      .filter(Boolean);
   }
 };
 

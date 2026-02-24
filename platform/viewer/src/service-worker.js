@@ -20,59 +20,27 @@ importScripts(
 );
 */
 
-// Install newest
-// https://developers.google.com/web/tools/workbox/modules/workbox-core
+// Immediately activate any updated worker.
 workbox.core.skipWaiting();
 workbox.core.clientsClaim();
 
-// Cache static assets that aren't precached
-workbox.routing.registerRoute(
-  /\.(?:js|css)$/,
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: 'static-resources',
-  })
-);
+// This worker intentionally removes old SW state/caches and unregisters itself.
+// We do this to avoid stale JS bundle delivery from prior runtime-cache strategy.
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    (async () => {
+      const cacheKeys = await caches.keys();
+      await Promise.all(cacheKeys.map(cacheKey => caches.delete(cacheKey)));
 
-// Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
-workbox.routing.registerRoute(
-  /^https:\/\/fonts\.googleapis\.com/,
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: 'google-fonts-stylesheets',
-  })
-);
+      await self.registration.unregister();
 
-// Cache the underlying font files with a cache-first strategy for 1 year.
-workbox.routing.registerRoute(
-  /^https:\/\/fonts\.gstatic\.com/,
-  new workbox.strategies.CacheFirst({
-    cacheName: 'google-fonts-webfonts',
-    plugins: [
-      new workbox.cacheableResponse.CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-      new workbox.expiration.ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24 * 365, // 1 Year
-        maxEntries: 30,
-      }),
-    ],
-  })
-);
-
-// MESSAGE HANDLER
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    switch (event.data.type) {
-      case 'SKIP_WAITING':
-        // TODO: We'll eventually want this to be user prompted
-        // workbox.core.skipWaiting();
-        // workbox.core.clientsClaim();
-        // TODO: Global notification to indicate incoming reload
-        break;
-
-      default:
-        console.warn(`SW: Invalid message type: ${event.data.type}`);
-    }
-  }
+      const clients = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      });
+      clients.forEach(client => client.navigate(client.url));
+    })()
+  );
 });
 
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
