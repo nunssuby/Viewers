@@ -5,11 +5,43 @@ window.config = {
   servers: {
     dicomWeb: [
       {
-        name: 'DCM4CHEE',
+        id: 'pid24',
+        viewerKey: 'pid24',
+        name: 'PACS PID24',
         wadoUriRoot:
           'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/wado',
         qidoRoot: 'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/rs',
         wadoRoot: 'http://15.164.31.253:8080/dcm4chee-arc/aets/DCM4CHEE/rs',
+        qidoSupportsIncludeField: true,
+        imageRendering: 'wadors',
+        thumbnailRendering: 'wadors',
+        requestOptions: {
+          requestFromBrowser: true,
+        },
+      },
+      {
+        id: 'pid20',
+        viewerKey: 'pid20',
+        name: 'PACS PID20',
+        wadoUriRoot:
+          'http://15.164.31.253:8082/dcm4chee-arc/aets/DCM4CHEE/wado',
+        qidoRoot: 'http://15.164.31.253:8082/dcm4chee-arc/aets/DCM4CHEE/rs',
+        wadoRoot: 'http://15.164.31.253:8082/dcm4chee-arc/aets/DCM4CHEE/rs',
+        qidoSupportsIncludeField: true,
+        imageRendering: 'wadors',
+        thumbnailRendering: 'wadors',
+        requestOptions: {
+          requestFromBrowser: true,
+        },
+      },
+      {
+        id: 'pid19',
+        viewerKey: 'pid19',
+        name: 'PACS PID19',
+        wadoUriRoot:
+          'http://15.164.31.253:8081/dcm4chee-arc/aets/DCM4CHEE/wado',
+        qidoRoot: 'http://15.164.31.253:8081/dcm4chee-arc/aets/DCM4CHEE/rs',
+        wadoRoot: 'http://15.164.31.253:8081/dcm4chee-arc/aets/DCM4CHEE/rs',
         qidoSupportsIncludeField: true,
         imageRendering: 'wadors',
         thumbnailRendering: 'wadors',

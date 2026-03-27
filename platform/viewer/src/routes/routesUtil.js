@@ -42,7 +42,7 @@ const reload = () => window.location.reload();
 const ROUTES_DEF = {
   default: {
     viewer: {
-      path: '/viewer/:studyInstanceUIDs',
+      path: ['/viewer/:serverKey/:studyInstanceUIDs', '/viewer/:studyInstanceUIDs'],
       component: ViewerRouting,
     },
     standaloneViewer: {
